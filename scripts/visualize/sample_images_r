@@ -1,0 +1,75 @@
+# ================================================================================
+#  script samples images from different experiments
+#       created lists can be viewed in Fiji ImageJ
+#
+#       needs: file with list of images from all experiments to be considered
+#                                    (specified by path)
+#              make by `find . -name '*.jpg'`  
+
+require(tidyverse)
+require(fs)
+
+
+path <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/images.txt"
+folder <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec"
+output_folder <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/focusing_issue"
+
+# ----------                                load data
+data <- read.csv(path, header = TRUE) %>%
+    mutate(
+        path = path(folder,image), 
+        experiment = image %>% path_split %>% map_chr(1),
+        conc = image %>% path_split %>% map_chr(3),
+        )
+
+
+
+# ================================================================================
+#                                             1st 10 images as preview for each condition
+save_group_data <- function(df) {
+    file_name <- path(output_folder, 
+                      paste(df[["experiment"]][[1]], df[["conc"]][[1]], sep = "_"), 
+                      ext = "_image_lst.txt")
+    #print(file_name)
+    df %>% 
+        head(10) %>%
+        select(path) %>%
+        write.table(., file = file_name, col.names = FALSE, row.names = FALSE, quote = FALSE)
+    cat(open_script_line(file_name))  # these lines form imageJ macro to import data in fiji
+}
+open_script_line <- function(file_name) {
+    sub("__NAME__", file_name, "run(\"Stack From List...\", \"open=__NAME__ use\");\n")
+}
+
+print("")
+data %>% 
+    group_by(experiment, conc) %>%
+    group_split %>%
+    walk(save_group_data)
+
+
+# ================================================================================
+#                                             montage of Nth image for each condition
+
+IMAGE_INDEX <- 10
+temp_data <- data %>%
+    group_by(experiment, conc) %>%
+    summarize(image = path[[IMAGE_INDEX]]) %>%
+    mutate(label = paste(experiment, conc, sep = "|"))
+
+labels <- temp_data[["label"]]
+temp_data %>%
+    {.[["image"]]} %>% 
+    as.data.frame %>% 
+    write.table(., 
+            file = path(output_folder, 
+                        paste("all_images_", 
+                                IMAGE_INDEX,
+                                "-th_frame.txt",
+                                sep = "")
+                       ),
+            col.names = FALSE,
+            row.names = FALSE,
+            quote = FALSE)
+
+

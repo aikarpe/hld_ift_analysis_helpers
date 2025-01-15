@@ -1,0 +1,43 @@
+# ================================================================================
+# load csv data into r
+#
+# ================================================================================
+
+require(tidyverse)
+
+path <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/all_data_from_json.csv"
+
+
+data <- read.csv(path, header = TRUE)
+
+m_v_conc <- function(w, ro) {
+    w * ro
+}
+
+
+data_now <- data %>%
+    mutate(
+        c_NaCl = si_NaCl * solution_inner_ro * 100,
+        c_Brij_L4 = so_Brij_L4 * solution_outer_ro * 100,
+        )
+
+data_now %>%
+    select(scan_label, c_NaCl, c_Brij_L4, measurement_label, ift) %>%
+    group_by(scan_label, c_NaCl, c_Brij_L4, measurement_label) %>%
+    summarize(ift = mean(ift)) %>%
+    knitr::kable(.)
+    
+
+ data_now %>% knitr::kable(.) %>% utils::writeClipboard(.)
+
+
+data_now %>%
+    select(scan_label, c_NaCl, c_Brij_L4, measurement_label, ift, datetime) %>%
+    group_by(scan_label, c_NaCl, c_Brij_L4, measurement_label) %>%
+    summarize(ift = mean(ift), datetime = datetime[[1]]) %>%
+    arrange(datetime) %>% 
+    knitr::kable(.)
+
+
+
+
