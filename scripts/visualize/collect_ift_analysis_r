@@ -1,0 +1,55 @@
+# ===============================================================================
+# IFT is evaluated with Adam's original script and saved in 
+#   some location
+#   this script takes list of all results.csv files and combines them in one
+# ===============================================================================
+
+output_folder <- "D:/projects/HLD_parameter_determination/IFT_calculation_test_images/output"
+
+open_results_file <- function(path) {
+    read.csv(path, header = TRUE) %>%
+        mutate(
+            source_file = path,
+            experiment = source_file %>% path_split %>% map_chr(-6),
+            scan = source_file %>% path_split %>% map_chr(-5),
+            measurement = source_file %>% path_split %>% map_chr(-4),
+            )
+}
+
+experiments <- c(
+    "exp_2025-01-13_007",
+    "exp_2025-01-21_008",
+    "exp_2025-01-21_009",
+    "exp_2025-01-21_010",
+    "exp_2025-01-21_011",
+    "exp_2025-01-21_011a",
+    "exp_2025-01-22_012"
+    )
+
+matches_any_experiment <- function(x) {
+    any(map_lgl(experiments, .f = ~ grepl(.x, x)))
+}
+
+csv_files <- dir_ls(output_folder, 
+                    regexp = "results.csv",
+                    recurse = TRUE) %>% 
+                keep(.p = matches_any_experiment)
+
+print(csv_files %>% length)
+
+ift_data <- csv_files %>%
+#    map(.f = ~ path(output_folder, .x)) %>%
+    map(.f = open_results_file) %>% 
+    reduce(.f = rbind) 
+ift_data <- ift_data %>% 
+    mutate(
+        ift_val = IFT %>% str_split(., " ") %>% map(1) %>% as.numeric,
+        )
+
+print(csv_files %>% length)
+
+ift_data %>%
+    ggplot(aes(x = measurement, y = ift_val)) + geom_point() + facet_wrap(~ experiment, ncol = 1)
+
+ift_data %>% 
+    write.csv(path(output_folder, "ift_data.csv"), row.names = FALSE)

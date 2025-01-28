@@ -1,0 +1,329 @@
+# ================================================================================
+# these scripts are helpers to digest json data to data.frame
+# ================================================================================
+
+require(tidyverse)
+require(fs)
+
+require(rjson)
+
+#' fn extracts json element or default_value if given element is not found
+get_element <- function(alst, path, default_value) {
+    path_elements <- str_split(path, "/")[[1]]
+    path_elements <- if (path_elements[[1]] == "") {
+                        path_elements[-1]
+                     } else {
+                        path_elements
+                     }
+    element(alst, path_elements, default_value)
+}
+
+#' fn extracts json element or default_value if given element is not found
+#'
+#' this fn is helper to get_element and deals with evaluation of a single layer in 
+#'  json object
+#'
+element <- function(alst, path, default_value) {
+    if (is.null(alst) || length(path) < 1) { # || is.null(alst[[path[[1]]]])) {
+        return(default_value)
+    } 
+
+    nms <- alst %>% names
+    N <- length(alst)
+
+    x <- if (path[[1]] %in% nms) {
+        alst[[path[[1]]]]
+    } else {
+        index <- extract_index(path[[1]])
+        if (index < 1 || index > N) {
+            NULL
+        } else {
+            alst[[index]]
+        }
+    }
+    
+    if (is.null(x) || (class(x) != "list" && length(path) > 1)) {
+        return(default_value)  # constant already at mid level
+    }
+    
+    if (length(path) > 1) {
+        return(element(x, path[-1], default_value))
+    } else {
+        return(x)
+    }
+}
+
+#' fn extracts index from string of type "__index__:<int>" or "<int>"
+extract_index <- function(astr) {
+     m <- regexec("(^[[:digit:]]{1,}$)|^__index__:([[:digit:]]*)$", astr[[1]])
+     status <- m[[1]] > 0
+     if (status[[1]]) {
+        index <- which(status[-1])[[1]] + 1
+        as.integer(regmatches(astr[[1]], m)[[1]][[index]])
+     } else {
+        -1
+     }
+}
+
+#' fn maps all json variable tree
+json_tree <- function(a_json_lst, use_index_value = FALSE) {
+    json_tree_extractor(a_json_lst, "", use_index_value)
+}
+#' fn gives unique pathes in json
+unique_json_pathes <- function(a_json_lst) {
+    unique(json_tree(a_json_lst))
+}
+#' fn gives unique params names in json 
+unique_json_params <- function(a_json_lst) {
+    unique_json_pathes(a_json_lst) %>%
+        str_split("/") %>%
+        reduce(.f = ~ unique(c(.x, .y)), .init = NULL)
+}
+#' json_tree helper fn
+json_tree_extractor <- function(a_json_lst, parent, use_index_value = FALSE) {
+    if (is.null(a_json_lst) || 
+            class(a_json_lst) != "list" ||
+            length(a_json_lst) == 0 ) {
+        parent
+    } else {
+        json_names <- a_json_lst %>% names
+        if (is.null(json_names)) {
+            if (use_index_value) {
+                imap(a_json_lst, .f = ~ json_tree_extractor(.x, path(parent, paste("__index__", .y, sep = ":")))) %>%
+                reduce(.f = c, .init = NULL)
+            } else {
+                map(a_json_lst, .f = ~ json_tree_extractor(.x, path(parent, "__index__"))) %>%
+                reduce(.f = c, .init = NULL)
+            }
+        } else {
+            map(json_names, .f = ~ json_tree_extractor(a_json_lst[[.x]], path(parent, .x))) %>%
+            reduce(.f = c, .init = NULL)
+        }
+    }
+}
+# --------------------------------------------------------------------------------
+
+#' extracts elements with given path: use this
+#'
+#'  path can contain `__index__` variable that lists all available combinations of input path
+get_elements <- function(json_data, path, default_value) {
+    a_path <- path_to_pathes(path)
+    get_elements_helper(json_data, a_path, default_value)
+}
+
+#' f-n restructures json local path into list containing constants and variables separately 
+#' this f-n is used wit `get_elements()`
+path_to_pathes <- function(path) {
+    path_elements <- str_split(path, "/")[[1]]
+    path_elements <- if (path_elements[[1]] == "") {
+                        path_elements[-1]
+                     } else {
+                        path_elements
+                     }
+    pos_of__index__ <- seq_along(path_elements)[path_elements %>% map_lgl(.f = ~ .x == "__index__")]
+    path_to_pathes_helper(list(path_elements),pos_of__index__)
+}
+
+#' f-n is a helper for `path_to_pathes`; it restructures list of path components into
+#' list of path components were bits are only constants or only variables
+path_to_pathes_helper <- function(path_lst, pos_of__index__) {
+    print(path_lst)
+    print(pos_of__index__)
+    if (length(pos_of__index__) < 1) {
+        path_lst
+    } else {
+        N <- length(path_lst)
+        content_N <- path_lst[[N]]
+        if (pos_of__index__[[1]] == 1) {
+            path_lst[[N]] <- content_N[[1]]
+            if (length(content_N[-1]) > 0) {
+                path_lst[[N+1]] <- content_N[-1]
+            }
+            path_to_pathes_helper(path_lst, pos_of__index__[-1] - 1)
+        } else { 
+            index <- seq_along(content_N)
+            i_keep <- seq_along(content_N) < pos_of__index__[[1]]
+            path_lst[[N]] <- content_N[i_keep]
+            path_lst[[N+1]] <- content_N[!i_keep]
+            path_to_pathes_helper(path_lst, pos_of__index__ - pos_of__index__[[1]] + 1)
+        }
+    }
+}
+#' helper f-n to `get_elements()`; it traverses along name tree and extracts needed components
+get_elements_helper <- function(json_data, path, default_value) {
+    print("######################## calling get_elements_helper:")
+    print(json_data %>% names)
+    print("end json data------------------------------")
+    print(path)
+    print("end path------------------------------")
+    print(default_value)
+    print("end def val------------------------------")
+    if (is.null(path) || length(path) < 1) {
+        default_value #json_data
+    } else if (path[[1]][[1]] == "__index__") {
+        json_data %>%
+            map(.f = ~ get_elements_helper(.x, path[-1], default_value)) %>%
+            reduce(.f = c, .init = c())
+    } else if (length(path) == 1) {
+        element(json_data, path[[1]], default_value)
+    } else {
+        get_elements_helper(get_element(json_data, path[[1]], list()), path[-1], default_value)
+    }
+}
+
+
+
+### bits tried before #########################
+
+# json_tree(jd[[2]])
+
+
+path_a <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/log.log.2"
+path_a <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/exp_2025-01-22_012/data.json"
+
+jd <- fromJSON(file = path_a)
+
+jt <- json_tree(jd, use_index_value = T)
+jt_with_speed <- jt %>% grep("speed", ., value = T)
+
+# from json pathes with index convert to general expression
+jt_with_speed %>% gsub(":[[:digit:]]{1,}", "", .) %>% unique
+# from json pathes with index get index values as chr
+jt_with_speed %>% gsub(".*:([[:digit:]]{1,}).*", "\\1", .) %>% unique
+
+is_move_to_well_command <- function(x) {
+    if (is.null(x[["output"]]) || class(x[["output"]]) != "list") {
+        return(FALSE)
+    }
+    if (is.null(x[["output"]][["data"]])) {
+        return(FALSE)
+    }
+    if (is.null(x[["output"]][["data"]][["commandType"]])) {
+        return(FALSE)
+    }
+    x[["output"]][["data"]][["commandType"]] == "moveToWell"
+}
+jd_temp <- jd %>%
+    keep(.p = is_move_to_well_command)
+
+is_move_to_well_command(list())
+
+
+
+get_element(jd[[1]], "output/data/commandType", "")
+data_out <- data.frame(command = map_chr(jd, ~ get_element(.x, "output/data/commandType", "")),
+            x_in = map_dbl(jd, ~ get_element(.x, "output/data/params/wellLocation/offset/x", NA)),
+            y_in = map_dbl(jd, ~ get_element(.x, "output/data/params/wellLocation/offset/y", NA)),
+            z_in = map_dbl(jd, ~ get_element(.x, "output/data/params/wellLocation/offset/z", NA)),
+            speed = map_dbl(jd, ~ get_element(.x, "output/data/params/speed", NA)),
+            x_out = map_dbl(jd, ~ get_element(.x, "output/data/result/position/x", NA)),
+            y_out = map_dbl(jd, ~ get_element(.x, "output/data/result/position/y", NA)),
+            z_out = map_dbl(jd, ~ get_element(.x, "output/data/result/position/z", NA))
+            )
+
+#> this did not work| data_out <- data.frame(
+#> this did not work| concentration               = map_dbl(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/concentration", NA)),                             
+#> this did not work| solution_inner_name         = map_chr(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_inner/name", "")),                       
+#> this did not work| solution_inner_ro           = map_dbl(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_inner/ro", NA)),                        
+#> this did not work| solution_inner_label        = map_chr(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_inner/label", "")),                      
+#> this did not work| solution_inner_water_label  = map_chr(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_inner/components/water/label", "")),     
+#> this did not work| solution_inner_water_w      = map_dbl(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_inner/components/water/w", NA)),         
+#> this did not work| solution_inner_NaCl_label   = map_chr(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_inner/components/NaCl/label", "")),      
+#> this did not work| solution_inner_NaCl_w       = map_dbl(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_inner/components/NaCl/w", NA)),          
+#> this did not work| solution_inner_name         = map_chr(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_outer/name", "")),                       
+#> this did not work| solution_outer_ro           = map_dbl(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_outer/ro", NA)),                         
+#> this did not work| solution_outer_label        = map_chr(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_outer/label", "")),                      
+#> this did not work| solution_outer_brij_label   = map_chr(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_outer/components/Brij_L4/label", "")),   
+#> this did not work| solution_outer_brij_w       = map_dbl(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_outer/components/Brij_L4/w", NA)),       
+#> this did not work| solution_outer_hexdec_label = map_chr(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_outer/components/hexadecane/label", "")),
+#> this did not work| solution_outer_hexdec_w     = map_dbl(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/solution_outer/components/hexadecane/w", NA)),    
+#> this did not work| delta_ro                    = map_dbl(jd, ~ get_element(.x, "/scans/__index__/measurements/__index__/delta_ro", NA))
+#> this did not work| )
+
+
+label_has_autofocus <- function(x) {
+    grepl("autofocus", get_element(x, "label", ""))
+}
+msm <- jd %>% get_element(., "/scans", list()) %>% map(~ get_element(.x , "measurements", list())) %>% reduce(append) %>% keep(.p = ~!label_has_autofocus(.x))
+
+data_out <- data.frame(
+concentration               = map_dbl(msm, ~ get_element(.x, "/concentration", NA)),                             
+solution_inner_name         = map_chr(msm, ~ get_element(.x, "/solution_inner/name", "")),                       
+solution_inner_ro           = map_dbl(msm, ~ get_element(.x, "/solution_inner/ro", NA)),                        
+solution_inner_label        = map_chr(msm, ~ get_element(.x, "/solution_inner/label", "")),                      
+solution_inner_water_label  = map_chr(msm, ~ get_element(.x, "/solution_inner/components/water/label", "")),     
+solution_inner_water_w      = map_dbl(msm, ~ get_element(.x, "/solution_inner/components/water/w", NA)),         
+solution_inner_NaCl_label   = map_chr(msm, ~ get_element(.x, "/solution_inner/components/NaCl/label", "")),      
+solution_inner_NaCl_w       = map_dbl(msm, ~ get_element(.x, "/solution_inner/components/NaCl/w", NA)),          
+solution_inner_name         = map_chr(msm, ~ get_element(.x, "/solution_outer/name", "")),                       
+solution_outer_ro           = map_dbl(msm, ~ get_element(.x, "/solution_outer/ro", NA)),                         
+solution_outer_label        = map_chr(msm, ~ get_element(.x, "/solution_outer/label", "")),                      
+solution_outer_brij_label   = map_chr(msm, ~ get_element(.x, "/solution_outer/components/Brij_L4/label", "")),   
+solution_outer_brij_w       = map_dbl(msm, ~ get_element(.x, "/solution_outer/components/Brij_L4/w", NA)),       
+solution_outer_hexdec_label = map_chr(msm, ~ get_element(.x, "/solution_outer/components/hexadecane/label", "")),
+solution_outer_hexdec_w     = map_dbl(msm, ~ get_element(.x, "/solution_outer/components/hexadecane/w", NA)),    
+delta_ro                    = map_dbl(msm, ~ get_element(.x, "/delta_ro", NA))
+)
+
+
+
+conc <- get_elements(jd, "/scans/__index__/measurements/__index__/concentration", NA)
+
+
+concentration               <- get_elements(jd,"/scans/__index__/measurements/__index__/concentration", NA)                             
+solution_inner_name         <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/name", "")
+solution_inner_ro           <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/ro", NA)
+solution_inner_label        <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/label", "")
+solution_inner_water_label  <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/water/label", "")
+solution_inner_water_w      <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/water/w", NA)
+solution_inner_NaCl_label   <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/NaCl/label", "")
+solution_inner_NaCl_w       <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/NaCl/w", NA)
+solution_inner_name         <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/name", "")
+solution_outer_ro           <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/ro", NA)
+solution_outer_label        <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/label", "")
+solution_outer_brij_label   <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/Brij_L4/label", "")
+solution_outer_brij_w       <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/Brij_L4/w", NA)
+solution_outer_hexdec_label <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/hexadecane/label", "")
+solution_outer_hexdec_w     <- get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/hexadecane/w", NA)
+delta_ro                    <- get_elements(jd,"/scans/__index__/measurements/__index__/delta_ro", NA)
+
+
+
+all <- data.frame(
+concentration               = get_elements(jd,"/scans/__index__/measurements/__index__/concentration", NA),                             
+solution_inner_name         = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/name", ""),
+solution_inner_ro           = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/ro", NA),
+solution_inner_label        = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/label", ""),
+solution_inner_water_label  = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/water/label", ""),
+solution_inner_water_w      = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/water/w", NA),
+solution_inner_NaCl_label   = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/NaCl/label", ""),
+solution_inner_NaCl_w       = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/NaCl/w", NA),
+solution_outer_name         = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/name", ""),
+solution_outer_ro           = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/ro", NA),
+solution_outer_label        = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/label", ""),
+solution_outer_brij_label   = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/Brij_L4/label", ""),
+solution_outer_brij_w       = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/Brij_L4/w", NA),
+solution_outer_hexdec_label = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/hexadecane/label", ""),
+solution_outer_hexdec_w     = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/hexadecane/w", NA),
+delta_ro                    = get_elements(jd,"/scans/__index__/measurements/__index__/delta_ro", NA)
+)
+
+all_lst <- list(
+concentration               = get_elements(jd,"/scans/__index__/measurements/__index__/concentration", NA),                             
+solution_inner_name         = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/name", ""),
+solution_inner_ro           = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/ro", NA),
+solution_inner_label        = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/label", ""),
+solution_inner_water_label  = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/water/label", ""),
+solution_inner_water_w      = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/water/w", NA),
+solution_inner_NaCl_label   = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/NaCl/label", ""),
+solution_inner_NaCl_w       = get_elements(jd,"/scans/__index__/measurements/__index__/solution_inner/components/NaCl/w", NA),
+solution_outer_name         = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/name", ""),
+solution_outer_ro           = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/ro", NA),
+solution_outer_label        = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/label", ""),
+solution_outer_brij_label   = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/Brij_L4/label", ""),
+solution_outer_brij_w       = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/Brij_L4/w", NA),
+solution_outer_hexdec_label = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/hexadecane/label", ""),
+solution_outer_hexdec_w     = get_elements(jd,"/scans/__index__/measurements/__index__/solution_outer/components/hexadecane/w", NA),
+delta_ro                    = get_elements(jd,"/scans/__index__/measurements/__index__/delta_ro", NA)
+)
+

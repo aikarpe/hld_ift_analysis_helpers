@@ -8,68 +8,424 @@
 
 require(tidyverse)
 require(fs)
+require(imager)
 
 
-path <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/images.txt"
-folder <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec"
-output_folder <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/focusing_issue"
+images_in_experiment <- function(folder, regexp = "*.jpg") {
+    fs::dir_ls(path = folder, regexp = regexp, recurse = TRUE)
+}
 
-# ----------                                load data
-data <- read.csv(path, header = TRUE) %>%
-    mutate(
-        path = path(folder,image), 
-        experiment = image %>% path_split %>% map_chr(1),
-        conc = image %>% path_split %>% map_chr(3),
+needle_images <- function(folder) {
+    images_in_experiment(folder, regexp = "autofocus_n.*.jpg")
+}
+
+autofocus_images <- function(folder) {
+    images_in_experiment(folder, regexp = "autofocus_(0|1).*.jpg")
+}
+data_images <- function(folder) {
+    images_in_experiment(folder, regexp = "conc_.{7}(/|\\\\).*.jpg")
+}
+
+to_data_frame <- function(x) {
+    data.frame(path = x) %>%
+        mutate(
+            experiment = path %>% path_split %>% map_chr(-4),
+            scan = path %>% path_split %>% map_chr(-3),
+            measurement = path %>% path_split %>% map_chr(-2),
+            image_name = path %>% path_split %>% map_chr(-1),
+            )
+}
+
+data_images_to_list <- function(folder_in, folder_out) {
+    df_lst <- data_images(folder_in) %>%
+        to_data_frame %>%
+        group_by(experiment, scan, measurement) %>%
+        group_split 
+    file_name <- function(df) {
+        path(folder_out,
+            paste("data_images_list_", 
+                    df[["scan"]][[1]],
+                    df[["measurement"]][[1]],
+                    sep = "_"),
+            ext = ".txt")
+    }
+    ### save data_images_lsts
+    walk(df_lst, .f = ~ write_to_image_lst(.x, file_name(.x), col_name = "path"))
+
+    ### save macro to open them
+    write(
+        ij_macro_to_open_lists(map_chr(df_lst, .f = ~ file_name(.x))),
+        file = path(folder_out, 
+                    "ij_macro__open_all_data_image_lsts.ijm")
         )
+}
 
+ij_macro_to_open_lists <- function(lst_of_pathes) {
+    paste(
+        "run(\"Stack From List...\", \"open=",
+        lst_of_pathes,
+        " use\");",
+        sep = "",
+        collapse = "\n"
+        )
+}
 
-
-# ================================================================================
-#                                             1st 10 images as preview for each condition
-save_group_data <- function(df) {
-    file_name <- path(output_folder, 
-                      paste(df[["experiment"]][[1]], df[["conc"]][[1]], sep = "_"), 
-                      ext = "_image_lst.txt")
-    #print(file_name)
+n_th_image <- function(df, index = 1) {
+    df %>%
+        group_by(experiment, scan, measurement) %>%
+        #summarize(image = {if (group_size(.) > index) index else group_size(.)} %>% 
+        #                    {path[[.]]}) %>%
+        summarize(image = path[[index]]) 
+}
+write_to_image_lst <- function(df, path, col_name = "image") {
     df %>% 
-        head(10) %>%
-        select(path) %>%
-        write.table(., file = file_name, col.names = FALSE, row.names = FALSE, quote = FALSE)
-    cat(open_script_line(file_name))  # these lines form imageJ macro to import data in fiji
+        ungroup %>% 
+        select(matches(col_name)) %>%
+        write.table(., 
+                file = path,
+                col.names = FALSE,
+                row.names = FALSE,
+                quote = FALSE)
 }
-open_script_line <- function(file_name) {
-    sub("__NAME__", file_name, "run(\"Stack From List...\", \"open=__NAME__ use\");\n")
+
+montage_lst <- function(df, index = 1, path_out) {
+    df %>%
+        to_data_frame %>% 
+        n_th_image(index = index) %>% 
+        write_to_image_lst(path = path_out, col_name = "image") 
+}
+montage_lst_AF_needle <- function(path_in, path_out, index) {
+    needle_images(path_in) %>%
+        montage_lst(index, path_out)
+}
+montage_lst_AF <- function(path_in, path_out, index) {
+    autofocus_images(path_in) %>%
+        montage_lst(index, path_out)
+}
+montage_lst_images <- function(path_in, path_out, index) {
+    data_images(path_in) %>%
+        montage_lst(index, path_out)
+}
+montage_name <- function(prefix, index) {
+    paste(prefix, index, "-th_frame.txt", sep = "")
+}
+montage_lst_AF_needle_ <- function(path_in, folder_out, index) {
+    montage_lst_AF_needle(path_in, path(folder_out, montage_name("AF_needle", index)), index)
+}
+montage_lst_AF_ <- function(path_in, folder_out, index) {
+    montage_lst_AF(path_in, path(folder_out, montage_name("AF_images", index)), index)
+}
+montage_lst_images_ <- function(path_in, folder_out, index) {
+    montage_lst_images(path_in, path(folder_out, montage_name("images", index)), index)
 }
 
-print("")
-data %>% 
-    group_by(experiment, conc) %>%
-    group_split %>%
-    walk(save_group_data)
+# --------------------------------------------------------------------------------
+# notes:
+make_a_row_image <- function(imlist, n_cols) {
+    start <- seq(1, length(imlist), by = n_cols)
+    end <- map_int(start, .f = ~ min(.x + n_cols - 1, length(imlist)))
+    row_image <- function(start, end) {
+        imappend(imlist[seq(start, end)], "x")
+    }
+    pmap(list(start,end), .f = row_image)
+}
+make_a_col_image <- function(imlist) {
+    imappend(imlist, "y")
+}
+make_montage <- function(imlist, n_cols) {
+    imlist %>%
+        make_a_row_image(n_cols) %>%
+        make_a_col_image
+}
+#>old> append_images <- function(im, imlist, count) {
+#>old>     if (count > 0) {
+#>old>         im
+#>old>     }
+#>old> make_montage <- function(im_lst, n_cols, n_rows) {
+#>old>     first_im <- im_lst[[1]] 
+#>old>     delta_x <- width(first_im)
+#>old>     delta_y <- height(first_im)
+#>old>     z <- depth(first_im)
+#>old>     spectrum <- cc(first_im)
+#>old> 
+#>old>     new_im <- cimg(array(0, dim = c(delta_x * n_cols, delta_y * n_rows, z, spectrum)))
+#>old> 
+#>old>     index_to_i_col <- function(i) ((i - 1) %%  n_cols) + 1
+#>old>     index_to_i_row <- function(i) ((i - 1) %/% n_cols) + 1
+#>old>     x0 <- function(i) (index_to_i_col(i) - 1) * delta_x
+#>old>     y0 <- function(i) (index_to_i_row(i) - 1) * delta_y
+#>old> 
+#>old>     new_coordinates <- function(im, a_lst) {
+#>old>         im %>%
+#>old>             as.data.frame %>%
+#>old>             mutate(
+#>old>                 x = x + x0(i),
+#>old>                 y = y + y0(i),
+#>old>                 )
+#>old>     }
+#>old>     imap(im_lst, .f = new_coordinates) %>%
+#>old>         reduce(.f = rbind) %>%
+#>old>         as.cimg(x = delta_x * n_cols, delta_y * n_rows, z = 1)
+#>old> }
+#>old> make_montage <- function(im_lst, n_cols, n_rows) {
+#>old>     delta_x <- width(im_lst[[1]]) 
+#>old>     delta_y <- height(im_lst[[1]])
+#>old>     index_to_i_col <- function(i) ((i - 1) %%  n_cols) + 1
+#>old>     index_to_i_row <- function(i) ((i - 1) %/% n_cols) + 1
+#>old>     x0 <- function(i) (index_to_i_col(i) - 1) * delta_x
+#>old>     y0 <- function(i) (index_to_i_row(i) - 1) * delta_y
+#>old>     new_coordinates <- function(im, i) {
+#>old>         im %>%
+#>old>             as.data.frame %>%
+#>old>             mutate(
+#>old>                 x = x + x0(i),
+#>old>                 y = y + y0(i),
+#>old>                 )
+#>old>     }
+#>old>     imap(im_lst, .f = new_coordinates) %>%
+#>old>         reduce(.f = rbind) %>%
+#>old>         as.cimg(x = delta_x * n_cols, delta_y * n_rows, z = 1)
+#>old> }
+# --------------------------------------------------------------------------------
 
 
-# ================================================================================
-#                                             montage of Nth image for each condition
+#> pp <- needle_images(source_folder) %>% to_data_frame %>% n_th_image
+#> pp <- autofocus_images(source_folder) %>% to_data_frame %>% n_th_image
+#> pp <- data_images(source_folder) %>% to_data_frame %>% n_th_image(index = 10)
+#> N <- pp %>% {.[["measurement"]]} %>% unique %>% length
 
-IMAGE_INDEX <- 10
-temp_data <- data %>%
-    group_by(experiment, conc) %>%
-    summarize(image = path[[IMAGE_INDEX]]) %>%
-    mutate(label = paste(experiment, conc, sep = "|"))
+make_montage_from_file_name_df <- function(df, n_cols, fn = imager::load.image){
+    df[["image"]] %>%
+        map(.f = fn) %>%
+        as.imlist %>%
+        make_montage(n_cols = n_cols)
+}
+make_montage_AF_images_for_exp <- function(source_folder, path_out = NULL, folder_out = NULL, to_file = FALSE, quality = 0.7, fn_load = imager::load.image) {
+    df <- autofocus_images(source_folder) %>% 
+        to_data_frame %>% 
+        n_th_image %>%
+        mutate(
+            conc = gsub("(conc_.{7}).*", "\\1", measurement),
+            af_index = gsub("^.*_(.{3})$", "\\1", measurement),
+            )
+    print(knitr::kable(df))
 
-labels <- temp_data[["label"]]
-temp_data %>%
-    {.[["image"]]} %>% 
-    as.data.frame %>% 
-    write.table(., 
-            file = path(output_folder, 
-                        paste("all_images_", 
-                                IMAGE_INDEX,
-                                "-th_frame.txt",
-                                sep = "")
-                       ),
-            col.names = FALSE,
-            row.names = FALSE,
-            quote = FALSE)
+    N <- df %>% {.[["af_index"]]} %>% unique %>% length
+    print(paste("number of columns to use for montage: ", N))
+
+    out <- make_montage_from_file_name_df(df, N, fn = fn_load)
+    if (!to_file) {
+        out
+    } else {
+        a_path <- if (is.null(path_out)) {
+            fldr <- if (is.null(folder_out) && !fs::dir_exists(folder_out)) {
+                source_folder
+            } else {
+                folder_out
+            }
+            fs::path(fldr, "montage_AF_images.jpg")
+        } else {
+            path_out
+        }
+        imager::save.image(out, file = a_path, quality = quality)
+        a_path
+    }
+}
+#make_montage_AF_images_for_exp(source_folder, folder_out = output_folder, to_file = TRUE, fn_load = open_needle_bit)
+
+make_montage_needle_images_for_exp <- function(source_folder, path_out = NULL, folder_out = NULL, to_file = FALSE, quality = 0.7, fn_load = imager::load.image) {
+    df <- needle_images(source_folder) %>% 
+        to_data_frame %>% 
+        n_th_image 
+    N <- nrow(df)
+    out <- make_montage_from_file_name_df(df, N, fn = fn_load)
+    if (!to_file) {
+        out
+    } else {
+        a_path <- if (is.null(path_out)) {
+            fldr <- if (is.null(folder_out) && !fs::dir_exists(folder_out)) {
+                source_folder
+            } else {
+                folder_out
+            }
+            fs::path(fldr, "montage_needle_images.jpg")
+        } else {
+            path_out
+        }
+        imager::save.image(out, file = a_path, quality = quality)
+        a_path
+    }
+}
+#make_montage_needle_images_for_exp(source_folder, folder_out = output_folder, to_file = TRUE, fn_load = open_needle_bit)
+
+make_montage_data_images_for_exp <- function(source_folder, index = 1, path_out = NULL, folder_out = NULL, to_file = FALSE, quality = 0.7, fn_load = imager::load.image) {
+    df <- data_images(source_folder) %>% 
+        to_data_frame %>% 
+        n_th_image(index = index) 
+    N <- nrow(df)
+    out <- make_montage_from_file_name_df(df, N, fn = fn_load)
+    if (!to_file) {
+        out
+    } else {
+        a_path <- if (is.null(path_out)) {
+            fldr <- if (is.null(folder_out) && !fs::dir_exists(folder_out)) {
+                source_folder
+            } else {
+                folder_out
+            }
+            fs::path(fldr, "montage_data_images.jpg")
+        } else {
+            path_out
+        }
+        imager::save.image(out, file = a_path, quality = quality)
+        a_path
+    }
+}
+#make_montage_data_images_for_exp(source_folder, index = 10, folder_out = output_folder, to_file = TRUE, fn_load = open_needle_bit)
 
 
+find_needle_position <- function(im) {
+    im %>% 
+        grayscale %>%
+        as.data.frame %>%
+        group_by(x) %>%
+        summarize(
+            v = sd(value),
+            ) %>% 
+        mutate(
+            bin = v > sum(range(v)) / 2,
+            ) %>%
+        {.[["bin"]]} %>%
+        which %>%
+        median %>%
+        round 
+}
+crop_needle <- function(im, width) {
+    x_center <- find_needle_position(im)
+    delta <- width %/% 2
+    xs <- x_center - delta 
+    xe <- x_center - delta + width
+    #print(xs)
+    #print(xe)
+    #print(im)
+    #imsub(im, between(x, x_center - delta, x_center - delta + width - 1))
+    im_out <- imsub(im, x >=  xs & x < xe)
+    #print(im_out)
+    im_out
+}
+open_needle_bit <- function(path, width) {
+    path %>%
+        imager::load.image(.) %>%
+        grayscale %>%
+        crop_needle(., width = width)
+}
+
+
+
+source_folder <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/"
+output_folder <- "D:/projects/HLD_parameter_determination/IFT_calculation_test_images/output"
+
+
+
+experiments <- c(
+    "exp_2025-01-13_007",
+    "exp_2025-01-21_008",
+    "exp_2025-01-21_009",
+    "exp_2025-01-21_010",
+    "exp_2025-01-21_011",
+    "exp_2025-01-21_011a",
+    "exp_2025-01-22_012",
+    )
+
+make_all_montages <- function(folder_in, folder_out, experiment) {
+    fi <- path(folder_in, experiment)
+    fo <- path(folder_out, experiment)
+    make_montage_data_images_for_exp(fi, index = 10, folder_out = fo, to_file = TRUE, fn_load = function(path) open_needle_bit(path, width = 200))
+    make_montage_AF_images_for_exp(fi, folder_out = fo, to_file = TRUE, fn_load = function(path) open_needle_bit(path, width = 200))
+    make_montage_needle_images_for_exp(fi, folder_out = fo, to_file = TRUE, fn_load = function(path) open_needle_bit(path, width = 200))
+
+}
+#walk(experiments, .f = ~ make_all_montages(source_folder, output_folder, .x))
+walk(experiments_new, .f = ~ make_all_montages(source_folder, output_folder, .x))
+
+
+make_all_data_images_list <- function(folder_in, folder_out, experiment) {
+    fi <- path(folder_in, experiment)
+    fo <- path(folder_out, experiment)
+    data_images_to_list(fi, fo)
+}
+walk(experiments, .f = ~ make_all_data_images_list(source_folder, output_folder, .x))
+
+
+
+
+
+
+
+
+
+# old bits> # ===============================================================================
+# old bits> 
+# old bits> path <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/images.txt"
+# old bits> folder <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec"
+# old bits> output_folder <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/focusing_issue"
+# old bits> 
+# old bits> # ----------                                load data
+# old bits> data <- read.csv(path, header = TRUE) %>%
+# old bits>     mutate(
+# old bits>         path = path(folder,image), 
+# old bits>         experiment = image %>% path_split %>% map_chr(1),
+# old bits>         conc = image %>% path_split %>% map_chr(3),
+# old bits>         )
+# old bits> 
+# old bits> 
+# old bits> 
+# old bits> # ================================================================================
+# old bits> #                                             1st 10 images as preview for each condition
+# old bits> save_group_data <- function(df) {
+# old bits>     file_name <- path(output_folder, 
+# old bits>                       paste(df[["experiment"]][[1]], df[["conc"]][[1]], sep = "_"), 
+# old bits>                       ext = "_image_lst.txt")
+# old bits>     #print(file_name)
+# old bits>     df %>% 
+# old bits>         head(10) %>%
+# old bits>         select(path) %>%
+# old bits>         write.table(., file = file_name, col.names = FALSE, row.names = FALSE, quote = FALSE)
+# old bits>     cat(open_script_line(file_name))  # these lines form imageJ macro to import data in fiji
+# old bits> }
+# old bits> open_script_line <- function(file_name) {
+# old bits>     sub("__NAME__", file_name, "run(\"Stack From List...\", \"open=__NAME__ use\");\n")
+# old bits> }
+# old bits> 
+# old bits> print("")
+# old bits> data %>% 
+# old bits>     group_by(experiment, conc) %>%
+# old bits>     group_split %>%
+# old bits>     walk(save_group_data)
+# old bits> 
+# old bits> 
+# old bits> # ================================================================================
+# old bits> #                                             montage of Nth image for each condition
+# old bits> 
+# old bits> IMAGE_INDEX <- 10
+# old bits> temp_data <- data %>%
+# old bits>     group_by(experiment, conc) %>%
+# old bits>     summarize(image = path[[IMAGE_INDEX]]) %>%
+# old bits>     mutate(label = paste(experiment, conc, sep = "|"))
+# old bits> 
+# old bits> labels <- temp_data[["label"]]
+# old bits> temp_data %>%
+# old bits>     {.[["image"]]} %>% 
+# old bits>     as.data.frame %>% 
+# old bits>     write.table(., 
+# old bits>             file = path(output_folder, 
+# old bits>                         paste("all_images_", 
+# old bits>                                 IMAGE_INDEX,
+# old bits>                                 "-th_frame.txt",
+# old bits>                                 sep = "")
+# old bits>                        ),
+# old bits>             col.names = FALSE,
+# old bits>             row.names = FALSE,
+# old bits>             quote = FALSE)
+# old bits> 
+# old bits> 

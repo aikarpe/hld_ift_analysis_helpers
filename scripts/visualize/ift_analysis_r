@@ -1,0 +1,144 @@
+# ===============================================================================
+# reads collected IFT analysis data of multiple experiments for analysis
+# ===============================================================================
+
+output_folder <- "D:/projects/HLD_parameter_determination/IFT_calculation_test_images/output"
+
+require(tidyverse)
+require(fs)
+
+experiments <- c(
+    "exp_2025-01-13_007",
+    "exp_2025-01-21_008",
+    "exp_2025-01-21_009",
+    "exp_2025-01-21_010",
+    "exp_2025-01-21_011",
+    "exp_2025-01-21_011a",
+    "exp_2025-01-22_012"
+    )
+cBrijL5_translate <- list(
+    `exp_2025-01-13_007` = 5, # 5 g/ 100 mL BrijL4 in hexadecane 
+    `exp_2025-01-21_008` = 5, 
+    `exp_2025-01-21_009` = 2.5, 
+    `exp_2025-01-21_010` = 2.5, 
+    `exp_2025-01-21_011` = 10,  
+    `exp_2025-01-21_011a` = 20,
+    `exp_2025-01-22_012` = 20
+    )
+
+ift_data <- read.csv(path(output_folder, "ift_data.csv"), 
+                    header = TRUE)
+                    
+ift_data %>%
+    ggplot(aes(x = measurement, y = ift_val)) + geom_point() + facet_wrap(~ experiment, ncol = 1)
+
+
+suffix_in =  "2025-01-13_006"  #5g BrijL4
+suffix_out = "2025-01-13_007"
+
+suffix_in =  "2025-01-13_006"  #5g BrijL4
+suffix_out = "2025-01-21_008"
+
+suffix_in =  "2025-01-21_008"  #2.5g BrijL4
+suffix_out = "2025-01-21_008_s2.5_BrijL4"
+
+suffix_in =  "2025-01-21_008_s2.5_BrijL4"  #2.5g BrijL4
+suffix_out = "2025-01-21_009"
+
+suffix_in =   "2025-01-21_009_s10_BrijL4"  #2.5g BrijL4 repeat of 009;  even though this is labeled as 10g, actually 2.5 g was used!!!
+suffix_out =  "2025-01-21_010"  
+
+suffix_in =   "2025-01-21_010_s10_BrijL4"  #10g BrijL4  
+suffix_out =  "2025-01-21_011"  
+
+suffix_in =   "2025-01-21_011"  #20g BrijL4  
+suffix_out =  "2025-01-22_012"  
+
+
+# ==============================
+label_has_autofocus <- function(x) {
+    grepl("autofocus", get_element(x, "label", ""))
+}
+msm <- jd %>% get_element(., "/scans", list()) %>% map(~ get_element(.x , "measurements", list())) %>% reduce(append) %>% keep(.p = ~!label_has_autofocus(.x))
+
+data_out <- data.frame(
+concentration               = map_dbl(msm, ~ get_element(.x, "/concentration", NA)),                             
+solution_inner_name         = map_chr(msm, ~ get_element(.x, "/solution_inner/name", "")),                       
+solution_inner_ro           = map_dbl(msm, ~ get_element(.x, "/solution_inner/ro", NA)),                        
+solution_inner_label        = map_chr(msm, ~ get_element(.x, "/solution_inner/label", "")),                      
+solution_inner_water_label  = map_chr(msm, ~ get_element(.x, "/solution_inner/components/water/label", "")),     
+solution_inner_water_w      = map_dbl(msm, ~ get_element(.x, "/solution_inner/components/water/w", NA)),         
+solution_inner_NaCl_label   = map_chr(msm, ~ get_element(.x, "/solution_inner/components/NaCl/label", "")),      
+solution_inner_NaCl_w       = map_dbl(msm, ~ get_element(.x, "/solution_inner/components/NaCl/w", NA)),          
+solution_inner_name         = map_chr(msm, ~ get_element(.x, "/solution_outer/name", "")),                       
+solution_outer_ro           = map_dbl(msm, ~ get_element(.x, "/solution_outer/ro", NA)),                         
+solution_outer_label        = map_chr(msm, ~ get_element(.x, "/solution_outer/label", "")),                      
+solution_outer_brij_label   = map_chr(msm, ~ get_element(.x, "/solution_outer/components/Brij_L4/label", "")),   
+solution_outer_brij_w       = map_dbl(msm, ~ get_element(.x, "/solution_outer/components/Brij_L4/w", NA)),       
+solution_outer_hexdec_label = map_chr(msm, ~ get_element(.x, "/solution_outer/components/hexadecane/label", "")),
+solution_outer_hexdec_w     = map_dbl(msm, ~ get_element(.x, "/solution_outer/components/hexadecane/w", NA)),    
+delta_ro                    = map_dbl(msm, ~ get_element(.x, "/delta_ro", NA))
+)
+
+exp_to_use <- c(
+    "exp_2025-01-13_007",
+    #"exp_2025-01-21_009",
+    "exp_2025-01-21_010",
+    "exp_2025-01-22_012"
+    )
+
+df_to_join <- data_out %>% 
+    mutate(
+        solution_inner_NaCl_w = if_else(is.na(solution_inner_NaCl_w), 0, solution_inner_NaCl_w), 
+        mv_NaCl = solution_inner_NaCl_w * solution_inner_ro * 100, 
+        ) %>%
+    select(concentration, mv_NaCl)
+# ==============================
+
+ift_data %>% 
+    mutate(concentration = measurement %>% gsub("conc_", "", .) %>% as.numeric) %>% 
+    left_join(., df_to_join) %>%
+    filter(experiment %in% exp_to_use) %>% 
+    mutate(
+        lbl = paste(cBrijL4, "g Brij L4 / 100 mL", sep = ""),
+        rep_val = if_else(is.na(ift_val), NA, 1),
+        ) %>% 
+    ggplot(aes(x = mv_NaCl, y = rep_val)) + geom_point() + facet_wrap(~ lbl, nrow = 1)
+
+ift_data %>% 
+    mutate(concentration = measurement %>% gsub("conc_", "", .) %>% as.numeric) %>% 
+    left_join(., df_to_join) %>%
+    filter(experiment %in% exp_to_use) %>% 
+    mutate(
+        lbl = paste(cBrijL4, "g Brij L4 / 100 mL", sep = ""),
+        rep_val = if_else(is.na(ift_val), NA, 1),
+        ) %>% 
+    filter(between(cBrijL4, 2, 3)) %>% 
+    ggplot(aes(x = mv_NaCl, y = rep_val)) + geom_point() + facet_wrap(~ lbl, nrow = 1)
+
+ift_data %>% 
+    mutate(concentration = measurement %>% gsub("conc_", "", .) %>% as.numeric) %>% 
+    left_join(., df_to_join) %>%
+    filter(experiment %in% exp_to_use) %>% 
+    mutate(
+        lbl = paste(cBrijL4, "g Brij L4 / 100 mL", sep = ""),
+        rep_val = if_else(is.na(ift_val), NA, 1),
+        ) %>% 
+    filter(between(cBrijL4, 4, 6)) %>% 
+    ggplot(aes(x = mv_NaCl, y = rep_val)) + geom_point() + facet_wrap(~ lbl, nrow = 1)
+
+ift_data %>% 
+    mutate(concentration = measurement %>% gsub("conc_", "", .) %>% as.numeric) %>% 
+    left_join(., df_to_join) %>%
+    filter(experiment %in% exp_to_use) %>% 
+    mutate(
+        lbl = paste(cBrijL4, "g Brij L4 / 100 mL", sep = ""),
+        rep_val = if_else(is.na(ift_val), NA, 1),
+        ) %>% 
+    filter(between(cBrijL4, 9, Inf)) %>% 
+    ggplot(aes(x = mv_NaCl, y = rep_val)) + geom_point() + facet_wrap(~ lbl, nrow = 1)
+
+
+ift_data %>%
+    ggplot(aes(x = measurement, y = ift_val)) + geom_point() + facet_wrap(~ experiment, ncol = 1)
+
