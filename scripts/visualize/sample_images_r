@@ -71,11 +71,14 @@ ij_macro_to_open_lists <- function(lst_of_pathes) {
 }
 
 n_th_image <- function(df, index = 1) {
-    df %>%
-        group_by(experiment, scan, measurement) %>%
-        #summarize(image = {if (group_size(.) > index) index else group_size(.)} %>% 
-        #                    {path[[.]]}) %>%
-        summarize(image = path[[index]]) 
+    temp_df <- df %>%
+        group_by(experiment, scan, measurement) 
+    n <- length(index)
+    if (n == 1) {
+        temp_df %>% summarize(image = path[[index]]) 
+    } else {
+        temp_df %>% reframe(image = path[row_number() %in% index])
+    }
 }
 write_to_image_lst <- function(df, path, col_name = "image") {
     df %>% 
@@ -322,21 +325,6 @@ open_needle_bit <- function(path, width) {
 
 
 
-source_folder <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/"
-output_folder <- "D:/projects/HLD_parameter_determination/IFT_calculation_test_images/output"
-
-
-
-experiments <- c(
-    "exp_2025-01-13_007",
-    "exp_2025-01-21_008",
-    "exp_2025-01-21_009",
-    "exp_2025-01-21_010",
-    "exp_2025-01-21_011",
-    "exp_2025-01-21_011a",
-    "exp_2025-01-22_012",
-    )
-
 make_all_montages <- function(folder_in, folder_out, experiment) {
     fi <- path(folder_in, experiment)
     fo <- path(folder_out, experiment)
@@ -345,22 +333,170 @@ make_all_montages <- function(folder_in, folder_out, experiment) {
     make_montage_needle_images_for_exp(fi, folder_out = fo, to_file = TRUE, fn_load = function(path) open_needle_bit(path, width = 200))
 
 }
-#walk(experiments, .f = ~ make_all_montages(source_folder, output_folder, .x))
-walk(experiments_new, .f = ~ make_all_montages(source_folder, output_folder, .x))
+#> #walk(experiments, .f = ~ make_all_montages(source_folder, output_folder, .x))
+#> walk(experiments_new, .f = ~ make_all_montages(source_folder, output_folder, .x))
 
 
 make_all_data_images_list <- function(folder_in, folder_out, experiment) {
     fi <- path(folder_in, experiment)
     fo <- path(folder_out, experiment)
+    if (!dir_exists(fo)) {
+        dir_create(fo)
+    }
     data_images_to_list(fi, fo)
 }
-walk(experiments, .f = ~ make_all_data_images_list(source_folder, output_folder, .x))
+#walk(experiments, .f = ~ make_all_data_images_list(source_folder, output_folder, .x))
+
+# -------------------------------------------------- find needle regios
+#
+data_images_to_list_and_montages <- function(folder_in, folder_out) {
+    a_width <- 150
+
+    df_lst <- data_images(folder_in) %>%
+        to_data_frame %>%
+        group_by(experiment, scan, measurement) %>%
+        group_split 
+
+    file_name <- function(df, prefix) {
+        path(folder_out,
+            paste(prefix, 
+                    df[["scan"]][[1]],
+                    df[["measurement"]][[1]],
+                    sep = "_"),
+            ext = ".txt")
+    }
+    file_name_data_images_list <- function(df) file_name(df, "data_images_list_")
+    file_name_measurement_montage <- function(df) file_name(df, "measurement_montage_")
+
+    needle_roi_of_1st_image <- function(df, width) {
+        im <- df %>% 
+            filter(grepl("00000.jpg", image_name)) %>%
+            select(path) %>%
+            {.[[1]][[1]]} %>%
+            imager::load.image(.) %>%
+            grayscale
+        list(
+            x_start = find_needle_position(im) - width %/% 2,
+            width = width,
+            height = height(im)
+            )
+    }
+
+    create_macro_to_open_crop_montage_save_close <- function(path_to_lst, x_start, width, height, n_images, montage_path) {
+        c(
+            "run(\"Stack From List...\", \"open=__path_to_lst__ use\");",
+            "makeRectangle(__x_start__, 0, __width__, __height__);",
+            "run(\"Crop\");",
+            "run(\"Make Montage...\", \"columns=__n_images__ rows=1 scale=1\");",
+            "saveAs(\"Jpeg\", \"__montage_path__\");",
+            "close();"
+        ) %>% 
+        paste(., collapse = "\n") %>% 
+        gsub("__path_to_lst__", path_to_lst, .) %>%
+        gsub("__x_start__", x_start, .) %>%
+        gsub("__width__", width, .) %>%
+        gsub("__height__", height, .) %>%
+        gsub("__n_images__", n_images, .) %>%
+        gsub("__montage_path__", montage_path, .) 
+        #gsub("", , .) %>%
+    }
+    do_it <- function(df) {
+        roi <- needle_roi_of_1st_image(df, a_width)
+        create_macro_to_open_crop_montage_save_close(
+                                                path_to_lst = file_name_data_images_list(df),
+                                                x_start = roi[["x_start"]],
+                                                width = roi[["width"]],
+                                                height = roi[["height"]],
+                                                n_images = nrow(df),
+                                                montage_path = file_name_measurement_montage(df)
+                                                )
+    }
+    ### save data_images_lsts
+    walk(df_lst, .f = ~ write_to_image_lst(.x, file_name_data_images_list(.x), col_name = "path"))
+
+    ### save macro to open them
+    map_chr(df_lst, .f = do_it) %>%
+        paste(., collapse = "\n") %>% 
+        write(
+            ., 
+            file = path(folder_out, 
+                        "ij_macro__make_data_image_montages.ijm")
+            )
+}
+process_experiments <- function(folder_in, folder_out, experiment, fn) {
+    if (length(experiment) > 1) {
+        walk(experiment, .f = ~ process_experiments(folder_in, folder_out, .x, fn))
+    } else {
+        fi <- path(folder_in, experiment)
+        fo <- path(folder_out, experiment)
+        if (!dir_exists(fo)) {
+            dir_create(fo)
+        }
+        fn(fi, fo)
+    }
+}
+
+
+source_folder <- "I:/temp/opentron/Brij_L4_C16-C7_v1/hexdec/"
+source_folder <- "D:/temp_data/"
+output_folder <- "D:/projects/HLD_parameter_determination/IFT_calculation_test_images/output"
 
 
 
+experiments <- c(
+    #"exp_2025-01-13_007",
+    #"exp_2025-01-21_008",
+    #"exp_2025-01-21_009",
+    #"exp_2025-01-21_010",
+    #"exp_2025-01-21_011",
+    #"exp_2025-01-21_011a",
+    #"exp_2025-01-22_012",
+    #"exp_2025-02-07_001_2.5g_BrijL4_C7-C16",
+    #"exp_2025-02-13_001_5g_BrijL4_C7-C16"
+    "exp_2025-02-14_001_10g_BrijL4_C7-C16"
+    )
 
 
+process_experiments(source_folder, output_folder, experiments, data_images_to_list_and_montages)
 
+# 2025-02-10 analysis of latest data:
+
+
+# scan montage
+#   filter scan images
+#   pick N images from each conc
+#   make montage with N cols
+#   save as montage file
+
+# ---> |fi <- path(source_folder, experiments[[1]])
+# ---> |fo <- path(output_folder, experiments[[1]])
+# ---> |index_to_pick <- seq(120,130)
+# ---> |quality <- 0.7
+# ---> |ncols <- length(index_to_pick)
+# ---> |temp_dfs <- data_images(fi) %>% 
+# ---> |        to_data_frame %>%
+# ---> |        n_th_image(index = index_to_pick) %>% 
+# ---> |        group_by(experiment, scan) %>%
+# ---> |        group_split
+# ---> |n_images <- map_int(temp_dfs, .f = nrow)
+# ---> |f_names <- map_chr(temp_dfs, .f = ~ paste("data_images_montage_", .x[["scan"]][[1]], "from", min(index_to_pick), "to", max(index_to_pick), sep = "_") %>% path(fo, ., ext = ".jpg")) 
+# ---> |montages <- map(temp_dfs, .f = ~ make_montage_from_file_name_df(.x, ncols, fn = function(path) open_needle_bit(path, width = 200)))
+# ---> |pwalk(
+# ---> |    list(file_name = f_names, image = montages),
+# ---> |    .f = function(file_name, image) {
+# ---> |        imager::save.image(
+# ---> |                        image, 
+# ---> |                        file = file_name, 
+# ---> |                        quality = quality
+# ---> |                        )
+# ---> |    })
+# ---> |
+### number of images per condition
+#> data_images(fi) %>% 
+#>         to_data_frame %>%
+#>         group_by(experiment, scan, measurement) %>%
+#>         summarize(n = n()) %>%
+#>         knitr::kable(.) 
 
 
 

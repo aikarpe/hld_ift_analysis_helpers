@@ -4,7 +4,6 @@
 #   this script takes list of all results.csv files and combines them in one
 # ===============================================================================
 
-output_folder <- "D:/projects/HLD_parameter_determination/IFT_calculation_test_images/output"
 
 open_results_file <- function(path) {
     read.csv(path, header = TRUE) %>%
@@ -15,41 +14,87 @@ open_results_file <- function(path) {
             measurement = source_file %>% path_split %>% map_chr(-4),
             )
 }
-
-experiments <- c(
-    "exp_2025-01-13_007",
-    "exp_2025-01-21_008",
-    "exp_2025-01-21_009",
-    "exp_2025-01-21_010",
-    "exp_2025-01-21_011",
-    "exp_2025-01-21_011a",
-    "exp_2025-01-22_012"
-    )
-
+collect_csv_files <- function(path) {
+    dir_ls(path, regexp = "results.csv", recurse = TRUE) 
+}
 matches_any_experiment <- function(x) {
     any(map_lgl(experiments, .f = ~ grepl(.x, x)))
 }
+collect_ift_data <- function(root, experiment) {
+    files_to_use <- root %>%
+        collect_csv_files %>%
+        keep(.p = ~ grepl(experiment, .x)) %>%
+        map(.f = open_results_file) %>% 
+        reduce(.f = rbind) %>%
+        mutate(
+            ift_val = IFT %>% str_split(., " ") %>% map(1) %>% as.numeric,
+            )
+}
 
-csv_files <- dir_ls(output_folder, 
-                    regexp = "results.csv",
-                    recurse = TRUE) %>% 
-                keep(.p = matches_any_experiment)
-
-print(csv_files %>% length)
-
-ift_data <- csv_files %>%
-#    map(.f = ~ path(output_folder, .x)) %>%
-    map(.f = open_results_file) %>% 
-    reduce(.f = rbind) 
-ift_data <- ift_data %>% 
-    mutate(
-        ift_val = IFT %>% str_split(., " ") %>% map(1) %>% as.numeric,
-        )
-
-print(csv_files %>% length)
-
-ift_data %>%
-    ggplot(aes(x = measurement, y = ift_val)) + geom_point() + facet_wrap(~ experiment, ncol = 1)
-
-ift_data %>% 
-    write.csv(path(output_folder, "ift_data.csv"), row.names = FALSE)
+# ---> |output_folder <- "D:/projects/HLD_parameter_determination/IFT_calculation_test_images/output"
+# ---> |
+# ---> |experiments <- c(
+# ---> |    "exp_2025-01-13_007",
+# ---> |    "exp_2025-01-21_008",
+# ---> |    "exp_2025-01-21_009",
+# ---> |    "exp_2025-01-21_010",
+# ---> |    "exp_2025-01-21_011",
+# ---> |    "exp_2025-01-21_011a",
+# ---> |    "exp_2025-01-22_012",
+# ---> |    "exp_2025-02-07_001_2.5g_BrijL4_C7-C16",
+# ---> |    "exp_2025-02-13_001_5g_BrijL4_C7-C16",
+# ---> |    "exp_2025-02-14_001_10g_BrijL4_C7-C16"
+# ---> |    )
+# ---> |
+# ---> |
+# ---> |files_to_use <- output_folder %>%
+# ---> |    collect_csv_files %>%
+# ---> |    keep(.p = ~ grepl("exp_2025-02-14_001", .x))  # select bits needed
+# ---> |    #keep(.p = matches_any_experiment)
+# ---> |
+# ---> |ift_data <- 
+# ---> |    files_to_use %>%
+# ---> |    map(.f = open_results_file) %>% 
+# ---> |    reduce(.f = rbind) %>%
+# ---> |    mutate(
+# ---> |        ift_val = IFT %>% str_split(., " ") %>% map(1) %>% as.numeric,
+# ---> |        )
+# ---> |
+# ---> |index <- 10
+# ---> |save_path <- path(
+# ---> |                output_folder, 
+# ---> |                experiments[[index]],
+# ---> |                paste(experiments[[index]], "ift_data.csv", sep = "_")
+# ---> |            )
+# ---> |print(save_path)
+# ---> |ift_data %>% 
+# ---> |    write.csv(
+# ---> |            save_path,
+# ---> |            row.names = FALSE
+# ---> |            )
+# ---> |    
+# ---> |
+# ---> |
+# ---> |#csv_files <- dir_ls(output_folder, 
+# ---> |#                    regexp = "results.csv",
+# ---> |#                    recurse = TRUE) %>% 
+# ---> |#                keep(.p = matches_any_experiment)
+# ---> |#
+# ---> |#print(csv_files %>% length)
+# ---> |#
+# ---> |#ift_data <- csv_files %>%
+# ---> |##    map(.f = ~ path(output_folder, .x)) %>%
+# ---> |#    map(.f = open_results_file) %>% 
+# ---> |#    reduce(.f = rbind) 
+# ---> |#ift_data <- ift_data %>% 
+# ---> |#    mutate(
+# ---> |#        ift_val = IFT %>% str_split(., " ") %>% map(1) %>% as.numeric,
+# ---> |#        )
+# ---> |
+# ---> |#print(csv_files %>% length)
+# ---> |
+# ---> |ift_data %>%
+# ---> |    ggplot(aes(x = measurement, y = ift_val)) + geom_point() + facet_wrap(~ experiment, ncol = 1)
+# ---> |
+# ---> |#ift_data %>% 
+# ---> |#    write.csv(path(output_folder, "ift_data.csv"), row.names = FALSE)
