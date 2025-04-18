@@ -93,7 +93,7 @@ def montage_col(lst_ims, padding_width = 0, fill = 0):
     return ski.util.montage(lst_ims, grid_shape = (len(lst_ims), 1), padding_width = padding_width, fill = fill)
 
 def montage_row_from_path(lst_path, x_start, width, padding_width = 0, fill = 0):
-    return montage_row(list(map(lambda x: load_image(x, x_start, width), lst_path)), padding_width = padding_width, fill = fill)
+    return montage_row(list(map(lambda x: ski.img_as_ubyte(load_image(x, x_start, width)), lst_path)), padding_width = padding_width, fill = fill)
 
 
 # ================================================================================
