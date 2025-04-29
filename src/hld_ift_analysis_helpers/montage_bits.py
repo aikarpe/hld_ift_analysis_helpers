@@ -1,8 +1,8 @@
 #================================================================================
 #   functions to create montages from HLD_IFT experimental data
 #================================================================================
-import sys 
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts")
+#import sys 
+#sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts")
 
 import os
 import re
@@ -20,7 +20,7 @@ from skimage.measure import label, regionprops, regionprops_table
 from skimage.transform import rotate
 import pandas as pd
 from math import pi
-from collect_files_folders import collect_images
+from hld_ift_analysis_helpers.collect_files_folders import collect_images
 # ================================================================================
 #                                                           needle roi 
 def needle(im, width = 0):

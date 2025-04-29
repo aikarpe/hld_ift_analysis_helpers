@@ -1,8 +1,8 @@
 #================================================================================
 #   script takes input image and creates list of blobs seen in it
 #================================================================================
-import sys 
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts")
+#import sys 
+#sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts")
 
 import os
 import re
@@ -33,7 +33,7 @@ from skimage.morphology import (
 
 import pandas as pd
 from math import pi
-from collect_files_folders import list_images
+from hld_ift_analysis_helpers.collect_files_folders import list_images
 
 
 
