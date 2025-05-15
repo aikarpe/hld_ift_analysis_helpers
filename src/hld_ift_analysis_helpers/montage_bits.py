@@ -160,6 +160,7 @@ def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200
             im = montage_row_from_path(pths, start, width)
             print(type(im))
             print(f'... saving {p}')
+            os.makedirs(os.path.split(p)[0], exist_ok = True)
             imsave(p, ski.util.img_as_ubyte(im))
     print(f'... done making montage in `{root}`')
    
