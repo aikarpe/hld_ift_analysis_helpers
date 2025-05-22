@@ -1,12 +1,16 @@
 #python "D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts/experiment_hough_transform_v2.py"
 #
 import sys
+sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_calc/src")
 sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_calc")
+sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
 #import pandas as pd
 import re
 import os
 import time
 import math
+import functools
+import itertools
 
 #import copy
 import numpy as np
@@ -45,6 +49,48 @@ from drop_recognition import (
                             autocrop_bin
                             ) 
 
+#================================================================================
+def create_fraction_to_intensity_fn(im, channels: list = [0], nbins = 256, a_range = None, mask = None):
+    N = functools.reduce(lambda x, y: x * y, im.shape, 1) if mask is None else mask.sum() / mask.max() 
+    im_min = 0 # im.min()
+    im_max = 256  # im.max()
+    range_to_use = a_range if a_range is not None else [im_min, im_max]
+    #    hist = cv2.calcHist([img],[0],None,[256],[0,256])
+    #accumulate
+    a_hist = cv.calcHist([im], channels, mask, [nbins], range_to_use)
+    print(a_hist)
+    print(a_hist.shape)
+    N2 = functools.reduce(lambda x,y: x+y[0],a_hist.tolist(), 0) 
+    print(f'N2: {N2}')
+    fraction_vals = itertools.accumulate(list(map(lambda x: x[0] / N, a_hist.tolist() )),
+                                            lambda x,y: x + y)
+    print(f'N: {N}')
+    print(f'im.shape: {im.shape}')
+
+    intensity_increment = (im_max - im_min) / (nbins - 1)
+    intensity_vals = [im_min + x * intensity_increment for x in range(nbins) ]
+    for intensity, fraction in zip(intensity_vals, fraction_vals):
+        print(f'{fraction}, {intensity}')
+
+    def temp(fr):
+        if fr >= 1:
+            return intensity_vals[len(intensity_vals) - 1]
+        elif fr <=0:
+            return intensity_vals[0]
+        else:
+            index = [index for index,value in enumerate(fraction_vals) if value > fr ]
+            print(index)
+            index = index[0]
+            return interpolate(fr, fraction_vals[index - 1], fraction_vals[index], intensity_vals[index - 1], intensity_vals[index])
+
+    return temp
+
+def interpolate(x_val, x1, x2, y1, y2):
+    return y1 + (y2 - y1) / (x2 - x1) * (x_val - x1)
+
+#================================================================================
+
+
 start = time.time()
 
 def temp_data_output_exp_name(path):
@@ -61,7 +107,11 @@ print(root_out)
 
 
 #jpgs = collect_files(root, "[0-9]{5}.jpg$") #"conc_[0-9.]{7}[\/].*[0-9]{5}.jpg$")
-jpgs = collect_files(root, "conc_[0-9.]{7}[\\\\].*[0-9]{5}.jpg$")
+#jpgs = collect_files(root, "conc_[0-9.]{7}[\\\\].*[0-9]{5}.jpg$")
+jpgs = [
+        r"\\huckdfs-srv.science.ru.nl\huckdfs\RobotLab\Storage-Miscellaneous\aigars\temp\AOT_IB-45_C7C16_NaCl\exp_2025-04-07_05g_AOT_C7C16_001\scan_001\conc_0.50000\00012.jpg"
+        ]
+
 
 
 
@@ -78,7 +128,8 @@ def new_image_name(p, root, root_out):
         return os.path.join(new_image_name(x[0], root, root_out), x[1])
 
 for i,p in enumerate(jpgs):
-    if i < 1450 and i > 1447: #10: #2500: # and i >= 1500:
+    #if i < 1450 and i > 1448: #10: #2500: # and i >= 1500:
+    if i > -1:
         output_img_path = new_image_name(p, root, root_out)
         print(f'{i: >3d}: {output_img_path}')
         #save_edges_needle_and_droplet(p, output_img_path)
@@ -90,13 +141,18 @@ for i,p in enumerate(jpgs):
         value = 70
         erode = 0
         dilate = 0
+        fraction = 0.05
         one_more = True
         show_image = True
         while one_more:
             im = imread(p)
-            yyy = needle_region_threshold(im, fraction = 0.105, show_image = show_image)
+            im = cv.cvtColor(im, cv.COLOR_BGR2GRAY)
+            fract_to_intsty = create_fraction_to_intensity_fn(im, [0])
+            for a_fr in [ x / 20 for x in range(21) ]:
+                print(f'fract_to_intsty({a_fr}): {fract_to_intsty(a_fr)}')
+            yyy = needle_region_threshold(im, fraction = fraction, show_image = show_image)
             print(im.shape)
-            edges_needle_and_droplet(yyy, show_image = show_image, threshold_low = 32, erode = 1, dilate = 1)
+            edges_needle_and_droplet(yyy, show_image = show_image, threshold_low = value, erode = erode, dilate = dilate)
 
             #\\\>>>x = contour_below_needle(im, show_image = show_image, threshold_low = value, dilate = dilate, erode = erode)
             #\\\>>>#plt.imshow(x)
@@ -116,6 +172,7 @@ for i,p in enumerate(jpgs):
                     value = int(cmpnnts[0])
                     dilate = int(cmpnnts[1])
                     erode = int(cmpnnts[2])
+                    fraction = float(cmpnnts[3])
             else:
                 one_more = False
 
@@ -142,8 +199,8 @@ for i,p in enumerate(jpgs):
         #===> |plt.imshow(iim)
         #===> |plt.title("contour below")
         #===> |plt.show()
+        print(p)
 
 
 print(f'duration: {time.time() - start}')
-
 

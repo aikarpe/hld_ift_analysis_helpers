@@ -133,7 +133,8 @@ def find_needle_pos(path, width):
 # ===============================================
 # montages to make
 
-def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200, test = -1):
+def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200, test = -1, output_folder = ""):
+    use_default_fldr = output_folder == ""
     im_data = collect_images_to_dataframe(root)
     
     def select_start_to_end(i_start): 
@@ -144,11 +145,15 @@ def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200
     temp = aggregate_item(im_data, ['experiment_root', 'experiment', 'scan', 'concentration'], "path", fn)
     temp['roi_x_start'] = list(map(lambda x: find_needle_pos(x[0], width = roi_width)["start"], temp['path']))
     temp['roi_x_width'] = roi_width
-    temp['montage_path'] = list(map(lambda x: os.path.join(
-                                                experiment_root(x[0]), 
-                                                "meas_montage", 
-                                                scan(x[0]) + "_" + concentration_bit(x[0]) + "_measurement_montage.png"), 
+    temp['montage_name'] = list(map(lambda x: scan(x[0]) + "_" + concentration_bit(x[0]) + "_measurement_montage.png", 
                                     temp['path'], ))
+    temp['montage_folder'] = list(map(lambda x: os.path.join(experiment_root(x[0]), "meas_montage") if use_default_fldr else output_folder, 
+                                    temp['path'], ))
+
+    temp['montage_path'] = list(map(lambda x,y: os.path.join(x,y), 
+                                    temp['montage_folder'],
+                                    temp['montage_name']))
+
     #temp['montage'] = list(map(lambda x,y,z: montage_row_from_path(x, y, z, padding_width = 0), temp['path'], temp['roi_x_start'], temp['roi_x_width']))
 
     for p, pths, start, width, index in zip(temp['montage_path'], 
@@ -165,7 +170,7 @@ def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200
     print(f'... done making montage in `{root}`')
    
     
-def make_montage_of_experiment(root, i_start = 1, n_images = 5, roi_width = 200, test = 5):
+def make_montage_of_experiment(root, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = ""):
     im_data = collect_images_to_dataframe(root)
     
     temp = aggregate_item(im_data, ['experiment_root', 'experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
@@ -184,9 +189,10 @@ def make_montage_of_experiment(root, i_start = 1, n_images = 5, roi_width = 200,
                                 ))
 
     for p,im in zip(temp['montage_path'], temp['montage']):
+        montage_path = p if output_path == "" else output_path
         print(type(im))
-        print(f'... saving {p}')
-        imsave(p, ski.util.img_as_ubyte(im))
+        print(f'... saving {montage_path}')
+        imsave(montage_path, ski.util.img_as_ubyte(im))
     print(f'... done making montage in `{root}`')
 
 

@@ -11,6 +11,7 @@ import pandas as pd
 from pandas import DataFrame
 from math import nan
 os.path.sep = "/"
+import hld_ift_analysis_helpers.locations
 
 def json_tree(a_dict, use_index_value: bool = False):
     """
@@ -210,7 +211,12 @@ def create_extraction_pahtes_df(lst_pathes, regex, generic_pathes):
 #    return re.sub("/", "\\\\", astr)
 
 
-def extract_experiment_data(path, extraction_df, save_data = True, save_extraction_pathes = False):
+def extract_experiment_data(path,
+                            extraction_df,
+                            save_data = True,
+                            save_data_path = "",
+                            save_extraction_pathes = False,
+                            save_extraction_pathes_path = ""):
     # to convert "/" path sep to "\"
     extraction_df['generic_path'] = list(map(lambda x: os.path.join(*path_split_recursive(x)), extraction_df['generic_path']))
 
@@ -236,7 +242,10 @@ def extract_experiment_data(path, extraction_df, save_data = True, save_extracti
 
 
     if save_extraction_pathes:
-        path_temp_csv_out = os.path.join(os.path.dirname(path), "extracted_data__source.csv")
+        if save_extraction_pathes_path == "":
+            path_temp_csv_out = os.path.join(os.path.dirname(path), "extracted_data__source.csv")
+        else: 
+            path_temp_csv_out = save_extraction_pathes_path
         print(f'... extraction pathes are saved at:\n{path_temp_csv_out}')
         pte.to_csv(path_temp_csv_out, index = False)
 
@@ -250,7 +259,10 @@ def extract_experiment_data(path, extraction_df, save_data = True, save_extracti
     print(data_extracted.head().to_string())
 
     if save_data:
-        path_temp_extracted_csv_out = os.path.join(os.path.dirname(path), "extracted_data_.csv")
+        if save_data_path == "":
+            path_temp_extracted_csv_out = os.path.join(os.path.dirname(path), "extracted_data_.csv")
+        else: 
+            path_temp_extracted_csv_out = save_data_path 
         print(f'... extracted data are saved at:\n{path_temp_extracted_csv_out}')
         data_extracted.to_csv(path_temp_extracted_csv_out, index = False)
 

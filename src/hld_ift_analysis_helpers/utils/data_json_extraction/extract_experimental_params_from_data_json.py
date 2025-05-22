@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("source", help = "source of data.json file(s); can be a path to file, a path to file containing list of pathes or a folder")
 parser.add_argument("-e", "--extraction_options", help = "a path to file that specifies extraction options: default value, value path in a data.json file, target variable name", default = "")
 parser.add_argument("-v", "--view", help = "view option analyzes input files and summarizes unique variable pathes in data.json file(s)", action = "store_true")
+parser.add_argument("-o", "--original", help = "use original data.json file as input, if not specified ./processed/data_processed.json will be used", action = "store_true")
 args = parser.parse_args()
 
 # select source files
@@ -57,7 +58,7 @@ if os.path.isdir(args.source):
 
 if len(file_path) == 0:
     print(f'not sure what to do with given source:\n `{args.source}`\n exiting')
-    exit
+    exit()
 
 
 to_extract = None
@@ -70,9 +71,11 @@ if extraction_options != "":
 
 
 view_keys = args.view
+use_original_data_json = args.original
 extract = not view_keys
 for p in file_path:
     print(p)
+
     if view_keys:
         with open(p, 'r', encoding='utf-8') as f:
             data_dict = json.load(f)
@@ -109,8 +112,19 @@ for p in file_path:
                 print(x)
 
     if extract:
+        p_use = p if use_original_data_json else data_json_path_to_processed_data_json_path(p)
         if extraction_options == "":
             print(f'not sure how to extract parameters, no extraction options specified or found\n exiting')
-            exit
-        extract_experiment_data(p, to_extract, save_data = True, save_extraction_pathes = True)
+            continue
+        if not os.path.isfile(p_use):
+            print(f'expected file:\n{p_use}\n was not found; skipping ....')
+            continue
+        extract_experiment_data(p_use,
+                                to_extract,
+                                save_data = True,
+                                save_data_path = extracted_data_path(p),
+                                save_extraction_pathes = True,
+                                save_extraction_pathes_path = extracted_data_source_path(p)
+                                )
+
 
