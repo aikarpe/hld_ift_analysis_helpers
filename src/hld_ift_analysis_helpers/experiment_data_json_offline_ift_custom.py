@@ -261,7 +261,18 @@ def translate_scan(a_dict, **kwargs):
     dict_out = a_dict.copy()
     print(f'processing scan:\n{dict_out["root"]}')
     if not re.search("scan_[0-9]{3}$",
-                dict_out["root"]):                       ### edit condition
+                # .\AOT_IB-45_C7C16_NaCl\exp_2025-04-09_10.00g_AOT_C7C16_002
+                #dict_out["root"]) or dict_out["label"] in ["scan_002", "scan_004"]:                       ### edit condition
+                # .\AOT_IB-45_C7C16_NaCl\exp_2025-05-06_10.00g_AOT_C7_07.50g_nacl_001
+                #dict_out["root"]) or dict_out["label"] in ["scan_002", "scan_003"]:                       ### edit condition
+                # .\AOT_IB-45_C7C16_NaCl\exp_2025-05-07_05.00g_AOT_C7_07.50g_nacl_001
+                #dict_out["root"]) or dict_out["label"] in ["scan_003"]:         #["scan_001", "scan_003"]:                       ### edit condition
+                # .\AOT_IB-45_C7C16_NaCl\exp_2025-05-08_10.00g_AOT_C7_07.50g_nacl_001
+                #dict_out["root"]) or dict_out["label"] in ["scan_002", "scan_003"]:       #["scan_001", "scan_002", "scan_003"]                ### edit condition
+                # .\AOT_IB-45_C7C16_NaCl\exp_2025-05-13_10.00g_AOT_C7_07.50g_nacl_001
+                dict_out["root"]) or dict_out["label"] in ["scan_003"]:         
+        print(f'will copy as is scan: {dict_out["label"]}')
+        k = input("press <ENTER>")
         return dict_out
     dict_out["measurements"] = list(map(lambda x: translate_measurement(x,
                                                                         path_starts_with = kwargs["path_starts_with"],
@@ -295,18 +306,13 @@ def translate_image(a_dict, **kwargs):
     # report error in status, if needed
     # report ift value 
     #process_an_image(fpath, rho_w, rho_o): #, classifier: DetectionClassifier, ndc: NeedleDiameter):
-    try: 
-        st, err_st, val = process_an_image(
-                                        replace_path_start(
-                                                        dict_out["path"],
-                                                        kwargs["path_starts_with"],
-                                                        kwargs["path_replace_with"]),
-                                        kwargs["ro_inner"],
-                                        kwargs["ro_outer"])
-    except Exception as e:
-        st = "major failure"
-        err_st = str(e)
-        val = np.nan 
+    st, err_st, val = process_an_image(
+                                    replace_path_start(
+                                                    dict_out["path"],
+                                                    kwargs["path_starts_with"],
+                                                    kwargs["path_replace_with"]),
+                                    kwargs["ro_inner"],
+                                    kwargs["ro_outer"])
     dict_out["analyzed"]  = True
     dict_out["status"] = st
     dict_out["ift"] = val
@@ -369,7 +375,7 @@ if len(file_path) == 0:
 
 #def exp_root_fldr_to_processed_fldr_path(a_path):
 #    return os.path.join(a_path, "processed")
-#
+
 #def data_json_path_to_processed_data_json_path(a_path):
 #    fldr, fnm = os.path.split(a_path)
 #    if fnm == "data.json":

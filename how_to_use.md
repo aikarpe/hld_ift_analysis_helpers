@@ -35,6 +35,7 @@ flowchart TB
             _LOG_CMDS_
             _LOG_URLS_
         montages/
+            measurement/
 ```
 
 ```{explanation of content}
@@ -96,6 +97,7 @@ cd /D C:\Users\Aigar\miniconda3\
 set LOC="D:\temp_data"
 set SCR_SRC="D:\projects\HLD_parameter_determination\hld_ift_http\test"
 set SRC_ANF="D:\projects\HLD_parameter_determination\hld_ift_analysis_helpers\src\hld_ift_analysis_helpers"
+set AN_SRC="D:\projects\HLD_parameter_determination\hld_ift_analysis_helpers\src\hld_ift_analysis_helpers"
 #python "%SCR_SRC%\IFT_app_v12_2025-02-06.py"   #generate ift values offline
 #python %LOC%\create_experiment_copy_w_reduced_images.py #reduces large experiments to smaller
 #python %LOC%\extract_experimental_params_from_data_json.py
@@ -103,5 +105,18 @@ set SRC_ANF="D:\projects\HLD_parameter_determination\hld_ift_analysis_helpers\sr
 #python %LOC%\make_montages_experiment.py
 #python %LOC%\make_montages_measurements.py
 #python %SRC_ANF%\utils\visualize\make_montages_experiment.py \\huckdfs-srv.science.ru.nl\huckdfs\RobotLab\Storage-Miscellaneous\aigars\temp\AOT_IB-45_C7C16_NaCl
+
+
+
+
+#python %AN_SRC%\utils\extract_droplet_stats.py //huckdfs-srv.science.ru.nl/huckdfs/RobotLab/Storage-Miscellaneous/aigars/temp/AOT_IB-45_C7C16_NaCl/exp_2025-05-16_05g_AOT_C7_8_repeats_002/data.json
+#python %AN_SRC%\utils\visualize\make_montages_experiment.py  //huckdfs-srv.science.ru.nl/huckdfs/RobotLab/Storage-Miscellaneous/aigars/temp/AOT_IB-45_C7C16_NaCl/exp_2025-05-16_05g_AOT_C7_8_repeats_002/data.json
+#python %AN_SRC%\utils\visualize\make_montages_measurements.py  //huckdfs-srv.science.ru.nl/huckdfs/RobotLab/Storage-Miscellaneous/aigars/temp/AOT_IB-45_C7C16_NaCl/exp_2025-05-16_05g_AOT_C7_8_repeats_002/data.json
+#python %AN_SRC%\utils\extract__bits_from_logs.py  //huckdfs-srv.science.ru.nl/huckdfs/RobotLab/Storage-Miscellaneous/aigars/temp/AOT_IB-45_C7C16_NaCl/exp_2025-05-16_05g_AOT_C7_8_repeats_002/data.json
+#python %AN_SRC%\utils\data_json_extraction\extract_experimental_params_from_data_json.py --help
+#python %AN_SRC%\utils\data_json_extraction\extract_experimental_params_from_data_json.py  //huckdfs-srv.science.ru.nl/huckdfs/RobotLab/Storage-Miscellaneous/aigars/temp/AOT_IB-45_C7C16_NaCl/exp_2025-05-16_05g_AOT_C7_8_repeats_002/data.json -e \\huckdfs-srv.science.ru.nl\huckdfs\RobotLab\Storage-Miscellaneous\aigars\temp\AOT_IB-45_C7C16_NaCl\.processing_config\_data.json_extraction_options.json
+
+
+
 ```
 
