@@ -1,0 +1,50 @@
+{
+    "note": "a json representation of inputs for solution preparation for 2D scan, surfactant in oil",
+    "DATA_PATH"   : "C:/Users/admin/Documents/Data/aikars/opentron/Novel810_3.5_C07C16_NaCl",
+    "LOG_PATH"    : "C:/Users/admin/Documents/Data/aikars/opentron/Novel810_3.5_C07C16_NaCl/log.log",
+    "CONFIG_PATH" : "C:/Users/admin/Documents/Data/aikars/opentron/Novel810_3.5_C07C16_NaCl/config",
+    "SOLUTION_REPOSITORY_PATH" : "C:/Users/admin/Documents/Data/aikars/opentron/Novel810_3.5_C07C16_NaCl/config/solution_repository.json",
+    "c_surfactant_experiment": 5,
+    "c_surfactant_stock": 20,
+    "stocks": {
+        "surfactant_in_oil_1": "20g/100ml NovelTDA6 in C7 20250630",
+        "surfactant_in_oil_2": "20g/100ml NovelTDA6 in C16 20250630", 
+        "oil_1": "heptane",
+        "oil_2": "hexadecane",
+        "stock_aqueous_1": "water",
+        "stock_aqueous_2": "30g_NaCl_in_100mL_water_20250225",
+        "run_stock_surf_oil_1": "05g/100ml NovelTDA6 in C7 20250630",
+        "run_stock_surf_oil_2": "05g/100ml NovelTDA6 in C16 20250630",
+    },
+    "configurations": {
+        "blank": "hld_ift_experiment__blank",
+        "start": "2025-06-13_20.00g_Novio810-3.5_C7C16_NaCl",
+        "end": "2025-06-13_20.00g_Novio810-3.5_C7C16_NaCl_001",
+        "to_reuse": {
+            "name": "2025-06-12_15.00g_Novio810-3.5_C7C16_NaCl_001",
+            "content": [
+                { "address": { "slot": "2", "well_location": "C6" } },
+                { "address": { "slot": "2", "well_location": "D1" } },
+                { "address": { "slot": "2", "well_location": "D2" } },
+                { "address": { "slot": "2", "well_location": "D3" } },
+                { "address": { "slot": "2", "well_location": "D4" } },
+                { "address": { "slot": "2", "well_location": "D5" } },
+                { "address": { "slot": "2", "well_location": "D6" } }
+            ]
+        }
+    },
+    "scan": {
+        "experiment_metadata": {
+            "description": "Novio 810-3.5 20g/100ml oil (C7/C16)",
+            "needle_dia": 0.312,
+            "oil": "C7 to C16",
+            "measurement": "pulsed, 20 steps, 6 s pause",
+            "scan_type": "2D scan: salinity, oil"
+        },
+        "n_expansions": 3,
+        "n_approximation": 0,
+        "number_of_oil_points": 6,
+        "oil_volume": 3000,
+        "scan_type": "linear"
+    }
+}

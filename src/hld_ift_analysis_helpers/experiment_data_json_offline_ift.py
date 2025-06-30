@@ -163,7 +163,8 @@ def process_an_image(fpath, rho_w, rho_o): #, classifier: DetectionClassifier, n
     #cv2.imwrite(os.path.join(meas_f, f"{base}_detection.png"), vis)
 
     if cls_label != 'Droplet Detected':
-        return (cls_label, "", np.nan)
+        #return (cls_label, "", np.nan)
+        print("Droplet Detected missing, but ignored")
 
     # Stage 2: convert image to contour for IFT
     den = ImageFiltering.apply_maximum_denoising(img)
@@ -171,7 +172,7 @@ def process_an_image(fpath, rho_w, rho_o): #, classifier: DetectionClassifier, n
     if band is None:
         return (cls_label, 'Band processing failed', np.nan) 
 
-    sx_b, top, low, left, right, high, axis, ath = band
+    sx_b, top, low, left, right, high, axis, ath, morph, sy_b  = band
 
     mask = ath.copy()
     buf = min(high + 15, ath.shape[0] - 1)
@@ -238,6 +239,46 @@ def translate_image(a_dict, **kwargs):
 
 # --------------------------------------------------------------------------------
 
+#=========================================================================================
+#                                                   arguments
+
+parser = argparse.ArgumentParser()
+parser.add_argument("source", help = "source of data.json file(s); can be a path to file, a path to file containing list of pathes or a folder")
+#parser.add_argument("-e", "--extraction_options", help = "a path to file that specifies extraction options: default value, value path in a data.json file, target variable name", default = "")
+parser.add_argument("-v", "--view", help = "view option analyzes input files and summarizes unique variable pathes in data.json file(s)", action = "store_true")
+parser.add_argument("-x", "--exclude_scans", help = "a comma delimited string with scan names to be excluded from ift analysis", type = str, default = "")
+args = parser.parse_args()
+
+
+
+# select source files
+file_path = []
+#extraction_options = args.extraction_options if os.path.isfile(args.extraction_options) else ""
+
+def process_string_pointing_to_data_json_file(astr):
+    if os.path.split(astr)[1] == "data.json":
+        file_path.append(astr)
+
+if os.path.isfile(args.source):
+    if os.path.split(args.source)[1] == "data.json":
+        # a single source file
+        process_string_pointing_to_data_json_file(args.source) 
+    else:
+        # a file containing list of source files
+        with open(args.source, 'r') as file:
+            for line in file:
+                process_string_pointing_to_data_json_file(line) 
+
+if os.path.isdir(args.source):
+    for f in collect_data_jsons(args.source):
+        process_string_pointing_to_data_json_file(f)
+
+if len(file_path) == 0:
+    print(f'not sure what to do with given source:\n `{args.source}`\n exiting')
+    exit()
+
+exclude_scans = args.exclude_scans.split(",")
+
 # ---------- offline ift detection ----------------------------------------
 
 def replace_path_start(a_path, path_starts_with, path_replace_with):
@@ -252,7 +293,8 @@ def translate_experiment(a_dict, **kwargs):
     dict_out = a_dict.copy()
     dict_out["scans"] = list(map(lambda x: translate_scan(x, 
                                                             path_starts_with = os.path.split(a_dict["root"])[0],
-                                                            path_replace_with = kwargs["path_replace_with"]
+                                                            path_replace_with = kwargs["path_replace_with"],
+                                                            experiment_label = a_dict["label"]
                                                             ), 
                                 a_dict["scans"]))
     return dict_out
@@ -261,8 +303,11 @@ def translate_scan(a_dict, **kwargs):
     dict_out = a_dict.copy()
     print(f'processing scan:\n{dict_out["root"]}')
     if not re.search("scan_[0-9]{3}$",
-                dict_out["root"]):                       ### edit condition
+                dict_out["root"]) or dict_out["label"] in exclude_scans:
+        print(f'will copy scan as is: {dict_out["label"]}')
+        #k = input("press <ENTER>")
         return dict_out
+
     dict_out["measurements"] = list(map(lambda x: translate_measurement(x,
                                                                         path_starts_with = kwargs["path_starts_with"],
                                                                         path_replace_with = kwargs["path_replace_with"]
@@ -319,44 +364,6 @@ def translate_image(a_dict, **kwargs):
     return dict_out
 
 
-#=========================================================================================
-#                                                   arguments
-
-parser = argparse.ArgumentParser()
-parser.add_argument("source", help = "source of data.json file(s); can be a path to file, a path to file containing list of pathes or a folder")
-parser.add_argument("-e", "--extraction_options", help = "a path to file that specifies extraction options: default value, value path in a data.json file, target variable name", default = "")
-parser.add_argument("-v", "--view", help = "view option analyzes input files and summarizes unique variable pathes in data.json file(s)", action = "store_true")
-args = parser.parse_args()
-
-
-
-# select source files
-file_path = []
-#extraction_options = args.extraction_options if os.path.isfile(args.extraction_options) else ""
-
-def process_string_pointing_to_data_json_file(astr):
-    if os.path.split(astr)[1] == "data.json":
-        file_path.append(astr)
-
-if os.path.isfile(args.source):
-    if os.path.split(args.source)[1] == "data.json":
-        # a single source file
-        process_string_pointing_to_data_json_file(args.source) 
-    else:
-        # a file containing list of source files
-        with open(args.source, 'r') as file:
-            for line in file:
-                process_string_pointing_to_data_json_file(line) 
-
-if os.path.isdir(args.source):
-    for f in collect_data_jsons(args.source):
-        process_string_pointing_to_data_json_file(f)
-
-if len(file_path) == 0:
-    print(f'not sure what to do with given source:\n `{args.source}`\n exiting')
-    exit()
-
-
 
 #x = r'\\huckdfs-srv.science.ru.nl\huckdfs\RobotLab\Storage-Miscellaneous\aigars\temp\AOT_IB-45_C7C16_NaCl\exp_2025-04-07_05g_AOT_C7C16_001\scan_001\conc_0.03125\00001.jpg'
 #
@@ -369,7 +376,7 @@ if len(file_path) == 0:
 
 #def exp_root_fldr_to_processed_fldr_path(a_path):
 #    return os.path.join(a_path, "processed")
-#
+
 #def data_json_path_to_processed_data_json_path(a_path):
 #    fldr, fnm = os.path.split(a_path)
 #    if fnm == "data.json":

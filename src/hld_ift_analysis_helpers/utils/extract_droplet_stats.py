@@ -4,7 +4,7 @@ sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helper
 #from scripts.json_data_extraction import *
 from hld_ift_analysis_helpers.montage_bits import *
 from hld_ift_analysis_helpers.droplet_stats import *
-from hld_ift_analysis_helpers.collect_files_folders import match_conc_at_end, collect_dirs
+from hld_ift_analysis_helpers.collect_files_folders import match_conc_at_end, collect_dirs, list_images
 
 import argparse
 from hld_ift_analysis_helpers.locations import data_json_path_to_exp_root_path, drop_stats_path
@@ -38,6 +38,8 @@ from hld_ift_analysis_helpers.locations import data_json_path_to_exp_root_path, 
 # a list of 
 parser = argparse.ArgumentParser()
 parser.add_argument("source", help = "source of data.json file(s); can be a path to file, a path to file containing list of pathes or a folder")
+parser.add_argument("-r", "--raw_source", help = "file containing files to test", default = "")
+parset.add_argument("-d", "--debug", help = "show debug images while processsing, use only with `raw_source`", action = "store_true", default = False)
 #parser.add_argument("-e", "--extraction_options", help = "a path to file that specifies extraction options: default value, value path in a data.json file, target variable name", default = "")
 #parser.add_argument("-v", "--view", help = "view option analyzes input files and summarizes unique variable pathes in data.json file(s)", action = "store_true")
 args = parser.parse_args()
@@ -65,6 +67,7 @@ if os.path.isfile(args.source):
 if os.path.isdir(args.source):
     for f in collect_data_jsons(args.source):
         process_string_pointing_to_data_json_file(f)
+
 
 if len(file_path) == 0:
     print(f'not sure what to do with given source:\n `{args.source}`\n exiting')

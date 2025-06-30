@@ -148,8 +148,8 @@ for i,p in enumerate(jpgs):
             im = imread(p)
             im = cv.cvtColor(im, cv.COLOR_BGR2GRAY)
             fract_to_intsty = create_fraction_to_intensity_fn(im, [0])
-            for a_fr in [ x / 20 for x in range(21) ]:
-                print(f'fract_to_intsty({a_fr}): {fract_to_intsty(a_fr)}')
+            ####---->for a_fr in [ x / 20 for x in range(21) ]:
+            ####---->    print(f'fract_to_intsty({a_fr}): {fract_to_intsty(a_fr)}')
             yyy = needle_region_threshold(im, fraction = fraction, show_image = show_image)
             print(im.shape)
             edges_needle_and_droplet(yyy, show_image = show_image, threshold_low = value, erode = erode, dilate = dilate)

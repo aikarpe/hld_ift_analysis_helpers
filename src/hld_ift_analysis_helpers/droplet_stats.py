@@ -65,7 +65,17 @@ def process_image(path):
 
     props = regionprops_table(
         labeled_coins,
-        properties=('label', 'area', 'eccentricity', 'bbox', 'centroid'),
+        #properties=('label', 'area', 'eccentricity', 'bbox', 'centroid'),
+        properties=(
+                'label',
+                'area',
+                'eccentricity',
+                'bbox',
+                'centroid',
+                'orientation',
+                'axis_major_length',
+                'axis_minor_length'
+                ),
     )
     df = pd.DataFrame(props)
     df['r'] = (df['bbox-2'] - df['bbox-0'] + df['bbox-3'] - df['bbox-1'] ) / 4

@@ -1,7 +1,8 @@
 #python "D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts/experiment_hough_transform.py"
 #
 import sys
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts")
+#sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts")
+sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
 #import pandas as pd
 import re
 import os
@@ -277,12 +278,16 @@ def save_edges_needle_and_droplet(img_path, img_path_out):
     cv.imwrite(img_path_out, edges)    
 
 def edges_needle_and_droplet(img):
+    print(f'type of img is `{img.dtype}`; shape: {img.shape}')
     edges = sobel(img)
+    print(f'type of edges is `{edges.dtype}`; shape: {edges.shape}')
+
     ret, sthr = cv.threshold(edges,32, 255, cv.THRESH_BINARY) #cv.THRESH_BINARY_INV)
     
     kernel = np.ones((3,3),np.uint8) #np.ones((3,3),np.uint8)
     im_dil = cv.dilate(sthr,kernel,iterations=1)
     im_er = cv.erode(im_dil, kernel, iterations = 1)
+    print(f'type of im_er is `{im_er.dtype}`; shape: {im_er.shape}')
     im_skelet_4 = skeletonize_4(im_er)
     im_skelet_4 = 255 * im_skelet_4
     x = im_skelet_4.astype(np.uint8)
@@ -514,9 +519,9 @@ def needle_tip_boundary(bin_im, needle_tip_y_coord, max_theta = 90, angles = 20,
             comp = lambda x,y: seperate_points_by_line(line_coefs, x, y)
             # have to get line_coefs for whole image!!!! not just cutout
 
-def seperate_points_by_line(coefs, xs, ys, x_ref = 0, y_ref = 0):
-    plt.show()
-    if val > 0 and seperate_points_by_line(line_coefs
+#>def seperate_points_by_line(coefs, xs, ys, x_ref = 0, y_ref = 0):
+#>    plt.show()
+#>    if val > 0 and seperate_points_by_line(line_coefs
 
 def hough_to_AXpBYpCis0(dist, angle, offset = (0,0)):
     (x0, y0) = dist * np.array([np.cos(angle), np.sin(angle)])

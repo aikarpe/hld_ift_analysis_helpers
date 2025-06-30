@@ -163,7 +163,8 @@ def process_an_image(fpath, rho_w, rho_o): #, classifier: DetectionClassifier, n
     #cv2.imwrite(os.path.join(meas_f, f"{base}_detection.png"), vis)
 
     if cls_label != 'Droplet Detected':
-        return (cls_label, "", np.nan)
+        #return (cls_label, "", np.nan)
+        print("Droplet Detected missing, but ignored")
 
     # Stage 2: convert image to contour for IFT
     den = ImageFiltering.apply_maximum_denoising(img)
@@ -252,27 +253,30 @@ def translate_experiment(a_dict, **kwargs):
     dict_out = a_dict.copy()
     dict_out["scans"] = list(map(lambda x: translate_scan(x, 
                                                             path_starts_with = os.path.split(a_dict["root"])[0],
-                                                            path_replace_with = kwargs["path_replace_with"]
+                                                            path_replace_with = kwargs["path_replace_with"],
+                                                            experiment_label = a_dict["label"]
                                                             ), 
                                 a_dict["scans"]))
     return dict_out
 
 def translate_scan(a_dict, **kwargs):
+    exclude_scans = {
+            "exp_2025-04-08_10.00g_AOT_C7C16_001": ["scan_002", "scan_003"],
+            "exp_2025-04-09_10.00g_AOT_C7C16_002": ["scan_002", "scan_004"],
+            "exp_2025-05-06_10.00g_AOT_C7_07.50g_nacl_001": ["scan_002", "scan_003"],
+            "exp_2025-05-07_05.00g_AOT_C7_07.50g_nacl_001": ["scan_003"], 
+            "exp_2025-05-08_10.00g_AOT_C7_07.50g_nacl_001": ["scan_002", "scan_003"],
+            "exp_2025-05-13_10.00g_AOT_C7_07.50g_nacl_001": ["scan_003"],
+                    }
+
     dict_out = a_dict.copy()
     print(f'processing scan:\n{dict_out["root"]}')
+    exp_lbl = kwargs["experiment_label"]
+    to_exclude = exclude_scans[exp_lbl] if exp_lbl in exclude_scans.keys() else [] 
     if not re.search("scan_[0-9]{3}$",
-                # .\AOT_IB-45_C7C16_NaCl\exp_2025-04-09_10.00g_AOT_C7C16_002
-                #dict_out["root"]) or dict_out["label"] in ["scan_002", "scan_004"]:                       ### edit condition
-                # .\AOT_IB-45_C7C16_NaCl\exp_2025-05-06_10.00g_AOT_C7_07.50g_nacl_001
-                #dict_out["root"]) or dict_out["label"] in ["scan_002", "scan_003"]:                       ### edit condition
-                # .\AOT_IB-45_C7C16_NaCl\exp_2025-05-07_05.00g_AOT_C7_07.50g_nacl_001
-                #dict_out["root"]) or dict_out["label"] in ["scan_003"]:         #["scan_001", "scan_003"]:                       ### edit condition
-                # .\AOT_IB-45_C7C16_NaCl\exp_2025-05-08_10.00g_AOT_C7_07.50g_nacl_001
-                #dict_out["root"]) or dict_out["label"] in ["scan_002", "scan_003"]:       #["scan_001", "scan_002", "scan_003"]                ### edit condition
-                # .\AOT_IB-45_C7C16_NaCl\exp_2025-05-13_10.00g_AOT_C7_07.50g_nacl_001
-                dict_out["root"]) or dict_out["label"] in ["scan_003"]:         
+                dict_out["root"]) or dict_out["label"] in to_exclude:
         print(f'will copy as is scan: {dict_out["label"]}')
-        k = input("press <ENTER>")
+        #k = input("press <ENTER>")
         return dict_out
     dict_out["measurements"] = list(map(lambda x: translate_measurement(x,
                                                                         path_starts_with = kwargs["path_starts_with"],
@@ -306,13 +310,18 @@ def translate_image(a_dict, **kwargs):
     # report error in status, if needed
     # report ift value 
     #process_an_image(fpath, rho_w, rho_o): #, classifier: DetectionClassifier, ndc: NeedleDiameter):
-    st, err_st, val = process_an_image(
-                                    replace_path_start(
-                                                    dict_out["path"],
-                                                    kwargs["path_starts_with"],
-                                                    kwargs["path_replace_with"]),
-                                    kwargs["ro_inner"],
-                                    kwargs["ro_outer"])
+    try: 
+        st, err_st, val = process_an_image(
+                                        replace_path_start(
+                                                        dict_out["path"],
+                                                        kwargs["path_starts_with"],
+                                                        kwargs["path_replace_with"]),
+                                        kwargs["ro_inner"],
+                                        kwargs["ro_outer"])
+    except Exception as e:
+        st = "major failure"
+        err_st = str(e)
+        val = np.nan 
     dict_out["analyzed"]  = True
     dict_out["status"] = st
     dict_out["ift"] = val

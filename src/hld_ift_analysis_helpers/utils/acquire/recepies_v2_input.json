@@ -1,0 +1,55 @@
+{
+        "solution_repository_path": "D:/temp_data/solution_repository.json",
+        "compounds_to_add": [
+              {
+                "mixture_type": "binary_mix",
+                "name": "44perc_IB-45_in_wt",
+                "m_solute":   0.44,
+                "m_solvent":  0.56,
+                "ro":         1.12,
+                "solvent":   "water",
+                "solute":    "aerosol_ib-45",
+                "v_ro":       1.0,
+                "m_ro_water": 1.0,
+                "m_ro":       1.12,
+                "date":       "2025-03-02"
+              },
+              {
+                "mixture_type": "pure_compound",
+                "ro": 1.17,
+                "name": "idrosal_sxs40",
+                "label": "idrosal_sxs40",
+                "cas": "1300-72-7",
+                "alt_name": "Sodium Xylenesulfonate",
+                "note": "idrosal_sxs40 is name for 40% solution of sodium xylenesulfonate"
+              }
+            ],
+        "recepies": [
+                {
+                    "solution1": "sdbs",
+                    "solution2": "water",
+                    "component_to_target": "sdbs", 
+                    "target_concentration": 0.2,
+                    "concentration_type": "m/v", 
+                    "quantity": 50
+                },
+                {
+                    "solution1": "idrosal_sxs40",
+                    "solution2": "water",
+                    "component_to_target": "idrosal_sxs40",
+                    "target_concentration": 0.2,
+                    "concentration_type": "m/v",
+                    "quantity": 50
+                },
+                {
+                    "solution1": "44perc_IB-45_in_wt",
+                    "solution2": "water",
+                    "component_to_target": "aerosol_ib-45",
+                    "target_concentration": 0.2,
+                    "concentration_type": "m/v",
+                    "quantity": 50
+                }
+            ]
+}
+
+
