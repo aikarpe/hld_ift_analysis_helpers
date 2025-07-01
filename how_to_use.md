@@ -44,7 +44,7 @@ log.log: a raw log of opentron commands passed from PC
 scan_001/ (and similarly named folders): contain individual scans performed during experiment
 conc_0.0000/ (and similarly named folders): contain images for an individual measuement
 processed/: contains processed data
-data_processed.json: this is a processed data.json file 
+data_processed.json: this is a processed data.json file; as of now original data.json is modified to include offline generated ift values
 log_digest/: folder containing human readable extracts from raw log file
 _LOG_CMDS_: human readable list of commands sent to opentron
 _LOG_URLS_: human readable list of urls for all requests to opentron
@@ -120,3 +120,4 @@ set AN_SRC="D:\projects\HLD_parameter_determination\hld_ift_analysis_helpers\src
 
 ```
 
+//huckdfs-srv.science.ru.nl/huckdfs/RobotLab/Storage-Miscellaneous/aigars/temp/

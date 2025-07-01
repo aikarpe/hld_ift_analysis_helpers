@@ -11,9 +11,9 @@ import datetime
 from scipy.optimize import minimize
 import argparse
 
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_http/src") # on office pc in miniconda
+#sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_http/src") # on office pc in miniconda
 #sys.path.append("/mnt/d/projects/HLD_parameter_determination/hld_ift_http/src") # on office pc
-#sys.path.append("C:/Users/admin/Documents/Data/aikars/opentron/hld_ift_http/src") # robolab laptop
+sys.path.append("C:/Users/admin/Documents/Data/aikars/opentron/hld_ift_http/src") # robolab laptop
 print("current contant of my python path\n: {c}".format(c = sys.path))
 
 
@@ -96,7 +96,7 @@ def create_recepie_for(sol1, sol2, component, target, concentration_type, amount
         params_use = params[conc_type]
         return f'optimizing for\n\tcomponent: `{component}`\n\tconcentration type: `{params_use["concentration"]}`\n\ttarget: {target} {params_use["units"]}'
     def binary_mix_recipe_dict_str(mixture, solute, solvent, m_solute, m_solvent):
-        return 'a_dict_name = {\n' + \
+        return '{\n' + \
         f'    \"mixture_type\": \"binary_mix\",\n' + \
         f'    \"name\": \"{mixture.name}_{datetime.datetime.now().strftime("%Y%m%d")}\",\n' + \
         f'    \"m_solute\":   _{m_solute:0.4f}_,\n' + \
