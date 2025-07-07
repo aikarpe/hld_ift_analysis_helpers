@@ -20,15 +20,16 @@ import os
 import json
 import shutil
 
-params = dict(
-            "surfactant_label": "Novel810-3.5",
-            "folder_name": "Novel_810-3.5_v2_test",
-            "surfactant_pretty_name": "Novel 810-3.5",
-            )
+params = {
+            "surfactant_label": "test_surf_aaa",
+            "folder_name": "test_surf_aaa_fldr",
+            "surfactant_pretty_name": "a test surf AAA",
+            "ro": 0.989
+            }
 
 
-template_source = "__add__"
-root = "__add__"
+template_source = "//huckdfs-srv.science.ru.nl/huckdfs/RobotLab/Storage-Miscellaneous/aigars/temp/scripts/template"
+root = "C:/Users/admin/Documents/Data/aikars/opentron"
 
 files_to_copy = [
                 "command_prompt_bits.md", 
@@ -42,7 +43,7 @@ files_to_copy = [
                 "config/config_hld_ift_experiment__blank__mixing_graph.json"
                 ]
 
-project_root = os.path.join(root, folder_name) 
+project_root = os.path.join(root, params["folder_name"]) 
 project_config = os.path.join(project_root, "config")
 project_scripts = os.path.join(project_root, "scripts")
 blank_config_path = os.path.join(project_config, "config_hld_ift_experiment__blank__opentron_pp.json") 
@@ -50,7 +51,7 @@ cmd_prompt_file = os.path.join(project_root, files_to_copy[0])
 scan_settings_json = os.path.join(project_root, files_to_copy[1])
 recipes_json = os.path.join(project_root, files_to_copy[2])
 log_path = os.path.join(project_root, "log.log")
-solution_repository_path = os.path.join(project_config, "solution_repository.json"
+solution_repository_path = os.path.join(project_config, "solution_repository.json")
 
 def modify_blank_profile(log_path):
     with open(blank_config_path, "r") as f:
@@ -59,7 +60,7 @@ def modify_blank_profile(log_path):
     data["opentrons_api"]["log_path"] = log_path
 
     with open(blank_config_path, "w") as f:
-        json.dump(data, f)
+        json.dump(data, f, indent = 4)
 
 def copy_file(file_relative_path):
     shutil.copy(os.path.join(template_source, file_relative_path), os.path.join(project_root, file_relative_path))
@@ -71,6 +72,9 @@ def modify_command_prompt_bits():
     lines = content.split("\n")
 
     lines[0] = f"cd {project_root}".replace("/", "\\")
+    
+    for i, l in enumerate(lines):
+        lines[i] = lines[i] + "\n"
 
     with open(cmd_prompt_file, "w") as fo:
         fo.writelines(lines)
@@ -96,10 +100,10 @@ def create_recipes():
                     quantity = 50
                     )
 
-    data["recipes"] = list(map(make_recipe, ["heptane", "hexadecane"]))
+    data["recepies"] = list(map(make_recipe, ["heptane", "hexadecane"]))
     
     with open(recipes_json, "w") as fo:
-        json.dump(data, fo)
+        json.dump(data, fo, indent = 4)
        
 
 def create_scan_settings():
@@ -112,13 +116,15 @@ def create_scan_settings():
         return f'2025-MM-DD_{conc_str}.00g_{params["surfactant_label"]}_C7C16_NaCl'
 
     def_conc_exp = 5
+    
     data["DATA_PATH"] = project_root
     data["LOG_PATH"] = log_path
     data["CONFIG_PATH"] = project_config
     data["SOLUTION_REPOSITORY_PATH"] = solution_repository_path
         
-    data["c_surfactant_experiment"] = def_cond_exp
+    data["c_surfactant_experiment"] = def_conc_exp
     data["c_surfactant_stock"] = 20
+
     data["stocks"] = dict(
         surfactant_in_oil_1 = surf_sol_name("20", "heptane"),
         surfactant_in_oil_2 = surf_sol_name("20", "hexadecane"), 
@@ -129,7 +135,7 @@ def create_scan_settings():
         run_stock_surf_oil_1 = surf_sol_name(f'{def_conc_exp:02d}', "heptane"),
         run_stock_surf_oil_2 = surf_sol_name(f'{def_conc_exp:02d}', "hexadecane")
         )
-    },
+
     data["configurations"] = dict(
                                 blank = "hld_ift_experiment__blank",
                                 start = config_name(f'{def_conc_exp:02d}'),
@@ -154,9 +160,19 @@ def create_scan_settings():
         )
 
     with open(scan_settings_json, "w") as fo:
-        json.dump(data, fo)
+        json.dump(data, fo, indent = 4)
 
 
+
+print(project_root) # = os.path.join(root, folder_name) 
+print(project_config) # = os.path.join(project_root, "config")
+print(project_scripts) # = os.path.join(project_root, "scripts")
+print(blank_config_path) # = os.path.join(project_config, "config_hld_ift_experiment__blank__opentron_pp.json") 
+print(cmd_prompt_file) # = os.path.join(project_root, files_to_copy[0])
+print(scan_settings_json) # = os.path.join(project_root, files_to_copy[1])
+print(recipes_json) # = os.path.join(project_root, files_to_copy[2])
+print(log_path) # = os.path.join(project_root, "log.log")
+print(solution_repository_path) # = os.path.join(project_config, "solution_repository.json"
 
 os.makedirs(project_root)
 os.makedirs(project_config)
