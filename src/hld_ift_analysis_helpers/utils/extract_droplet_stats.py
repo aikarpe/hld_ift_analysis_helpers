@@ -39,7 +39,7 @@ from hld_ift_analysis_helpers.locations import data_json_path_to_exp_root_path, 
 parser = argparse.ArgumentParser()
 parser.add_argument("source", help = "source of data.json file(s); can be a path to file, a path to file containing list of pathes or a folder")
 parser.add_argument("-r", "--raw_source", help = "file containing files to test", default = "")
-parset.add_argument("-d", "--debug", help = "show debug images while processsing, use only with `raw_source`", action = "store_true", default = False)
+parser.add_argument("-d", "--debug", help = "show debug images while processsing, use only with `raw_source`", action = "store_true", default = False)
 #parser.add_argument("-e", "--extraction_options", help = "a path to file that specifies extraction options: default value, value path in a data.json file, target variable name", default = "")
 #parser.add_argument("-v", "--view", help = "view option analyzes input files and summarizes unique variable pathes in data.json file(s)", action = "store_true")
 args = parser.parse_args()

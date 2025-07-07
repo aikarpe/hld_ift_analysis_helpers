@@ -4,23 +4,17 @@ date: 2025-06-27
 ---
 
 1. evaluate surfactant solubility in oils to be used for scan
-
 2. plan preparation of stock solution 
-    - __ref_to_script_for_estimates__
-
 3. make stock(s) and add their representation to a solution repository
-
-3.5. make run configuration
-
-4. make run stock (and distribute washing solution) 
-
-5. prepare run configuration
-
-6. execute run
+4. make run configuration
+5. make run stock (and distribute washing solution) 
+6. prepare run configuration
+7. check camera
+8. execute run
 
 ---
 
-## surfactant solubility in oil
+## surfactant solubility in oil (step 1)
 
 1. with neat surfactant measure 2 aliquots of 0.1 g surfactants in 5 mL vials
 2. with heptane and hexadecane test solubility (see solubility testing)
@@ -36,117 +30,142 @@ date: 2025-06-27
 
 ---
 
-## stock solution preparation
+## stock solution preparation (step 2 and 3)
+
+- in the context of an oil scan there are 3 parts relevant to stock solutions:
+    - planning: what components and in what quantities to mix
+    - actual preparation of stock solution
+    - making of stock solution representation for oil scan(s) and adding to a solution repository
 
 ### planning
 
-Providing that surfactant is going to dissolve in a chosen oil, recipe(s) for stock(s) can be generated using `generate_recepies_for_solutions.py`. The script will optimize a binary mixture from solutions available in repository
-
-Script will require some tweaking:
-
-- repository to use
-- (optional) add components not in repository
-- referencing solutions to be used
-- recipe call(s)
-- my (ap) call sequence of edited script in command prompt:
-
-
----
-
+- Providing that surfactant is going to dissolve in a chosen oil, recipe(s) for stock(s) can be generated using `generate_recepies_for_solutions_v2.py`. The script will optimize a binary mixture from solutions (compounds) available in repository. Recipes are estimated from ingredient densities.
+- to generate call execute command like:
 
 ```
-cd /D C:\Users\Aigar\miniconda3\
-set LOC_SRC="D:\temp_data\scripts"
-python %LOC_SRC%\\generate_recepies_for_solutions.py
+python generate_recepies_for_solutions_v2.py <recipe_file>
+```
+- recipes needed should be specified in recipe_file in `recepies` section; it can contain multiple recipes targets
+- each recipe should contain following parameters:
+    - solution1, solution2: string, a name of solutions (compounds) to be used to generate recipe; names of solutions should be defined in a selected solution repository
+    - component_to_target: string, a name of a component which concentration is to be targeted
+    - target_concentration: numeric, concentration in g/g (m/m) or g/ml (m/v) units
+    - concentration_type: a string, mass ("m/m") or mass to volume concentration ("m/v")
+    - quantity: numeric, quantity of final solution needed in grams
+
+- script will output 3 section per each recipe:
+    - instructions to make solution
+    - a dictionary template to create sock solution representation
+    - a serialized solution object of a stock
+
+### stock preparation and density measurement
+
+- make stock according to recipe by dissolving m_surfactant g of surfactant in m_solvent g of solvent
+- add 5 ml (v_ro) of di water in 5 mL glass vial, note mass (m_ro_water)
+- add 5 ml of stock in 5 ml vial, note mass (m_ro)
+- note values of m_surfactant, m_solvent, v_ro, m_ro_water, m_ro
+
+### define solution in a solution repository
+
+- edit <recipe_file>  to incorporate all prepared stock solutions:
+    - use previously noted values of m_surfactant, m_solvent, v_ro, m_ro_water, m_ro to create dictionary for binary mixture
+- run script:
+
+```
+python solution_repository__edit.py <recipe_file> 
 ```
 
 
----
+### a recipe (json input) file
 
-More details on tweaks are below.
-
-- specify solution repository location (if different from what is already in the script). Change a line:
+This is a json file containing data necessary 1) to plan recipes and 2) add solution representation to a solution repository
 
 ```
-SOLUTION_REPOSITORY_PATH = "D:/temp_data/solution_repository.json"
-```
-
-- mixtures can be made from solutions(compounds) that are stored in repository, a new component can be added by providing relevant information as dictionary(s) and adding to repository at runtime. All definitions added to `rep_init` are added to repository. In the example below `idrosal_sxs40_dict` is added, but `ib_45` ignored. See code below.
-
-```
-# =========================================================
-# add new compounds/solutions, if needed
-# =========================================================
-ib_45  = {
-    "mixture_type": "binary_mix",
-    "name": "44perc_IB-45_in_wt",
-    "m_solute":   0.44,
-    "m_solvent":  1.0 - 0.44,
-    "ro":         1.12,
-    "solvent":   "water",
-    "solute":    "aerosol_ib-45",
-    "v_ro":       1.0,
-    "m_ro_water": 1.0,
-    "m_ro":       1.12,
-    "date":       "2025-03-02",
-  }
-idrosal_sxs40_dict = {
-    "mixture_type": "pure_compound",
-    "ro": 1.17,
-    "name": "idrosal_sxs40",
-    "label": "idrosal_sxs40",
-    "cas": "1300-72-7",
-    "alt_name": "Sodium Xylenesulfonate",
-    "note": "idrosal_sxs40 is name for 40% solution of sodium xylenesulfonate"
+{
+        "solution_repository_path": "D:/temp_data/solution_repository.json",
+        "compounds_to_add": [
+              {
+                "mixture_type": "binary_mix",
+                "name": "44perc_IB-45_in_wt",
+                "m_solute":   0.44,
+                "m_solvent":  0.56,
+                "ro":         1.12,
+                "solvent":   "water",
+                "solute":    "aerosol_ib-45",
+                "v_ro":       1.0,
+                "m_ro_water": 1.0,
+                "m_ro":       1.12,
+                "date":       "2025-03-02"
+              },
+              {
+                "mixture_type": "pure_compound",
+                "ro": 1.17,
+                "name": "idrosal_sxs40",
+                "label": "idrosal_sxs40",
+                "cas": "1300-72-7",
+                "alt_name": "Sodium Xylenesulfonate",
+                "note": "idrosal_sxs40 is name for 40% solution of sodium xylenesulfonate"
+              }
+            ],
+        "recepies": [
+                {
+                    "solution1": "sdbs",
+                    "solution2": "water",
+                    "component_to_target": "sdbs", 
+                    "target_concentration": 0.2,
+                    "concentration_type": "m/v", 
+                    "quantity": 50
+                },
+                {
+                    "solution1": "idrosal_sxs40",
+                    "solution2": "water",
+                    "component_to_target": "idrosal_sxs40",
+                    "target_concentration": 0.2,
+                    "concentration_type": "m/v",
+                    "quantity": 50
+                },
+                {
+                    "solution1": "44perc_IB-45_in_wt",
+                    "solution2": "water",
+                    "component_to_target": "aerosol_ib-45",
+                    "target_concentration": 0.2,
+                    "concentration_type": "m/v",
+                    "quantity": 50
+                }
+            ]
 }
-
-rep_init = [idrosal_sxs40_dict]
-for it in rep_init:
-    rep.add_item(it)
 ```
+        
+#### key description
 
-- you have to explicitly reference solution(s) from repository to be used:
+- solution_repository_path: string, a path to a solution repository file; it is needed for recipe generation and to add stock solution representation
+- compounds_to_add: a list of dictionaries of binary mixture or pure compound definitions; this section is used when solution(s) are added to a solution repository
+- recepies: a list of dictionaries specifying recipe requests; this section is to generate recipes
+- dictionary to define binary mixtures should have following keys:
+    - mixture_type: string, should be set to "binary_mix"
+    - name: a name of this mixture, will be used to refer to it in a solution repository
+    - m_solute, m_solvent: a mass of each component in grams
+    - ro: numeric, a density in g/ml, if this key is present values in keys: v_ro, m_ro_water and m_ro are ignored
+    - solvent, solute: names of solutions as specified in a solution repository
+    - v_ro: numeric, a volume of liquid(s) in mL used to measure density
+    - m_ro_water: a mass of water in grams in reference measurement
+    - m_ro: a mass of a mixture in grams in density measurement; density of a mixture is evaluated as `m_ro/m_ro_water`; the evaluation is skipped if key `ro` is defined
+    - other keys can be provided, but are ignored
+- dictionary to define pure compound should have following keys:
+    - mixture_type: string, should be set to "pure_compound"
+    - name, label: a name of this compound, will be used to refer to it in a solution repository; label and name should be the same!!!
+    - ro: numeric, a density in g/ml, if this key is present values in keys: v_ro, m_ro_water and m_ro are ignored
+    - v_ro: numeric, a volume of liquid(s) in mL used to measure density
+    - m_ro_water: a mass of water in grams in reference measurement
+    - m_ro: a mass of a compound in grams in density measurement; density of compound is evaluated as `m_ro/m_ro_water`; the evaluation is skipped if key `ro` is defined
+    - other keys can be provided, but are ignored
+- dictionary to define recipe requests:
+    - solution1, solution2: string, a name of solutions (compounds) to be used to generate recipe; names of solutions should be defined in a selected solution repository
+    - component_to_target: string, a name of a component which concentration is to be targeted
+    - target_concentration: numeric, concentration in g/g (m/m) or g/ml (m/v) units
+    - concentration_type: a string, mass ("m/m") or mass to volume concentration ("m/v")
+    - quantity: numeric, quantity of final solution needed in grams
 
-```
-# =========================================================
-# references to solutions
-# solution names and component names look up in solution repository!!!
-# =========================================================
-
-aot = rep.items["aot"]
-heptane = rep.items["heptane"]
-hexadecane = rep.items["hexadecane"]
-water = rep.items["water"]
-ib_45 = rep.items["44perc_IB-45_in_wt"]
-nacl_sol = rep.items["30g_NaCl_in_100mL_water"]
-idrosal_sxs40 = rep.items["idrosal_sxs40"]
-sdbs = rep.items["sdbs"]
-```
-
-- finally actual recipe is generated by calling `create_recepie_for()`:
-
-```
-# =========================================================
-# recepies needed
-# =========================================================
-
-print("============================= sdbs in di water")
-create_recepie_for(sdbs, water, "sdbs", 0.2, "m/v", 50) 
-print("============================= idrosal_sxs40 in di water")
-create_recepie_for(idrosal_sxs40, water, "idrosal_sxs40", 0.2, "m/v", 50) 
-print("============================= ib-45 in wt")
-create_recepie_for(ib_45, water, "aerosol_ib-45", 0.2, "m/v", 50) 
-```
-
-- description of create_recepie_for():
-    - call: create_recepie_for(sol1, sol2, component, target, concentration_type, amount_needed = 1, method = "Nelder-Mead")
-    - arguments:
-        Solution sol1: a solution to use
-        Solution sol2: a solution to use
-        str component: a name of component for which target concentration is specified
-        str concentration_type: {"m/m": mass to mass of solution, "m/v": mass of component to volume of solution}, any other string defaults to "m/m"
-        float amount_needed: mass of solution needed in grams
-    - returns: Solution or None, if recipe fails
 
 ---
 

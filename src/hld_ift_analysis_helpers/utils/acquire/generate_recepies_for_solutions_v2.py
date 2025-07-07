@@ -1,4 +1,4 @@
-################################################################################
+###############################################################################
 # create representation of stock solutions for BrijL4 experiments
 ################################################################################
 # /d/temp_data/scripts/generate_recepies_for_solutions.py
@@ -106,7 +106,7 @@ def create_recepie_for(sol1, sol2, component, target, concentration_type, amount
         f'    \"v_ro\":       _1.0_,\n' + \
         f'    \"m_ro_water\": _1.0_,\n' + \
         f'    \"m_ro\":       _{mixture.ro:0.5f}_,\n' + \
-        f'    \"date\":       \"{datetime.datetime.now().strftime("%Y-%m-%d")}\",\n' + \
+        f'    \"date\":       \"{datetime.datetime.now().strftime("%Y-%m-%d")}\"\n' + \
         '}'
  
     res = None
