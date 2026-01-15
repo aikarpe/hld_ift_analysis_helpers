@@ -255,33 +255,34 @@ Run configuration is json file with all the parameters needed to make up run sto
 }
 ```
 
-- json/c_surfactant_stock is surfactant concentration in stock oil; json/c_surfactant_experiment is surfactant concentration needed for experiment
-- json/SOLUTION_REPOSITORY_PATH specifies solution repository to use; stock solution have to be defined (or will be created) in this repository
-- json/stocks contain names of solutions from solution repository. First 6 solutions have to be defined before executing any of scripts, last two (run_stock_surf_oil_1/2) are created by dilution of general stocks:
-    - surfactant_in_oil_1: a name for main stock in oil 1 (heptane)
-    - surfactant_in_oil_2: a name for main stock in oil 2 (hexadecane)
-    - oil_1: a name for oil 1 (heptane)
-    - oil_2: a name for oil 2 (hexadecane)
-    - stock_aqueous_1: a name for aqueous stock with low NaCl concentration (typically water)
-    - stock_aqueous_2: a name for aqueous stock with high NaCl concentration 
-    - run_stock_surf_oil_1: a name for running stock in oil 1
-    - run_stock_surf_oil_2: a name for running stock in oil 2
-- json/configurations contain names of configurations. 
-    - json/configurations/blank: a blank configuration of an opentron
-    - json/configurations/start: an opentron configuration at the beginning of HLD scan
-    - json/configurations/end: an opentron configuration written after HLD scan
-    - json/configurations/to_reuse/name: an opentron configuration from which well content is imported into starting configuration
-    - json/configurations/to_reuse/content: specifies wells which have to be added to starting configuration
-    - json/configurations/blank and json/configurations/to_reuse/name have to exist before running any of scripts
-    - json/configurations/start&end are created in the process
-- json/scan/experiment_metadata: metadata fields for user to clarify scan
-- json/scan contains parameters for 2D HLD scan; all parameters have to be specified:
-    -json/scan/n_expansions: number of expansion to perform in a 1D salinity scan
+- __`json/c_surfactant_stock`__: is surfactant concentration in stock oil; 
+- __`json/c_surfactant_experiment`__: is surfactant concentration needed for experiment
+- __`json/SOLUTION_REPOSITORY_PATH`__: specifies solution repository to use; stock solution have to be defined (or will be created) in this repository
+- __`json/stocks`__: contain names of solutions from solution repository. First 6 solutions have to be defined before executing any of scripts, last two (run_stock_surf_oil_1/2) are created by dilution of general stocks:
+    - __`surfactant_in_oil_1`__: a name for main stock in oil 1 (heptane)
+    - __`surfactant_in_oil_2`__: a name for main stock in oil 2 (hexadecane)
+    - __`oil_1`__: a name for oil 1 (heptane)
+    - __`oil_2`__: a name for oil 2 (hexadecane)
+    - __`stock_aqueous_1`__: a name for aqueous stock with low NaCl concentration (typically water)
+    - __`stock_aqueous_2`__: a name for aqueous stock with high NaCl concentration 
+    - __`run_stock_surf_oil_1`__: a name for running stock in oil 1
+    - __`run_stock_surf_oil_2`__: a name for running stock in oil 2
+- __`json/configurations`__: contain names of configurations. 
+    - __`json/configurations/blank`__: a blank configuration of an opentron
+    - __`json/configurations/start`__: an opentron configuration at the beginning of HLD scan
+    - __`json/configurations/end`__: an opentron configuration written after HLD scan
+    - __`json/configurations/to_reuse/name`__: an opentron configuration from which well content is imported into starting configuration
+    - __`json/configurations/to_reuse/content`__: specifies wells which have to be added to starting configuration
+    - __`json/configurations/blank`__: and json/configurations/to_reuse/name have to exist before running any of scripts
+    - __`json/configurations/start&end`__: are created in the process
+- __`json/scan/experiment_metadata`__: metadata fields for user to clarify scan
+- __`json/scan`__: contains parameters for 2D HLD scan; all parameters have to be specified:
+    - __`json/scan/n_expansions`__: number of expansion to perform in a 1D salinity scan
         - __add explanation for linear, log modes__
-    - json/scan/n_approximation: not used at the moment, leave at 0
-    - json/scan/number_of_oil_points: number of different oil mixtures requested; 1st point is neat oil 1; last point is neat oil 2; rest are mixtures with linearly increased amount of oil 2
-    - json/scan/oil_volume: volume of oil to dispense in cuvette (in mkL)
-    - json/scan/scan_type: specifies algorithm of 1d point selection:
+    - __`json/scan/n_approximation`__: not used at the moment, leave at 0
+    - __`json/scan/number_of_oil_points`__: number of different oil mixtures requested; 1st point is neat oil 1; last point is neat oil 2; rest are mixtures with linearly increased amount of oil 2
+    - __`json/scan/oil_volume`__: volume of oil to dispense in cuvette (in mkL)
+    - __`json/scan/scan_type`__: specifies algorithm of 1d point selection:
         - linear:
         - log:
         - log/???: 

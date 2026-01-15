@@ -39,6 +39,7 @@ from hld_ift_calc.contour_to_ift import (
 
 from hld_ift_analysis_helpers.collect_files_folders import collect_data_jsons
 from hld_ift_analysis_helpers.locations import data_json_path_to_processed_data_json_path
+from hld_ift_analysis_helpers.droplet_stats import needle_image
 
 import argparse
 
@@ -143,9 +144,11 @@ def process_an_image(fpath, rho_w, rho_o): #, classifier: DetectionClassifier, n
     #ift_calc = IFTCalculator(delta, ndc)
 
     base = os.path.basename(fpath)
-    img = cv2.imread(fpath)
-    if img is None:
+    img_raw = cv2.imread(fpath)
+    if img_raw is None:
         return ('no_image', 'no_image', np.nan)
+
+    img = needle_image(img_raw, width = 200) 
 
     # Stage 1: needle and droplet detection
     h, w = img.shape[:2]

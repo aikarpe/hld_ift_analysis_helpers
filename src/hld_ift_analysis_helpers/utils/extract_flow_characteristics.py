@@ -7,11 +7,7 @@ from hld_ift_analysis_helpers.droplet_stats import *
 from hld_ift_analysis_helpers.collect_files_folders import match_conc_at_end, collect_dirs, list_images
 
 import argparse
-from hld_ift_analysis_helpers.locations import (
-            data_json_path_to_exp_root_path,
-            drop_stats_path,
-            data_json_path_to_drop_stats_output
-            )
+from hld_ift_analysis_helpers.locations import data_json_path_to_exp_root_path, drop_stats_path
 
 #>.......... #import pandas as pd
 #>.......... #================================================================================
@@ -46,17 +42,9 @@ parser.add_argument("-r", "--raw_source", help = "file containing files to test"
 parser.add_argument("-d", "--debug", help = "show debug images while processsing, use only with `raw_source`", action = "store_true", default = False)
 #parser.add_argument("-e", "--extraction_options", help = "a path to file that specifies extraction options: default value, value path in a data.json file, target variable name", default = "")
 #parser.add_argument("-v", "--view", help = "view option analyzes input files and summarizes unique variable pathes in data.json file(s)", action = "store_true")
-parser.add_argument("-w", "--width", help = "width of image to include, default: 150 px", type = int, default = 150)
-parser.add_argument("-m", "--max_weight", help = "max weight, default: 0.8", type = float , default = 0.8)
-parser.add_argument("-1", "--save_raw_image", help = "save original image of area under needle", action = "store_true")
-parser.add_argument("-2", "--save_object_image", help = "save processed dripping image of area under needle", action = "store_true")
-parser.add_argument("-a", "--save_raw_and_object_image", help = "save original and processed dripping image of area under needle", action = "store_true")
-parser.add_argument("-t", "--test", help = "test few images from each measurement", type = int, default = -1)
-
 args = parser.parse_args()
 
-fl_save_raw_im = args.save_raw_image or args.save_raw_and_object_image
-fl_save_dripping_im = args.save_object_image or args.save_raw_and_object_image
+
 
 # select source files
 file_path = []
@@ -86,36 +74,20 @@ if len(file_path) == 0:
     exit()
 
 
-
 #================================================================================
 # this part generates all output from all available droplets!!! takes a very long time
-
 
 experiment_roots = list(map(data_json_path_to_exp_root_path, file_path))
 drop_stats_csv_path = list(map(drop_stats_path, file_path))
 
-for exp_root, path_out, data_json_path in zip(experiment_roots, drop_stats_csv_path, file_path):
-
-    root = data_json_path_to_drop_stats_output(data_json_path)
-
-    def fn_proc_im(apath): 
-        return process_dripping_stats(
-                apath,
-                root, 
-                width = args.width, 
-                max_weight = args.max_weight, 
-                save_raw_region = fl_save_raw_im, 
-                save_object_image = fl_save_dripping_im
-                )
-
-
+for exp_root, path_out in zip(experiment_roots, drop_stats_csv_path):
     folders_use = match_conc_at_end(collect_dirs(exp_root))
     first = True
     if os.path.exists(path_out):
         os.remove(path_out)
     for p in folders_use:
         print(p)
-        process_dir(p, path_out, fn = fn_proc_im, test = args.test)
+        process_dir_flow_char(p, path_out)
     
 #================================================================================
 

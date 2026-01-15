@@ -23,28 +23,109 @@ from math import pi
 from hld_ift_analysis_helpers.collect_files_folders import collect_images
 # ================================================================================
 #                                                           needle roi 
+
+#> def needle(im, width = 0):
+#>     """
+#>     fn finds x coordinates range for needle in given image
+#> 
+#>     fn expects a uniform image with a low intensity in a narrow x coordinate range
+#>     """
+#>     im_std = im.std(axis = 0)
+#>     im_max = im_std.max()
+#>     im_min = im_std.min()
+#> 
+#>     above_threshold =  list(filter(lambda x: x > (im_max + im_min)/2, im_std.tolist()))
+#>     index = np.where(im_std > (im_max + im_min)/2)[0]
+#>     #print(f'index above average: {index}')
+#>     center = int(sum(index) / len(index))
+#>     #start = min(index)
+#>     start = int(index[0])
+#>     #width = max(index) - min(index)
+#>     width_raw = int(index[len(index) - 1] - start)
+#>     width_report = width_raw if width == 0 else width
+#>     half = int( width_report / 2 )
+#>     start = center - half if center - half >= 0 else 0
+#>     return {"start": start, "width": width_report, "center": center}
+
 def needle(im, width = 0):
-    """
-    fn finds x coordinates range for needle in given image
-
-    fn expects a uniform image with a low intensity in a narrow x coordinate range
-    """
-    im_std = im.std(axis = 0)
-    im_max = im_std.max()
-    im_min = im_std.min()
-
-    above_threshold =  list(filter(lambda x: x > (im_max + im_min)/2, im_std.tolist()))
-    index = np.where(im_std > (im_max + im_min)/2)[0]
-    #print(f'index above average: {index}')
-    center = int(sum(index) / len(index))
-    #start = min(index)
-    start = int(index[0])
-    #width = max(index) - min(index)
-    width_raw = int(index[len(index) - 1] - start)
-    width_report = width_raw if width == 0 else width
+    def pixelcount(regionmask):
+        return np.sum(regionmask)
+    
+    def rel_size(regionmask):
+        shp = im.shape
+        return np.sum(regionmask) /  (shp[0] * shp[1])
+    
+    def extrema(coords):
+        mins = np.min(coords, axis = 0)
+        maxs = np.max(coords, axis = 0)
+        return dict(min_x = mins[1], max_x = maxs[1], min_y = mins[0], max_y = maxs[0])
+    
+    def region_from_top_to_bottom(roi_prop):
+        """
+            fn checks if region spans across whole y range
+            roi_prop: a region created by regionprops fn
+        """
+        #print("region_from_top_to_bottom___st")
+        ext = extrema(roi_prop.coords)
+        #print("region_from_top_to_bottom___end")
+        return ext["min_y"] == 0 and ext["max_y"] == im.shape[0] - 1
+    
+    def region_at_image_side_edges(roi_prop):
+        """
+            fn checks if region spans across whole y range
+            roi_prop: a region created by regionprops fn
+        """
+        #print("region_from_top_to_bottom___st")
+        ext = extrema(roi_prop.coords)
+        #print("region_from_top_to_bottom___end")
+        return ext["min_x"] == 0 or ext["max_x"] == im.shape[1] - 1
+    
+    im_max = im.max()
+    #print(f'im_max: {im_max}')
+    
+    im2 = im_max - im
+        
+    threshold = ski.filters.threshold_otsu(im2)
+    
+    mask = im2 > threshold
+    
+    mask = ski.morphology.remove_small_objects(mask, 50)
+    mask = ski.morphology.remove_small_holes(mask, 50)
+    
+    labels = ski.measure.label(mask)
+    
+    props = ski.measure.regionprops(labels, extra_properties=(pixelcount, rel_size,))
+    
+    i_area_lst = list(map(lambda x: [x[0], -x[1].area], enumerate(props)))
+    i_area_lst_sorted = sorted(i_area_lst, key = lambda x: x[1])
+    
+    i_area_lst_cleaned_up = list(filter(lambda x: not region_from_top_to_bottom(props[x[0]]), i_area_lst_sorted))
+    i_area_lst_cleaned_up = list(filter(lambda x: not region_at_image_side_edges(props[x[0]]), i_area_lst_cleaned_up))
+    
+    flipped = len(i_area_lst_cleaned_up) < len(i_area_lst_sorted)
+    
+    region_prop = props[i_area_lst_cleaned_up[0][0]]
+    
+    coords = region_prop.coords
+    extr_val = extrema(coords)
+    start = extr_val["min_x"]
+    end = extr_val["max_x"]
+    center = int((start + end) / 2)
+    width_raw = end - start
+    width_report = width_raw if width <= 0 else width
     half = int( width_report / 2 )
     start = center - half if center - half >= 0 else 0
+    #    return {"start": start, "width": width_report, "center": center}
     return {"start": start, "width": width_report, "center": center}
+
+    # threshold image to binary
+    #   remove small holes and small specks
+    # label image
+    # for all regions get all pixels involved
+    # discard regions if:
+    #       y spans whole region of image
+    #       x(max) - x(min) is above width_min and below width_max
+    #       
 
 # ================================================================================
 #                                                            path manipulation

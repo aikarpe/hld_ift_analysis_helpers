@@ -75,9 +75,20 @@ def data_json_path_to_log_urls(a_path):
     return data_json_path_to_processed_item_path(a_path, ["processed", "log_digest", "command_urls.txt"])
 def data_json_path_to_log_asp_disp_table(a_path): 
     return data_json_path_to_processed_item_path(a_path, ["processed", "log_digest", "aspiration_dispensation_params.csv"])
+def data_json_path_to_drop_stats_output(a_path):
+    fldr, fnm = os.path.split(a_path)
+    if fnm == "data.json":
+        out = data_json_path_to_processed_item_path(a_path, ["processed", "drop_stats_images"])
+        os.makedirs(out, exist_ok = True)
+        return out
+    else:
+        raise Exception("Not a data.json file path")
+
 def data_json_path_to_raw_log(a_path): 
     if is_data_json(a_path):
         root, nm = os.path.split(a_path)
         return os.path.join(root, "log.log")
     else:
         raise Exception("Not a data.json file path")
+
+
