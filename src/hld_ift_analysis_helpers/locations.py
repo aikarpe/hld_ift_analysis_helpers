@@ -91,4 +91,5 @@ def data_json_path_to_raw_log(a_path):
     else:
         raise Exception("Not a data.json file path")
 
-
+def montage_name__experiment(exp_nm, i_start, n_images, roi_width):
+    return f'montage__{exp_nm}_i-{i_start}-{n_images}_x-{roi_width}.png'

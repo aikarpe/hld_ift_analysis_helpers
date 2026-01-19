@@ -21,6 +21,7 @@ from skimage.transform import rotate
 import pandas as pd
 from math import pi
 from hld_ift_analysis_helpers.collect_files_folders import collect_images
+from hld_ift_analysis_helpers.locations import montage_name__experiment
 # ================================================================================
 #                                                           needle roi 
 
@@ -163,9 +164,13 @@ def image_index(path):
 # ================================================================================
 #                                                            montage mechanics
 
-def load_image(a_path, x_start, width):
-    im = imread(a_path, as_gray = True)
-    return im[: , x_start:x_start + width]
+def load_image(a_path, x_start, width, create_empty = False, height = 1500, default_value = 0):
+    try:
+        im = imread(a_path, as_gray = True)
+        return im[: , x_start:x_start + width]
+    except:
+        return np.full([height, width], 0, dtype = np.uint8)
+
 
 def montage_row(lst_ims, padding_width = 0, fill = 0):
     return ski.util.montage(lst_ims, grid_shape = (1, len(lst_ims)), padding_width = padding_width, fill = fill)
@@ -181,12 +186,20 @@ def montage_row_from_path(lst_path, x_start, width, padding_width = 0, fill = 0)
 #                                                           dataframe manipulation
 
 def aggregate_item(df, group_by, aggregate_by, fn):
-    output = df.groupby(by = group_by)[[aggregate_by]].agg(fn)
+    output = df.groupby(by = group_by)[aggregate_by].agg(fn) if type(aggregate_by) == list else df.groupby(by = group_by)[[aggregate_by]].agg(fn) 
     print(f'aggregate_item(): debug: index: {output.index}')
     print(f'aggregate_item(): debug: index: {output.index.names}')
     df_new = output.index.to_frame()
-    df_new[aggregate_by] = output[aggregate_by].tolist()
+    vars_to_process = aggregate_by if type(aggregate_by) == list else [aggregate_by]
+    for var in vars_to_process:
+        df_new[var] = output[var].tolist()
     return df_new.reset_index(drop = True)
+
+#>>>> # Source - https://stackoverflow.com/a
+#>>>> # Posted by Scott Boston, modified by community. See post 'Timeline' for change history
+#>>>> # Retrieved 2026-01-16, License - CC BY-SA 3.0
+#>>>> 
+#>>>> df.groupby('Category').agg({'Item':'size','shop1':['sum','mean','std'],'shop2':['sum','mean','std'],'shop3':['sum','mean','std']})
 
 def reinject_grouped_variables(df):
     index_df = df.index.to_frame()
@@ -208,7 +221,10 @@ def collect_images_to_dataframe(root):
     return im_data
 
 def find_needle_pos(path, width):
-    return needle(imread(path, as_gray = True), width = width)
+    if os.path.exists(path):
+        return needle(imread(path, as_gray = True), width = width)
+    else:
+        return {"start": 0}
 
 
 # ===============================================
@@ -251,30 +267,88 @@ def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200
     print(f'... done making montage in `{root}`')
    
     
-def make_montage_of_experiment(root, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = ""):
-    im_data = collect_images_to_dataframe(root)
+
+def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = ""):
+    """
+    im_data [pandas DataFrame] with following columns
+        - path: String, path to image
+        - experiment: String, experiment name (also folder name)
+        - experiment_root: String, path to experiment root
+        - scan: String, scan name of type "scan_<000>" where <000> is scan index
+        - concentration: String, measurement label of type "conc_<x.xxxxx>"
+        - concentration_val: float, relative concentration of a scan (float of "<x.xxxxx>")
+        - image_name: String: file name of type "<XXXXX>.jpg", were XXXXX is index
+        - image_index: int, image index in measurement
+    """
+    #> changes to add!!!!
+    #>  - reverser for montage_col and montage_row
+    #>  - flip scan and conc coordinates
     
-    temp = aggregate_item(im_data, ['experiment_root', 'experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
+    #temp = aggregate_item(im_data, ['experiment_root', 'experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
+    temp = aggregate_item(im_data, ['experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
     temp['roi_x_start'] = list(map(lambda x: find_needle_pos(x[0], width = roi_width)["start"], temp['path']))
     temp['roi_x_width'] = roi_width
     temp['montage'] = list(map(lambda x,y,z: montage_row_from_path(x, y, z, padding_width = 0), temp['path'], temp['roi_x_start'], temp['roi_x_width']))
+    def montage_log_make(alst, sep):
+        out = ""
+        for x in alst:
+            out += x + sep
+        return out
+    temp['montage_log'] = list(map(lambda x: montage_log_make(x,"\n"), temp['path']))
+    
+    #>>>
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    print(temp['path'].tolist())
+    print("--------------------------------------------------------------------------------")
+    print(list(map(lambda x: x.shape, temp['montage'])))
+    print("--------------------------------------------------------------------------------")
+    print(temp['montage_log'].tolist())
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    #>>>
 
-    temp = aggregate_item(temp, ['experiment_root', 'experiment', 'scan'], 'montage', lambda x: montage_row(x.tolist(), padding_width = 5))
+    
+    # temp = aggregate_item(temp, ['experiment_root', 'experiment', 'scan'], 'montage', lambda x: montage_row(x.tolist(), padding_width = 5))
+    temp = aggregate_item(temp, ['experiment', 'scan'], ['montage','montage_log'], lambda x: x.to_list())
+    temp['montage'] = list(map(lambda x: montage_row(x, padding_width = 5), temp['montage']))
+    temp['montage_log'] = list(map(lambda x: montage_log_make(x,"\n---COL_SEP---\n\n\n"), temp['montage_log']))
+    #>>>
+    print("2$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    print(list(map(lambda x: x.shape, temp['montage'])))
+    print(temp['montage_log'].tolist())
+    print("2$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    #>>>
 
-    temp = aggregate_item(temp, ['experiment_root', 'experiment'], 'montage', lambda x: montage_col(x.tolist(), padding_width = 10))
 
+    #temp = aggregate_item(temp, ['experiment_root', 'experiment'], 'montage', lambda x: montage_col(x.tolist(), padding_width = 10))
+    temp = aggregate_item(temp, ['experiment'], ['montage','montage_log'], lambda x: x.to_list())
+    temp['montage'] = list(map(lambda x: montage_col(x, padding_width = 10), temp['montage']))
+    temp['montage_log'] = list(map(lambda x: montage_log_make(x,"\n======ROW=SEP======\n\n\n\n\n"), temp['montage_log']))
     temp['montage_path'] = list(map(
-                                lambda t_root, t_exp: os.path.join(t_root, f'montage__{t_exp}_i-{i_start}-{n_images}_x-{roi_width}.png'), 
-                                temp['experiment_root'],
+                                lambda t_exp: montage_name__experiment(t_exp, i_start, n_images, roi_width), 
                                 temp['experiment']
                                 ))
+
+    #>>>
+    print("3$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    print(list(map(lambda x: x.shape, temp['montage'])))
+    print(temp['montage_log'].tolist())
+    print("3$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    #>>>
+
 
     for p,im in zip(temp['montage_path'], temp['montage']):
         montage_path = p if output_path == "" else output_path
         print(type(im))
         print(f'... saving {montage_path}')
         imsave(montage_path, ski.util.img_as_ubyte(im))
+
+def make_montage_of_experiment(root, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = ""):
+    im_data = collect_images_to_dataframe(root)
+    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path)
     print(f'... done making montage in `{root}`')
 
-
+def make_montage_of_experiment_csv(csv_path, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = ""): 
+    im_data = pd.read_csv(csv_path)
+    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path)
+    print(f'... done making montage from `{csv_path}`')
 
