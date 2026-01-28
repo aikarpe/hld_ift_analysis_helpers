@@ -22,6 +22,7 @@ import pandas as pd
 from math import pi
 from hld_ift_analysis_helpers.collect_files_folders import collect_images
 from hld_ift_analysis_helpers.locations import montage_name__experiment
+from functools import reduce
 # ================================================================================
 #                                                           needle roi 
 
@@ -181,7 +182,17 @@ def montage_col(lst_ims, padding_width = 0, fill = 0):
 def montage_row_from_path(lst_path, x_start, width, padding_width = 0, fill = 0):
     return montage_row(list(map(lambda x: ski.img_as_ubyte(load_image(x, x_start, width)), lst_path)), padding_width = padding_width, fill = fill)
 
+def make_lst_im_same_shape(lst_ims): 
+    def shape_helper(mins, im):
+        shp = im.shape
+        return (min(mins[0], shp[0]), min(mins[1], shp[1]))
 
+    shape_common = reduce(shape_helper, lst_ims, (9999999999,9999999999))
+   
+    all_same = reduce(lambda status, image: status and image.shape[0] == shape_common[0] and image.shape[1] == shape_common[1], lst_ims, True)
+    if not all_same:
+        print(f'not all images are the same in input list! common shape is: {shape_common}')
+    return lst_ims if all_same else list(map(lambda x: x[0:shape_common[0], 0:shape_common[1]], lst_ims))
 # ================================================================================
 #                                                           dataframe manipulation
 
@@ -309,7 +320,7 @@ def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width 
     
     # temp = aggregate_item(temp, ['experiment_root', 'experiment', 'scan'], 'montage', lambda x: montage_row(x.tolist(), padding_width = 5))
     temp = aggregate_item(temp, ['experiment', 'scan'], ['montage','montage_log'], lambda x: x.to_list())
-    temp['montage'] = list(map(lambda x: montage_row(x, padding_width = 5), temp['montage']))
+    temp['montage'] = list(map(lambda x: montage_row(make_lst_im_same_shape(x), padding_width = 5), temp['montage']))
     temp['montage_log'] = list(map(lambda x: montage_log_make(x,"\n---COL_SEP---\n\n\n"), temp['montage_log']))
     #>>>
     print("2$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
@@ -321,7 +332,7 @@ def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width 
 
     #temp = aggregate_item(temp, ['experiment_root', 'experiment'], 'montage', lambda x: montage_col(x.tolist(), padding_width = 10))
     temp = aggregate_item(temp, ['experiment'], ['montage','montage_log'], lambda x: x.to_list())
-    temp['montage'] = list(map(lambda x: montage_col(x, padding_width = 10), temp['montage']))
+    temp['montage'] = list(map(lambda x: montage_col(make_lst_im_same_shape(x), padding_width = 10), temp['montage']))
     temp['montage_log'] = list(map(lambda x: montage_log_make(x,"\n======ROW=SEP======\n\n\n\n\n"), temp['montage_log']))
     temp['montage_path'] = list(map(
                                 lambda t_exp: montage_name__experiment(t_exp, i_start, n_images, roi_width), 
