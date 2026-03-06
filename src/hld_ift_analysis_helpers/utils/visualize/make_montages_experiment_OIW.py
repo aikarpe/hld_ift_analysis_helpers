@@ -178,7 +178,11 @@ for an_exp_key in exp_split.keys():
                                                                     df_3['experiment'].to_list()[0], 
                                                                     args.i_start,
                                                                     args.n_images,
-                                                                    args.width)))
+                                                                    args.width)),
+                                reverse_measurement_order = args.flip_conc_order, 
+                                reverse_scan_order = args.flip_scan_order,
+                                transpose_scan_measurement = args.flip_variables
+                                )
                                 
     print("loop ends=======================================================")
 

@@ -14,6 +14,9 @@ parser.add_argument("-n", "--n_images", help = "number of images per measurement
 parser.add_argument("-w", "--width", help = "width of image to include, default: 150 px", type = int, default = 150)
 parser.add_argument("-t", "--test", help = "images to test, default: -1, all", type = int, default = -1)
 parser.add_argument("-o", "--output_path", help = "output path for a montage", type = str, default = "")
+parser.add_argument("-v", "--flip_variables", help = "flips scan variable and scans", type = bool, default = False)
+parser.add_argument("-c", "--flip_conc_order", help = "reverse ordering of scan variable", type = bool, default = False)
+parser.add_argument("-s", "--flip_scan_order", help = "reverse ordering of scans", type = bool, default = False)
 
 args = parser.parse_args()
 
@@ -23,6 +26,9 @@ print(args.n_images)
 print(args.width)
 print(args.test)
 print(args.output_path)
+print(args.flip_variables)
+print(args.flip_conc_order)
+print(args.flip_scan_order)
 
 # select source files
 file_path = []
@@ -67,7 +73,11 @@ for fp in file_path:
                                     n_images = args.n_images,
                                     roi_width = args.width, 
                                     test = args.test,
-                                    output_path = montage_output_path)
+                                    output_path = montage_output_path,
+                                    reverse_measurement_order = args.flip_conc_order, 
+                                    reverse_scan_order = args.flip_scan_order,
+                                    transpose_scan_measurement = args.flip_variables
+                                    )
 
 
 

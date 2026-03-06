@@ -241,6 +241,17 @@ def find_needle_pos(path, width):
 # ===============================================
 # montages to make
 
+def conditional_reverse(status):
+    """ 
+        fn reverses list if status == TRUE, otherwise 
+            list remains in the same order
+    """
+    if status:
+        return lambda x: x[::-1]
+    else:
+        return lambda x: x[::1]
+
+
 def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200, test = -1, output_folder = ""):
     use_default_fldr = output_folder == ""
     im_data = collect_images_to_dataframe(root)
@@ -279,7 +290,7 @@ def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200
    
     
 
-def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = ""):
+def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = "", reverse_measurement_order = False, reverse_scan_order = False, transpose_scan_measurement = False):
     """
     im_data [pandas DataFrame] with following columns
         - path: String, path to image
@@ -294,7 +305,14 @@ def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width 
     #> changes to add!!!!
     #>  - reverser for montage_col and montage_row
     #>  - flip scan and conc coordinates
-    
+     
+    order_measurements = conditional_reverse(reverse_measurement_order)
+    order_scans = conditional_reverse(reverse_scan_order)
+
+    var2            = 'concentration'    if transpose_scan_measurement else 'scan'
+    order_first     = order_scans        if transpose_scan_measurement else order_measurements
+    order_second    = order_measurements if transpose_scan_measurement else order_scans
+
     #temp = aggregate_item(im_data, ['experiment_root', 'experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
     temp = aggregate_item(im_data, ['experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
     temp['roi_x_start'] = list(map(lambda x: find_needle_pos(x[0], width = roi_width)["start"], temp['path']))
@@ -319,9 +337,9 @@ def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width 
 
     
     # temp = aggregate_item(temp, ['experiment_root', 'experiment', 'scan'], 'montage', lambda x: montage_row(x.tolist(), padding_width = 5))
-    temp = aggregate_item(temp, ['experiment', 'scan'], ['montage','montage_log'], lambda x: x.to_list())
-    temp['montage'] = list(map(lambda x: montage_row(make_lst_im_same_shape(x), padding_width = 5), temp['montage']))
-    temp['montage_log'] = list(map(lambda x: montage_log_make(x,"\n---COL_SEP---\n\n\n"), temp['montage_log']))
+    temp = aggregate_item(temp, ['experiment', var2], ['montage','montage_log'], lambda x: x.to_list())
+    temp['montage'] = list(map(lambda x: montage_row(order_first(make_lst_im_same_shape(x)), padding_width = 5), temp['montage']))
+    temp['montage_log'] = list(map(lambda x: montage_log_make(order_first(x),"\n---COL_SEP---\n\n\n"), temp['montage_log']))
     #>>>
     print("2$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
     print(list(map(lambda x: x.shape, temp['montage'])))
@@ -332,8 +350,8 @@ def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width 
 
     #temp = aggregate_item(temp, ['experiment_root', 'experiment'], 'montage', lambda x: montage_col(x.tolist(), padding_width = 10))
     temp = aggregate_item(temp, ['experiment'], ['montage','montage_log'], lambda x: x.to_list())
-    temp['montage'] = list(map(lambda x: montage_col(make_lst_im_same_shape(x), padding_width = 10), temp['montage']))
-    temp['montage_log'] = list(map(lambda x: montage_log_make(x,"\n======ROW=SEP======\n\n\n\n\n"), temp['montage_log']))
+    temp['montage'] = list(map(lambda x: montage_col(order_second(make_lst_im_same_shape(x)), padding_width = 10), temp['montage']))
+    temp['montage_log'] = list(map(lambda x: montage_log_make(order_second(x),"\n======ROW=SEP======\n\n\n\n\n"), temp['montage_log']))
     temp['montage_path'] = list(map(
                                 lambda t_exp: montage_name__experiment(t_exp, i_start, n_images, roi_width), 
                                 temp['experiment']
@@ -353,13 +371,13 @@ def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width 
         print(f'... saving {montage_path}')
         imsave(montage_path, ski.util.img_as_ubyte(im))
 
-def make_montage_of_experiment(root, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = ""):
+def make_montage_of_experiment(root, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = "", reverse_measurement_order = False, reverse_scan_order = False, transpose_scan_measurement = False):
     im_data = collect_images_to_dataframe(root)
-    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path)
+    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path, reverse_measurement_order = reverse_measurement_order, reverse_scan_order = reverse_scan_order, transpose_scan_measurement = transpose_scan_measurement)
     print(f'... done making montage in `{root}`')
 
-def make_montage_of_experiment_csv(csv_path, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = ""): 
+def make_montage_of_experiment_csv(csv_path, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = "", reverse_measurement_order = False, reverse_scan_order = False, transpose_scan_measurement = False): 
     im_data = pd.read_csv(csv_path)
-    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path)
+    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path, reverse_measurement_order = reverse_measurement_order, reverse_scan_order = reverse_scan_order, transpose_scan_measurement = transpose_scan_measurement)
     print(f'... done making montage from `{csv_path}`')
 
