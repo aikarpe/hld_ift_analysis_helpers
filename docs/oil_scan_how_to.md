@@ -851,33 +851,33 @@ This is a json file containing data necessary 1) to plan recipes and 2) add solu
         
 #### key description
 
-- solution_repository_path: string, a path to a solution repository file; it is needed for recipe generation and to add stock solution representation
-- compounds_to_add: a list of dictionaries of binary mixture or pure compound definitions; this section is used when solution(s) are added to a solution repository
-- recepies: a list of dictionaries specifying recipe requests; this section is to generate recipes
-- dictionary to define binary mixtures should have following keys:
-    - mixture_type: string, should be set to "binary_mix"
-    - name: a name of this mixture, will be used to refer to it in a solution repository
-    - m_solute, m_solvent: a mass of each component in grams
-    - ro: numeric, a density in g/ml, if this key is present values in keys: v_ro, m_ro_water and m_ro are ignored
-    - solvent, solute: names of solutions as specified in a solution repository
-    - v_ro: numeric, a volume of liquid(s) in mL used to measure density
-    - m_ro_water: a mass of water in grams in reference measurement
-    - m_ro: a mass of a mixture in grams in density measurement; density of a mixture is evaluated as `m_ro/m_ro_water`; the evaluation is skipped if key `ro` is defined
-    - other keys can be provided, but are ignored
-- dictionary to define pure compound should have following keys:
-    - mixture_type: string, should be set to "pure_compound"
-    - name, label: a name of this compound, will be used to refer to it in a solution repository; label and name should be the same!!!
-    - ro: numeric, a density in g/ml, if this key is present values in keys: v_ro, m_ro_water and m_ro are ignored
-    - v_ro: numeric, a volume of liquid(s) in mL used to measure density
-    - m_ro_water: a mass of water in grams in reference measurement
-    - m_ro: a mass of a compound in grams in density measurement; density of compound is evaluated as `m_ro/m_ro_water`; the evaluation is skipped if key `ro` is defined
-    - other keys can be provided, but are ignored
-- dictionary to define recipe requests:
-    - solution1, solution2: string, a name of solutions (compounds) to be used to generate recipe; names of solutions should be defined in a selected solution repository
-    - component_to_target: string, a name of a component which concentration is to be targeted
-    - target_concentration: numeric, concentration in g/g (m/m) or g/ml (m/v) units
-    - concentration_type: a string, mass ("m/m") or mass to volume concentration ("m/v")
-    - quantity: numeric, quantity of final solution needed in grams
+- __`solution_repository_path`__: string, a path to a solution repository file; it is needed for recipe generation and to add stock solution representation
+- __`compounds_to_add`__: a list of dictionaries of binary mixture or pure compound definitions; this section is used when solution(s) are added to a solution repository. It can contain zero or more dictionaries that contain definition of mixture and/or pure compound.
+    - to define a pure compound a dictionary should contain following keys:
+        - __`mixture_type`__: "pure_compound"
+        - __`ro`__: density of a compound in g/mL
+        - __`name`__: string containing name of a compound
+        - __`label`__: string containing label of a compound (NOTE it is strongly encouraged to use same name and label for a pure compound!!!)
+        - name, label: a name of this compound, will be used to refer to it in a solution repository; label and name should be the same!!!
+        - other keys can be provided (e.g. for refrence purposes), but are ignored
+    - to define a mixture a dictionary should contain following keys:
+        - __`mixture_type`__: string, should be set to "binary_mix"
+        - __`name`__: a name of this mixture, will be used to refer to it in a solution repository
+        - __`m_solute`__, __`m_solvent`__: a mass of each component in grams
+        - __`ro`__: numeric, a density in g/ml, if this key is present values in keys: __`v_ro`__, __`m_ro_water`__ and __`m_ro`__ are ignored
+        - __`solvent`__, __`solute`__: names of solutions as specified in a solution repository
+        - __`v_ro`__: numeric, a volume of liquid(s) in mL used to measure density
+        - __`m_ro_water`__: a mass of water in grams in reference measurement
+        - __`m_ro`__: a mass of a mixture in grams in density measurement; density of a mixture is evaluated as `m_ro/m_ro_water`; the evaluation is skipped if key `ro` is defined
+        - other keys can be provided (e.g. for refrence purposes), but are ignored
+        -
+- __`recepies`__: a list of dictionaries specifying recipe requests; this section is necessary to generate recipes, nothing is added to a solution repository.
+    - dictionary to define recipe requests should contain following keys:
+        - __`solution1`__, __`solution2`__: string, a name of solutions (compounds) to be used to generate recipe; names of solutions should be defined in a selected solution repository
+        - __`component_to_target`__: string, a name of a component which concentration is to be targeted
+        - __`target_concentration`__: numeric, concentration in g/g (m/m) or g/ml (m/v) units
+        - __`concentration_type`__: a string, mass ("m/m") or mass to volume concentration ("m/v")
+        - __`quantity`__: numeric, quantity of final solution needed in grams
 
 
 ##  main configuration
