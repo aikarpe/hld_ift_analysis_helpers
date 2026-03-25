@@ -18,8 +18,8 @@ if i skip skeletonization step and take im_er, i should be fine!!!
 """
 
 import sys
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_calc/src")
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
+#> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_calc/src")
+#> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
 
 import re
 import json

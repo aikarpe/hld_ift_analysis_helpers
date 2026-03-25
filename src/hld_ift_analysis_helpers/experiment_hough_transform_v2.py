@@ -1,9 +1,9 @@
 #python "D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts/experiment_hough_transform_v2.py"
 #
 import sys
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_calc/src")
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_calc")
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
+#> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_calc/src")
+#> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_calc")
+#> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
 #import pandas as pd
 import re
 import os

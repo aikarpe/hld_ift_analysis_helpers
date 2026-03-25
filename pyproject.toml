@@ -1,0 +1,29 @@
+[project]
+name = "hld_ift_analysis_helpers"
+version = "0.0.1"
+authors = [
+  { name="Aigars Piruska", email="a.piruska@science.ru.nl" },
+]
+description = "HLD-IFT scan analysis"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "opencv-python",
+    "pandas",
+    "numpy",
+    "matplotlib",
+    "keyring",
+    "scipy"
+]
+
+
+[project.urls]
+Homepage = "https://github.com/aikarpe/hld_ift_http"
+Issues = "https://github.com/aikarpe/hld_ift_http/issues"
+

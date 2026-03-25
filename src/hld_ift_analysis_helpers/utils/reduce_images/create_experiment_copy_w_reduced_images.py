@@ -19,7 +19,7 @@ import re
 import shutil
 import sys
 
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
+#> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
 
 from hld_ift_analysis_helpers.montage_bits import load_image, find_needle_pos
 from hld_ift_analysis_helpers.collect_files_folders import collect_data_jsons

@@ -3,8 +3,8 @@
 #python %AN_SRC%\experiment_optimization.py
 
 import sys
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_http/src")
+#> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
+#> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_http/src")
 from scipy.optimize import minimize
 import numpy as np
 import itertools

@@ -2,7 +2,7 @@
 #python D:/temp_data/extract__bits_from_logs.py
 import sys 
 import functools
-sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
+#sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
 #sys.path.append("C:/Users/nguye/Desktop/Radboud/hld_code/hld_ift_analysis_helpers/src")
 import os
 #from scripts.json_data_extraction import *
@@ -219,16 +219,27 @@ for p in file_path:
                 f.write(f"{el}\n") 
 
     if EXTRACT_ASP_DISP in action:
+        #>>>> print(data_dict)
         useful = list(filter(lambda x: get_element(x, "output/data/commandType", "") in ["aspirate", "dispense"], data_dict))
-        json_path = json_tree(useful)
+        #>>>> useful = list(filter(lambda x: get_element(x, "input/data/data/commandType", "") in ["aspirate", "dispense"], data_dict))
 
+        #>>>> print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        #>>>> print(useful)
+
+        json_path = json_tree(useful)
+        #>>>> print("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+        #>>>> print(json_path)
 
         print(f'=================== {p}')
         zz = sorted(list(set(json_path)))
         zz = list(map(lambda x: re.sub("__index__", "_i_", x), zz))
+
+        #>>>> print("1111111111111111111111111111111111")
         for x in sorted(zz):
             print(x)
 
+
+        #>>>> print("2222222222222222222222222222222222222222")
         for i,x in enumerate(useful):
             if i < 3:
                 print(json.dumps(x, indent = 2))
@@ -249,6 +260,8 @@ for p in file_path:
         labware2 = dict()
         for x in list(map(lambda x: {x["id"]: x["location"]["slotName"]}, labware)):
             labware2.update(x) 
+
+        #>>>> print("3333333333333333333333333333333")
         print(labware2)
 
         #for i,x in enumerate(useful2):

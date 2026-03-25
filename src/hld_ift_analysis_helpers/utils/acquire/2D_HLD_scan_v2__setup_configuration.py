@@ -8,7 +8,7 @@ import time
 import argparse
 
 #sys.path.append("/mnt/d/projects/HLD_parameter_determination/hld_ift_http/src") # on office pc
-sys.path.append("C:/Users/admin/Documents/Data/aikars/opentron/hld_ift_http/src") # robolab laptop
+#> sys.path.append("C:/Users/admin/Documents/Data/aikars/opentron/hld_ift_http/src") # robolab laptop
 print("current contant of my python path\n: {c}".format(c = sys.path))
 
 
