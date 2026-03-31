@@ -220,6 +220,432 @@ if state < STATE_LOCATION_SPECIFIED:
 #        https://stackoverflow.com/questions/10133856/how-to-add-an-image-in-tkinter
 #   
 
+# Do you want to use existing solution as recipe for stock?
+#   yes/no
+
+# on yes:
+# select solution to use as template for stock solution
+#   use chosen solution to make a recipe
+#           ==> recipe 1
+
+# on no:
+# if surfactant no selected
+#   select surfactant to use
+#       if new_surfactant... selected
+#           make new surfactant
+#       else:
+#           use chosen surfactant
+# select oil
+#       if new_oil... selected
+#           make new oil
+#       else:
+#           use chosen oil
+# what concentration to use?
+
+# make recipe based on:
+#       surfactant
+#       oil
+#       concentration
+
+# INSTRUCTIONS
+#       make solutions according to recipes
+#
+#       to measure density
+#           take an aliquot (e.g. 5 mL) of reference fluid (water) and measure its mass
+#           for each solution made:
+#               take an aliquot (same volume as referece fluid) and measure its mass
+#       continue with current script
+
+# recipe x
+# name of solution: enter string
+#
+# enter a mass used for each components:
+# 
+# density
+#   refence fluid mass
+#   solution mass
+# ==> solution definition x
+
+#================================================================================
+
+
+from hld_ift_http.solution import Solution, Solution_Component
+from hld_ift_http.solution_repository import Solution_Repository
+from scipy.optimize import minimize
+import numpy as np
+import datetime
+import json
+
+#fro hld_ift_analysis_helpers.utils.acquire.generate_recepies_for_solutions_v2 import create_recepie_for
+
+
+#> def create_recipe_for_user(surfactant_name, solution_name, concentration, sol_rep, quantity, quantity_type):
+#>     surfactant = sol_rep.items[surfactant_name]
+#>     solution = sol_rep.items[solution_name]
+#> 
+#>     if valid surfactant:
+#>         if surfactant not in solution:
+#>             binary mix of surfactant and solution at concentration
+#>         else 
+#>             binary mix of surfactant and rest of components at given proportions to yield surfactant at concentration
+#>     else:
+#>         recipe of solution
+#>     
+#>     how much: quantity / sum(components)
+#>     sum(components) / density ==> vx
+#>     v/vx = mult
+#> 
+#>     v * density / sum(components)
+
+#> def create_recipe_from_solution_definition(solution, quantity, quantity_type):
+#>     
+#>     total_mass = quantity * solution.ro if quantity_type == "ml" else quantity
+#> 
+#>     recipe = f'to make {solution.name}`:\n'
+#> 
+#>     for component in solution.components:
+#>         mass_comp = component.w * total_mass
+#>         recipe += f'    {mass_comp:0.4f} g of `{component.label}`\n'
+#> 
+#>     return recipe
+
+
+#> def create_solution_from_ingredients(lst_ingredients, name, m_ref, m_sol, sol_rep)
+#>     ingredients_to_use = list(map(lambda x: dict(mass = x["mass"], solution = sol_rep.item(x["name"])), lst_ingredients))
+#>     sol = list(functools.reduce(lambda x,y: mix(x["solution"], x["mass"], y["solution"], y["mass"], 1.0, "__"), ingredients_to_use))
+#>     sol.ro = m_sol/m_ref
+#>     sol.name = name
+#>     return sol
+
+
+def generate_recipe_pretty(sol_rep, stock_lbl, surfactant = ""):
+
+    def choice_existing_solution_to_recipe(label):
+        chosen = False
+        while not chosen:
+            k = input(f"use existing solution for `{label}` stock recipe? (Yy/Nn)")
+            choice = k.upper()
+            if choice == "Y":
+                print("will use existing solution to make a recipe")
+                chosen = True
+            else: 
+                print(f"will make stock from surfactant and a chosen `{label}`")
+                chosen = True
+        return choice == "Y"
+
+    def create_new_surfactant(name_use, ro):
+        #k = input("surfactant name:")
+        #ro = float(input("surfactant density, g/ml:"))
+
+        #name_use = k
+        component = Solution_Component(name_use, 1)
+        a_sol = Solution(name_use, ro, name_use, {})
+        a_sol.add_component(component)
+        return a_sol
+
+    def print_lot_of_choices(choices, n = 30):
+        for i,ch in enumerate(choices):
+            print(ch)
+            if i % n == n - 1:
+                input("press enter to continue")
+
+    def new_surfactant():
+        names_taken = sol_rep.list_solution_names()
+
+        chosen_name = False
+        chosen_density = False
+
+        name_use = ""
+        ro = 1.0
+
+        while not chosen_name:
+            k = input("select surfactant name:")
+            if k in names_taken:
+                print("this name is already taken, pick different one!!!")
+            else:
+                chosen_name = True
+                name_use = k
+
+        while not chosen_density:
+            k = input("select density, g/ml:")
+            try:
+                ro = float(k)
+                chosen_density = True
+            except:
+                k = input("would you like to use 1.0 g/ml as default value? (Y/N)")
+                if k.upper() == "Y":
+                    ro = 1.0
+                    chosen_density = True
+        xxx = create_new_surfactant(name_use, ro)
+        print("2222222222222222222222222222222222")
+        print(type(xxx))
+        print(str(xxx))
+        print("2222222222222222222222222222222222")
+        return xxx
+                    
+                      
+    def select_surfactant():
+        components = sol_rep.list_components()
+        choices = ["new surfactant ..."] + components
+        choices_pretty = [ f'{i: 4}: {v}' for i,v in enumerate(choices) ]
+        chosen = False
+        while not chosen:
+            print_lot_of_choices(choices_pretty, n = 30) 
+            k = input("select surfactant (or 0 to create a new one)")
+            try:
+                choice = int(k)
+                if choice >= 0 or choice < len(choices_pretty):
+                    chosen = True
+            except:
+                pass
+
+        surfactant = None
+
+        if choice == 0:
+            surfactant = new_surfactant()    
+            print("----------------------------")
+            print(type(surfactant))
+            print(str(surfactant))
+            print("----------------------------")
+            # add surfactant to sol_rep
+            sol_rep.add_solution(surfactant)
+            return surfactant
+        else:
+            return sol_rep.items[choices[choice]]
+
+    def quantity_needed():
+        chosen_quantity = False
+        chosen_type = False
+
+        default_quantity = 50
+        default_type = "g"
+
+        #while not chosen_quantity:
+        k = input("quantity of solution required? (50)")
+        try:
+            quantity = float(k)
+            chosen_quantity = True
+        except:
+            quantity = default_quantity
+            chosen_quantity = True
+
+        #while not chosen_type:
+        k = input("0: mass, g OR 1: volume, ml?")
+        try:
+            choice = int(k)
+            if choice == 1:
+                return (quantity, "ml")
+            else:
+                return (quantity, "g")
+        except:
+            return (quantity, "g")
+    
+    def pick_existing_solution():
+        all_names = sol_rep.list_solution_names()
+        choices_pretty = [ f'{i: 4}: {v}' for i,v in enumerate(all_names) ]
+
+        chosen = False
+        while not chosen:
+            print_lot_of_choices(choices_pretty, n = 30) 
+            k = input("select solution to use for recipe:")
+            try:
+                choice = int(k)
+                if choice >= 0 or choice < len(choices_pretty):
+                    chosen = True
+            except:
+                pass
+
+        return sol_rep.items[all_names[choice]]
+
+    def target_concentration():
+        print("can specify target concentration as `m/v` or `m/m`")
+        k = input("0: m/v (default); 1: m/m")
+        try:
+            choice_conc = int(k)
+            if choice_conc != 1:
+                choice_conc = 0
+        except:
+            choice_conc = 0
+        k = input("enter surfactant target concentration: (range ~ [0; 0.2]):")
+        try:
+            target_conc = float(k)
+            if target_conc < 0 or target_conc > 0.25:
+                print(f'target concentration ({target_conc}) outside of reasonable range, will use 0.2 instead!!!')
+                target_conc = 0.2
+        except:
+            target_conc = 0.2
+        return (target_conc, ['m/v', 'm/m'][choice_conc])
+         
+    def create_recipe_from_solution_definition(solution, quantity, quantity_type):
+        
+        total_mass = quantity * solution.ro if quantity_type == "ml" else quantity
+    
+        recipe = f'to make {solution.name}`:\n'
+    
+        for lbl in solution.components.keys():
+            component = solution.components[lbl]
+            mass_comp = component.w * total_mass
+            recipe += f'    {mass_comp:0.4f} g of `{component.label}`\n'
+    
+        print("###############################")
+        print(recipe)
+        print("###############################")
+
+        return recipe
+
+
+    x = choice_existing_solution_to_recipe(stock_lbl)
+
+    quantity = quantity_needed()
+    recipe_dict = None
+
+    if x:
+        # recipe from existing
+        solution = pick_existing_solution()
+        recipe_dict = dict(
+                        recipe = create_recipe_from_solution_definition(solution, quantity[0], quantity[1]), #human readable bit
+                        components = solution.components.keys()
+                        )
+    else:
+        # surf+oil
+        surfactant_obj = None
+        surfactant_out = ""
+        if surfactant in sol_rep.list_solution_names():
+            # use surfactant
+            surfactant_obj = sol_rep.items[params["surfactant"]]
+        else:
+            surfactant_obj = select_surfactant()
+            surfactant_out = surfactant_obj.name
+
+        solvent = sol_rep.items[stock_lbl]
+
+        target_conc = target_concentration() 
+
+        recipe_dict = dict(
+                        recipe = create_recepie_for(
+                                            surfactant_obj,
+                                            solvent,
+                                            surfactant_obj.name,
+                                            target_conc[0],
+                                            target_conc[1],
+                                            quantity[0],
+                                            method = "Nelder-Mead"
+                                            ),
+                        component = [ surfactant_obj.name, solvent.name ]
+                        )
+        
+    return recipe_dict
+
+
+#=====================================================================
+def create_recepie_for(sol1, sol2, component, target, concentration_type, amount_needed = 1, method = "Nelder-Mead"):
+    """
+        function makes recipe for solution with a component at a given concentration
+        :param Solution sol1: a solution to use
+        :param Solution sol2: a solution to use
+        :param str component: a name of component for which target concentration is specified
+        :param str concentration_type: {"m/m": mass to mass of solution, "m/v": mass of component to volume of solution}, any other string defaults to "m/m"
+        :param float amount_needed: mass of solution needed in grams
+        :returns: Solution or None if recipe fails
+    """
+    params = {
+            "m/v": {
+                    "units": "g/ml",
+                    "concentration": "m/v",
+                    },
+            "default": {
+                    "units": "g/g",
+                    "concentration": "m/m",
+                        },
+            }
+    def temp_sol(x):
+        return Solution.combine(
+                                [x, 1-x],
+                                ["mass", "mass"],
+                                [sol1, sol2],
+                                None,
+                                ro_final = -1
+                                )
+    def optimize_by_weight_fraction(x):
+        s = temp_sol(x[0])
+        return abs(s.components[component].w - target)
+    def optimize_by_m_v(x):
+        s = temp_sol(x[0])
+        return abs(s.components[component].w - target / s.ro)
+    def msg_str(conc_type):
+        params_use = params[conc_type]
+        return f'optimizing for\n\tcomponent: `{component}`\n\tconcentration type: `{params_use["concentration"]}`\n\ttarget: {target} {params_use["units"]}'
+    def binary_mix_recipe_dict_str(mixture, solute, solvent, m_solute, m_solvent):
+        return '{\n' + \
+        f'    \"mixture_type\": \"binary_mix\",\n' + \
+        f'    \"name\": \"{mixture.name}_{datetime.datetime.now().strftime("%Y%m%d")}\",\n' + \
+        f'    \"m_solute\":   _{m_solute:0.4f}_,\n' + \
+        f'    \"m_solvent\":  _{m_solvent:0.4f}_,\n' + \
+        f'    \"solvent\":   \"{solvent.name}\",\n' + \
+        f'    \"solute\":    \"{solute.name}\",\n' + \
+        f'    \"v_ro\":       _1.0_,\n' + \
+        f'    \"m_ro_water\": _1.0_,\n' + \
+        f'    \"m_ro\":       _{mixture.ro:0.5f}_,\n' + \
+        f'    \"date\":       \"{datetime.datetime.now().strftime("%Y-%m-%d")}\"\n' + \
+        '}'
+ 
+    res = None
+    if concentration_type == "m/v":
+        print(msg_str(concentration_type))
+        res = minimize(optimize_by_m_v, np.array([0.5]), method = method, bounds = [(0, 1)])
+    else: # assume target is mass fraction
+        print(msg_str("default"))
+        res = minimize(optimize_by_weight_fraction, np.array([0.3]), method = method, bounds = [(0, 1)])
+
+    if res is not None and res.success:
+        x = res.x[0]
+        resulting_mixture = temp_sol(x) 
+        m_solute = x * amount_needed
+        m_solvent = (1-x) * amount_needed
+        indent_str = '    '  
+        
+        print(f'Quantity: {amount_needed:0.4f} g\n\nUse:\n{indent_str}{m_solute:0.4f} g of {sol1.name} and\n{indent_str}{m_solvent:0.4f} g of {sol2.name}')
+        print(f'\n{indent_str}m({sol2.name})/m({sol1.name}): {(1 - x) / x: 0.6f}  g/g')
+
+        print("\n------- dictionary for inclusion in solution repository -------\n")
+        print(binary_mix_recipe_dict_str(resulting_mixture, sol1, sol2, m_solute, m_solvent)) 
+        print(f"\n------- target solution representation -------\n\n{json.dumps(resulting_mixture.toDict(), indent = 2)}")
+        return temp_sol(x)
+    else:
+        print('failed to create a recepie')
+        print(res)
+        return None
+
+def mix(sol1, m1, sol2, m2, ro_final, name):
+    sol = Solution.combine(
+                            [m1, m2],
+                            ["mass", "mass"],
+                            [sol1, sol2],
+                            None,
+                            ro_final = ro_final
+                            )
+    sol.name = name
+    return sol
+
+
+#=====================================================================
+
+   
+SOLUTION_REPOSITORY_PATH = '//huckdfs-srv.science.ru.nl/huckdfs/RobotLab/Storage-Miscellaneous/aigars/temp/HLD_scan/test_001/config/solution_repository.json'
+
+rep = Solution_Repository.fromJSON(file = SOLUTION_REPOSITORY_PATH)
+
+xyz = generate_recipe_pretty(rep, "heptane", "")
+
+print(xyz)
+
+
+
+
+#================================================================================
+
+   
+
 import os
 import shutil
 import json
