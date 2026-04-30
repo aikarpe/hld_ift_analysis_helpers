@@ -1,3 +1,18 @@
+#========================================================== notes
+# select 
+#   source folder, solution rep, scan_settings
+# select
+#   target folder
+# create target folder, copy solution rep, config templates,
+#           scan settings, command_prompt bits
+#
+# edit scan settings
+#================================================================
+
+import sys
+import os
+import tkinter as tk
+from tkinter.filedialog import askopenfilename, askdirectory
 
 STATE_LOCATION_SPECIFIED = 1
 
@@ -7,14 +22,59 @@ current_params = dict()
 def is_exit_signal(an_input: str):
     return an_input == "exit"
 
-def exit_routine():
+def exit_routine(an_input, params):
     print("Wizard will be terminated!!!")
     sys.exit()
+
+
+def looping_input(a_dict, prompt, params):
+    done = False
+    while not done:
+        an_input = input(prompt)
+
+        if "main" not in a_dict.keys():
+            print("cannot live without `main`")
+
+        for a_key in a_dict.keys():
+            if a_key == "main":
+                done = a_dict["main"](an_input, params)
+            elif a_dict[a_key]["value"] == an_input:
+                done = a_dict[a_key]["fn"](an_input, params)
+
+
+def is_valid_source_folder(an_input, params):
+    status = os.path.exists(an_input) and os.path.isdir(an_input)
+    if status:
+        params["source_folder"] = an_input
+    return status
+
+def source_folder_dialog(an_input, params):
+    folder = tk.filedialog.askdirectory(title='Select source folder...', mustexist = True)
+    status = is_valid_source_folder(folder, params)
+    return status
+    
+select_source_folder = dict(
+                        main = is_valid_source_folder, 
+                        exit = dict(value = "exit", fn = exit_routine), 
+                        dlg  = dict(value = "dlg", fn = source_folder_dialog)
+                        )
+looping_input(
+            select_source_folder, 
+            "Which folder to use as a template for new experiment?\n   type exact location,\n   `dlg` to start dialog, OR\n   `exit`\n>>>",
+            current_params
+            )
+
+
+
+
+print(current_params)
+print("---------------------------------------------------")
+exit()
 
 if state < STATE_LOCATION_SPECIFIED:
     done = False
     while not done:
-        source_path = input("Which folder to use as a template for new experiment?")
+        source_path = input("Which folder to use as a template for new experiment?\n   type exact location OR\n   type `dlg` to start dialog\n>>>")
         if is_exit_signal(source_path):
             exit_routine()        
 
@@ -1459,7 +1519,7 @@ params = dict(
                 help = "none"
                 ) 
 print(params)
-
+print("===================================================<<<<<<<<<<<<<<<<")
 dw = DialogSource(params)
 
 print(params)
