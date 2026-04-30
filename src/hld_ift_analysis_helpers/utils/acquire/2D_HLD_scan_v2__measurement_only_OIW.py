@@ -10,6 +10,37 @@
 #   Pause action (to close oil reservoirs)
 #   perform HLD scan with this oil
 
+#=======================================================================================================
+# slot 9
+#=======================================================================================================
+#       1                       2                   3               4                   5
+#
+# A:    .                       .                   stock_water     stock_NaCl          .                 
+#                                                   14500           14500                         
+#
+# B:    .                       .                   .               .                   .                                                                               
+#                                                                                                                                                                       
+#
+# C:    .                       .                   .               .                   .
+#                                                                                       
+#=======================================================================================================
+
+#=======================================================================================================
+# slot 2
+#=======================================================================================================
+#       1           2           3           4               5           6
+#
+# A:    hexadecane  hexadecane  hexadecane  <sample_mix>    .           .
+#       500         500         500         1400           
+#
+# B:    .           .           .           .               .           .  
+#      
+#
+# C:    run_stock_  sample_     sample_     sample_         sample_     run_stock_
+#       surf_oil_1  80_20       60_40       40_60           20_80       surf_oil_2  
+#       1400        1400        1400        1400            1400        1400
+#=======================================================================================================
+
 
 # ================================================================================
 
@@ -25,7 +56,7 @@ import time
 import argparse
 
 #sys.path.append("/mnt/d/projects/HLD_parameter_determination/hld_ift_http/src") # on office pc
-#> sys.path.append("C:/Users/admin/Documents/Data/aikars/opentron/hld_ift_http/src") # robolab laptop
+#sys.path.append("C:/Users/admin/Documents/Data/aikars/opentron/hld_ift_http/src") # robolab laptop
 print("current contant of my python path\n: {c}".format(c = sys.path))
 
 
@@ -55,6 +86,39 @@ except Exception as e:
     exit()
 
 print(json.dumps(params))
+
+index = str(params["scan"]["scan_part_index"])
+wells_info  = {
+                "1": {
+                    "info": "2/D1, 2/D2", 
+                    "1": Well_Address("2", "D1"),
+                    "2": Well_Address("2", "D2")
+                     },
+                "2": {
+                    "info": "2/D3, 2/D4",
+                    "1": Well_Address("2", "D3"),
+                    "2": Well_Address("2", "D4")
+                     },
+                "3": {
+                    "info": "2/D5, 2/D6", 
+                    "1": Well_Address("2", "D5"),
+                    "2": Well_Address("2", "D6")
+                     }
+              }
+
+print("\n\n\n")
+print("================================================================================")
+print("================================================================================")
+print("================================================================================")
+print(f'Following wells will be used in this scan: ')
+print(f'                                           {wells_info[index]["info"]}!!!')
+print("")
+print("make sure they are open and 1400 mkL of oil is added there")
+print("")
+print("================================================================================")
+print("================================================================================")
+print("================================================================================")
+
 k = input("... press enter to continue ...")
 
 # ---------- path
@@ -66,7 +130,7 @@ SOLUTION_REPOSITORY_PATH = params["SOLUTION_REPOSITORY_PATH"]
 # 1st run
 configs = params["configurations"]
 suffix_in =  configs["start"]
-suffix_out = configs["end"]
+suffix_out = configs["end"] + index
 
 
 #> slot 9   :::::::::::::::::::::::::::::::::::::::::::::::::::::: stock solutions ::::::::::::::::::::::::::::::::::      
@@ -75,10 +139,10 @@ suffix_out = configs["end"]
 #> _B_     ....                 ....                   ....                  ....                   ....                        
 #> _C_     ....                 ....                   ....                  ....                   ....                              
 
-stock_1_loc = Well_Address("9", "A1")
-stock_2_loc = Well_Address("9", "A2")
-heptane_well_address = Well_Address("9", "A3") 
-hexadecane_well_address = Well_Address("9", "A4")
+stock_1_loc = wells_info[index]["1"]
+stock_2_loc = wells_info[index]["2"]
+stock_wt   = Well_Address("9", "A3") 
+stock_NaCl = Well_Address("9", "A4")
 
 oil_points = 6
 oil_volume = 3000
@@ -122,6 +186,8 @@ ift_measurement = Execute_Measurement.fromJSON(
             experiment = exp
             )
 
+print(f'{CONFIG_PATH}/config_{suffix_in}__execute_measurement.json')
+k = input("press ENTER..........")
 
 ### test heigth vs volume calculation
 #wash_loc = Well_Address("2", "A1")
@@ -179,31 +245,67 @@ def record_all_configs(suffix):
 
 # ............................................................ oil scan parameters
 
-hld_scan_args = params["scan"]
-if "restart_index" not in  hld_scan_args.keys(): 
-    hld_scan_args["restart_index"] = 0
+# add water to measurement location
+
+water = op.well_by_address(Well_Address("9", "A3"))
+meas_loc = Well_Address("10","A1")
+well = op.well_by_address(meas_loc)
+well.used = True
+well.solution = water.solution
+well.volume = 3000
+well.pipette = {}
+if (well.solution == None):
+    well.volume = 0
+    well.used = False
 
 
-hld_scan = HLD_IFT_2D_Scan_W_Slider(
-                opentron = op,
-                n_expansions = hld_scan_args["n_expansions"],
-                n_approximation = hld_scan_args["n_approximation"],
-                scan_graph = scan,
-                mixing_pipette = MIXING_PIPETTE,
-                experiment = exp,
-                measurement = ift_measurement,
-                number_of_oil_points = hld_scan_args["number_of_oil_points"],
-                oil_volume = hld_scan_args["oil_volume"],
-                oil_1_address = hexadecane_well_address,
-                oil_2_address = heptane_well_address,
-                scan_type = hld_scan_args["scan_type"],
-                restart_index = hld_scan_args["restart_index"],
-                scan_params = {}
-                )
+
+exp.new_scan(active = True)
+#[expand scan_graph n_expansions times ]
+#self.scan_graph.expand(self.n_expansions)
+a_pipette = "left"
+loc_to_measure = Well_Address("2", "D6")
+intent = "setup"
+conc = "conc_1.00000"
+
+op.clear_run_if_needed()
+op.create_run() # .... starting setup a new http script run
+op.home()
+op.pick_up_tip_safely_for(
+                          a_pipette,
+                          Well_Address("10", "A1"),
+                          intent) 
+
+k = input("adjust needle, press Enter ...")
+
+ift_measurement.measure(loc_to_measure, conc, "")
+
+
+op.drop_tip_at_origin(a_pipette, intent)
+
+
+
+#hld_scan = HLD_IFT_2D_Scan_W_Slider(
+#                opentron = op,
+#                n_expansions = hld_scan_args["n_expansions"],
+#                n_approximation = hld_scan_args["n_approximation"],
+#                scan_graph = scan,
+#                mixing_pipette = MIXING_PIPETTE,
+#                experiment = exp,
+#                measurement = ift_measurement,
+#                number_of_oil_points = hld_scan_args["number_of_oil_points"],
+#                oil_volume = hld_scan_args["oil_volume"],
+#                oil_1_address = stock_NaCl,
+#                oil_2_address = stock_wt,
+#                scan_type = hld_scan_args["scan_type"],
+#                restart_index = hld_scan_args["restart_index"],
+#                manual_open_close_sample_reservoir = False,
+#                scan_params = {}
+#                )
 
 record_all_configs(f'{suffix_out}_start')
 
-hld_scan.run()
+#hld_scan.run()
     
 record_all_configs(suffix_out)
 exp.saveConfig()

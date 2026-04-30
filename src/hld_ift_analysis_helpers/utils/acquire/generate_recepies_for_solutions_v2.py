@@ -96,7 +96,7 @@ def create_recepie_for(sol1, sol2, component, target, concentration_type, amount
         params_use = params[conc_type]
         return f'optimizing for\n\tcomponent: `{component}`\n\tconcentration type: `{params_use["concentration"]}`\n\ttarget: {target} {params_use["units"]}'
     def binary_mix_recipe_dict_str(mixture, solute, solvent, m_solute, m_solvent):
-        return '{\n' + \
+        return 'a_dict_name = {\n' + \
         f'    \"mixture_type\": \"binary_mix\",\n' + \
         f'    \"name\": \"{mixture.name}_{datetime.datetime.now().strftime("%Y%m%d")}\",\n' + \
         f'    \"m_solute\":   _{m_solute:0.4f}_,\n' + \
@@ -124,7 +124,7 @@ def create_recepie_for(sol1, sol2, component, target, concentration_type, amount
         m_solvent = (1-x) * amount_needed
         indent_str = '    '  
         
-        print(f'Quantity: {amount_needed:0.4f} g\n\nUse:\n{indent_str}{m_solute:0.4f} g of {sol1.name} and\n{indent_str}{m_solvent:0.4f} g of {sol2.name}')
+        print(f'Quantity: {amount_needed:0.4f} g\nVolume: {amount_needed/resulting_mixture.ro:0.2f} ml\n\nUse:\n{indent_str}{m_solute:0.4f} g of {sol1.name} and\n{indent_str}{m_solvent:0.4f} g of {sol2.name}')
         print(f'\n{indent_str}m({sol2.name})/m({sol1.name}): {(1 - x) / x: 0.6f}  g/g')
 
         print("\n------- dictionary for inclusion in solution repository -------\n")

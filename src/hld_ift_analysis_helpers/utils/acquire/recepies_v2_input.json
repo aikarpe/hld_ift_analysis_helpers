@@ -1,55 +1,69 @@
 {
-        "solution_repository_path": "D:/temp_data/solution_repository.json",
+        "solution_repository_path": "//huckdfs-srv.science.ru.nl/huckdfs/Robotlab/Storage-Miscellaneous/aigars/temp/Ecosurf_EH-6_C7_C10/config/solution_repository.json",
         "compounds_to_add": [
               {
-                "mixture_type": "binary_mix",
-                "name": "44perc_IB-45_in_wt",
-                "m_solute":   0.44,
-                "m_solvent":  0.56,
-                "ro":         1.12,
-                "solvent":   "water",
-                "solute":    "aerosol_ib-45",
-                "v_ro":       1.0,
-                "m_ro_water": 1.0,
-                "m_ro":       1.12,
-                "date":       "2025-03-02"
+                "mixture_type": "pure_compound",
+                "ro": 0.9897,
+                "name": "ecosurf_eh-6",
+                "label": "ecosurf_eh-6"
               },
               {
-                "mixture_type": "pure_compound",
-                "ro": 1.17,
-                "name": "idrosal_sxs40",
-                "label": "idrosal_sxs40",
-                "cas": "1300-72-7",
-                "alt_name": "Sodium Xylenesulfonate",
-                "note": "idrosal_sxs40 is name for 40% solution of sodium xylenesulfonate"
+                "mixture_type": "binary_mix",
+                "name": "20g/100ml ecosurf_eh-6 n-decane_20250911",
+                "m_solute":   9.836,
+                "m_solvent":  28.661,
+                "solvent":   "n-decane",
+                "solute":    "ecosurf_eh-6",
+                "v_ro":       1.0,
+                "m_ro_water": 1.0,
+                "m_ro":       0.77655,
+                "date":       "2025-09-11"
+              },
+              {
+                "mixture_type": "binary_mix",
+                "name": "20g/100ml ecosurf_eh-6 heptane_20250911",
+                "m_solute":   9.842,
+                "m_solvent":  26.675,
+                "solvent":   "heptane",
+                "solute":    "ecosurf_eh-6",
+                "v_ro":       1.0,
+                "m_ro_water": 1.0,
+                "m_ro":       0.75530,
+                "date":       "2025-09-11"
               }
             ],
         "recepies": [
                 {
-                    "solution1": "sdbs",
-                    "solution2": "water",
-                    "component_to_target": "sdbs", 
+                    "solution1": "ecosurf_eh-6",
+                    "solution2": "n-decane",
+                    "component_to_target": "ecosurf_eh-6", 
                     "target_concentration": 0.2,
                     "concentration_type": "m/v", 
-                    "quantity": 50
+                    "quantity": 38.5
                 },
                 {
-                    "solution1": "idrosal_sxs40",
-                    "solution2": "water",
-                    "component_to_target": "idrosal_sxs40",
+                    "solution1": "ecosurf_eh-6",
+                    "solution2": "heptane",
+                    "component_to_target": "ecosurf_eh-6", 
                     "target_concentration": 0.2,
-                    "concentration_type": "m/v",
-                    "quantity": 50
+                    "concentration_type": "m/v", 
+                    "quantity": 36.5
                 },
                 {
-                    "solution1": "44perc_IB-45_in_wt",
-                    "solution2": "water",
-                    "component_to_target": "aerosol_ib-45",
+                    "solution1": "tergitol_15-S-7",
+                    "solution2": "n-decane",
+                    "component_to_target": "tergitol_15-S-7", 
                     "target_concentration": 0.2,
-                    "concentration_type": "m/v",
-                    "quantity": 50
+                    "concentration_type": "m/v", 
+                    "quantity": 38
+                },
+                {
+                    "solution1": "tergitol_15-S-7",
+                    "solution2": "heptane",
+                    "component_to_target": "tergitol_15-S-7", 
+                    "target_concentration": 0.2,
+                    "concentration_type": "m/v", 
+                    "quantity": 36.5
                 }
             ]
 }
-
-

@@ -20,8 +20,6 @@ import os
 import json
 import shutil
 
-
-
 params = {
             "surfactant_label": "test_surf_aaa",
             "folder_name": "test_surf_aaa_fldr",

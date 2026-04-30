@@ -165,26 +165,29 @@ for st in stocks:
 first = True
 for mix_input in mixtures:
     #if first:
-    if mix_input[["use"]]:
+    if mix_input["use"]:
         add_to_mixing_graph(**mix_input)
     #    first = False
 
 first = True
 for mix_input in mixtures:
     #if first:
-    if mix_input[["use"]]:
+    if mix_input["use"]:
         execute_dilution(**mix_input)
     #    first = False
 
 first = True
 for mix_input in mixtures:
     #if first:
-    if mix_input[["use"]]:
+    if mix_input["use"]:
         add_to_repository(**mix_input)
     #    first = False
 
 # ---- end run here!!!
 op.drop_tip_at_origin(pipette, Opentrons_HTTP_Communications.INTENT_SETUP)
+
+#op.discard_used_tips(pipette)
+
 op.clear_run_if_needed()
 
 print(f'mixing graph now:\n {mxg.toJSON(indent = 2)}')
