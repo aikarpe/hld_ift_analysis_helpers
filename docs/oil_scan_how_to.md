@@ -979,4 +979,35 @@ Run configuration is json file with all the parameters needed to make up run sto
 
 ---
 
+# template for executin scans
 
+###############################################################
+how to update
+	where is the code
+		```{git_bash}
+		~/code/hld_ift_http
+		~/code/hld_ift_analysis_helpers
+		```
+
+	how to pull new version
+		use git bash
+		browse to package
+		run pull command
+			```{git_bash} 
+			git pull origin reworked_measurement
+			```
+
+	how to install new version
+		use miniconda prompt
+			```{anaconda prompt}
+			conda activate hld_ift0
+			```
+		run install command
+			```{anaconda prompt}
+			REM pip install <path>
+			pip install C:\Users\Admin\code\hld_ift_http
+			```
+how to use miniconda prompt
+	use only miniconda (anaconda) prompt!!!
+	always activate your environment in your session!!!
+###############################################################
