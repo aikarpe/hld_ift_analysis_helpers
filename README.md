@@ -12,3 +12,7 @@ pip install <path>
 pip install C:\Users\Admin\code\hld_ift_analysis_helpers
 
 ```
+
+# how-to-s
+
+For various how-to-s look at ./docs folder!!!
