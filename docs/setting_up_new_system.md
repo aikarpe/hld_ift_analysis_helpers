@@ -35,7 +35,7 @@ https://www.baslerweb.com/en/downloads/software/?downloadCategory.values.label.d
 ```{anaconda prompt}
 conda create -n hld_ift0 python=3.13
 conda activate hld_ift0
-conda install pip`
+conda install pip
 ```
 
 ---

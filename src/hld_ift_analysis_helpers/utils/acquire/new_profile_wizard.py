@@ -11,8 +11,11 @@
 
 import sys
 import os
+import shutil
+import json
 import tkinter as tk
 from tkinter.filedialog import askopenfilename, askdirectory
+from hld_ift_http.solution_repository import Solution_Repository
 
 STATE_LOCATION_SPECIFIED = 1
 
@@ -35,12 +38,18 @@ def looping_input(a_dict, prompt, params):
         if "main" not in a_dict.keys():
             print("cannot live without `main`")
 
-        for a_key in a_dict.keys():
-            if a_key == "main":
-                done = a_dict["main"](an_input, params)
-            elif a_dict[a_key]["value"] == an_input:
-                done = a_dict[a_key]["fn"](an_input, params)
+        processed = False
 
+        for a_key in [x for x in a_dict.keys() if x != "main"]:
+            if a_dict[a_key]["value"] == an_input:
+                done = a_dict[a_key]["fn"](an_input, params)
+                processed = True
+
+        if not processed:
+            done = a_dict["main"](an_input, params)
+
+print(current_params)
+print("---------------------------------------------------")
 
 def is_valid_source_folder(an_input, params):
     status = os.path.exists(an_input) and os.path.isdir(an_input)
@@ -53,23 +62,423 @@ def source_folder_dialog(an_input, params):
     status = is_valid_source_folder(folder, params)
     return status
     
+
+
 select_source_folder = dict(
                         main = is_valid_source_folder, 
                         exit = dict(value = "exit", fn = exit_routine), 
                         dlg  = dict(value = "dlg", fn = source_folder_dialog)
                         )
+
 looping_input(
             select_source_folder, 
-            "Which folder to use as a template for new experiment?\n   type exact location,\n   `dlg` to start dialog, OR\n   `exit`\n>>>",
+            "Which folder to use as a template for a new experiment?\n   type exact location,\n   `dlg` to start dialog, OR\n   `exit`\n>>>",
             current_params
             )
 
 
+print(current_params)
+print("---------------------------------------------------")
+
+def is_valid_sol_rep(an_input, params):
+    status = os.path.exists(an_input) and os.path.isfile(an_input)
+    if status:
+        params["solution_repository_source"] = an_input
+    return status
+
+def sol_rep_dialog(an_input, params):
+    filename = tk.filedialog.askopenfilename(title='Select solution repository file ...', defaultextension = "json")
+    return is_valid_sol_rep(filename, params)
+
+def default_sol_rep(an_input, params):
+    return is_valid_sol_rep(params["default_solution_repository_source"], params)
+
+def default_sol_rep_value(folder):
+    if os.path.exists(folder) and os.path.isdir(folder):
+        def_path = os.path.join(folder, "config/solution_repository.json")
+        if os.path.exists(def_path):
+            return def_path
+    return ""
+
+current_params["default_solution_repository_source"] = default_sol_rep_value(current_params["source_folder"])
+
+select_sol_rep = dict(
+                    main    = is_valid_sol_rep, 
+                    exit    = dict(value = "exit", fn = exit_routine), 
+                    dlg     = dict(value = "dlg", fn = sol_rep_dialog), 
+                    default = dict(value = "def", fn = default_sol_rep)
+                    )
+
+looping_input(
+            select_sol_rep,
+            f'Solution repository to use for the new experiment:\n   type exact location,\n   `def` to use default repository\n      {current_params["default_solution_repository_source"]}\n   `dlg` to start dialog, OR\n   `exit`\n>>>',
+            current_params
+            )
 
 
 print(current_params)
 print("---------------------------------------------------")
+
+def is_valid_settings_file(an_input, params):
+    status = os.path.exists(an_input) and os.path.isfile(an_input)
+    if status:
+        params["scan_settings_source"] = an_input
+    return status
+
+def scan_setting_dialog(an_input, params):
+    filename = tk.filedialog.askopenfilename(title='Select scan settings file ...', defaultextension = "json")
+    return is_valid_settings_file(filename, params)
+
+def default_scan_settings_file(an_input, params):
+    return is_valid_settings_file(params["default_scan_settings_source"], params)
+
+def default_scan_settings_path_value(folder):
+    if os.path.exists(folder) and os.path.isdir(folder):
+        def_path = os.path.join(folder, "scan_settings.json")
+        if os.path.exists(def_path):
+            return def_path
+    return ""
+
+current_params["default_scan_settings_source"] = default_scan_settings_path_value(current_params["source_folder"])
+
+select_settings = dict(
+                    main    = is_valid_sol_rep, 
+                    exit    = dict(value = "exit", fn = exit_routine), 
+                    dlg     = dict(value = "dlg", fn = scan_setting_dialog), 
+                    default = dict(value = "def", fn = default_scan_settings_file)
+                    )
+
+looping_input(
+            select_settings,
+            f'Scan settings to use for the new experiment:\n   type exact location,\n   `def` to use default file\n      {current_params["default_scan_settings_source"]}\n   `dlg` to start dialog, OR\n   `exit`\n>>>',
+            current_params
+            )
+
+
+print(current_params)
+print("---------------------------------------------------")
+
+
+def is_target_folder(an_input, params):
+    # check is folder is empty!!
+    status = os.path.exists(an_input) and os.path.isdir(an_input)
+    if status:
+        params["root"] = an_input
+    return status
+
+def target_folder_dialog(an_input, params):
+    folder = tk.filedialog.askdirectory(title='Select/create root folder for a new experiment(s) ...', mustexist = True)
+    return is_target_folder(folder, params)
+
+def default_target_folder(an_input, params):
+    return is_target_folder(current_params["default_parent_folder"], params)
+
+current_params["default_parent_folder"]  = os.path.split(current_params["source_folder"])[0]
+
+select_root = dict(
+                    main    = is_target_folder, 
+                    exit    = dict(value = "exit", fn = exit_routine), 
+                    default = dict(value = "def", fn = default_target_folder),
+                    dlg     = dict(value = "dlg", fn = target_folder_dialog), 
+                    )
+
+looping_input(
+            select_root,
+            f'ROOT folder to use for the new experiment:\n   type exact location,\n   `def` to use\n      {current_params["default_parent_folder"]}\n   `dlg` to start dialog, OR\n   `exit`\n>>>',
+            current_params
+            )
+
+
+print(current_params)
+print("---------------------------------------------------")
+
+
+def is_valid_experiment_name(an_input, params):
+    new_path = os.path.join(params["root"], an_input)
+    status = not os.path.exists(new_path) 
+    if status:
+        params["exp_name"] = an_input
+    return status
+
+def target_folder_dialog(an_input, params):
+    folder = tk.filedialog.askdirectory(title='Select/create root folder for a new experiment(s) ...', mustexist = True)
+    return is_target_folder(folder, params)
+
+
+select_exp_name = dict(
+                    main    = is_valid_experiment_name, 
+                    exit    = dict(value = "exit", fn = exit_routine)
+                    )
+
+looping_input(
+            select_exp_name,
+            f'An experiment name to use:\n   type exact name, OR\n   `exit`\n>>>',
+            current_params
+            )
+
+
+print(current_params)
+print("---------------------------------------------------")
+
+
+class CreateNewExperimentSet:
+    def __init__(self, params: dict):
+        self.params = params
+        self.source = params["source"]
+        self.make_folders()
+        self.do_copy()
+        self.sol_rep_copy()
+        self.settings_copy()
+        print("----------------")
+        print(self.list_blank_config_files())
+        for fl in self.list_blank_config_files():
+            self.copy_verbose(
+                    os.path.join(self.source, "config", fl),
+                    os.path.join(self.config_folder, fl)
+                    )
+        print("----------------")
+        self.edit_settings_pathes()
+        self.params["scan_settings_path"] = self.settings_path
+        self.params["main_folder"] = self.main_folder
+        self.new_surfactant_add()
+
+    def make_folders(self):
+        self.main_folder = os.path.join(self.params["target"], self.params["folder"])
+        self.config_folder = os.path.join(self.main_folder, "config") 
+        self.sol_rep_path = os.path.join(self.config_folder, "solution_repository.json")
+        self.settings_path = os.path.join(self.main_folder, "scan_settings.json")
+
+        if os.path.exists(self.main_folder):
+            print(f'!!! ERROR !!!\n   {self.main_folder}\nalready exists!!! Choose folder name that does not point to existing folder.\n ... will stop now ...')
+            exit()
+
+        
+        os.mkdir(self.main_folder)
+        print(f'making folder:\n    {self.main_folder}')
+        os.mkdir(self.config_folder)
+        print(f'making folder:\n    {self.config_folder}')
+
+    def copy_verbose(self, p1, p2):
+        print(f'copy\n   {p1}\n    ==>\n    {p2}')
+        shutil.copy(p1, p2)
+
+    def copy_file_relative(self, file_relative_path):
+        self.copy_verbose(os.path.join(self.source, file_relative_path), os.path.join(self.main_folder, file_relative_path))
+
+    def do_copy(self):
+        files_to_copy = [
+                    "command_prompt_bits.md", 
+                    #"scan_settings.json",
+                    "recipes_solutions.json"
+                    #"config/solution_repository.json"
+                    #"config/config_hld_ift_experiment__blank__opentron_pp.json",
+                    #"config/config_hld_ift_experiment__blank__execute_measurement.json",
+                    #"config/config_hld_ift_experiment__blank__execute_measurement__no_wash.json",
+                    #"config/config_hld_ift_experiment__blank__execute_measurement__wash.json",
+                    #"config/config_hld_ift_experiment__blank__mixing_graph.json"
+                    ]
+        for f in files_to_copy:
+            self.copy_file_relative(f)
+
+    def sol_rep_copy(self): 
+        self.copy_verbose(self.params["source_solution_repository"], self.sol_rep_path)
+
+    def settings_copy(self): 
+        self.copy_verbose(self.params["source_settings_path"], self.settings_path)
+
+    def get_blank_profile_name(self):
+        with open(self.settings_path) as f:
+            cfg = json.load(f)
+        return cfg["configurations"]["blank"]
+
+    def list_blank_config_files(self):
+        all_files = os.listdir(os.path.join(self.source, "config"))
+        search_for = [self.get_blank_profile_name()]
+        return [st for st in all_files if any(sub in st for sub in search_for)] 
+    def new_surfactant_add(self):
+        with open(self.sol_rep_path, "r") as f:
+            cfg = json.load(f)
+        print(json.dumps(cfg, indent=2))
+
+        sol_rep = Solution_Repository.fromJSON(cfg)
+        
+        components = sol_rep.list_components()
+        for x in components:
+            print(x)
+
+        AddNewSurfactantDialog(sol_rep)
+
+        print(sol_rep.toJSON(indent = 2))
+    def edit_settings_pathes(self):
+        with open(self.settings_path, "r") as f:
+            cfg = json.load(f)
+
+        cfg["DATA_PATH"] = self.main_folder
+        cfg["LOG_PATH"] = os.path.join(self.main_folder, "log.log")
+        cfg["CONFIG_PATH"] = self.config_folder
+        cfg["SOLUTION_REPOSITORY_PATH"] = self.sol_rep_path
+
+        with open(self.settings_path, "w") as f:
+            json.dump(cfg, f, indent = 2)
+
+
+
+# end of CreateNewExperimentSet
+
+class ModifyCommandPropmtBits:
+    """ 
+    class modifies command_prompt_bits.md for new location
+    """
+    def __init__(self, params: dict):
+        self.params = params
+        self.command_prompt_bits = os.path.join(self.params["main_folder"], "command_prompt_bits.md")
+
+        with open(self.command_prompt_bits, "r") as f:
+            content = f.read()
+
+        with open(f'{self.command_prompt_bits}.bak', "w") as f:
+            f.write(content)
+
+        self.lines = content.split('\n')
+
+        self.modify_cd_path()
+
+        self.add_line_end_chrs()
+
+        with open(self.command_prompt_bits, "w") as f:
+            f.writelines(self.lines)
+
+    def modify_cd_path(self):
+        for i, _ in enumerate(self.lines):
+            if self.lines[i].startswith("cd "):
+                self.lines[i] = f'cd {self.params["main_folder"]}'.replace("/", "\\")
+    
+    def add_line_end_chrs(self):
+        for i, _ in enumerate(self.lines):
+            self.lines[i] = f'{self.lines[i]}\n'
+
+def split_path(a_path):
+    if a_path =='':
+        return []
+    elif a_path == os.path.split(a_path)[0]:
+        return [a_path]
+    else:
+        x,y = os.path.split(a_path)
+        return split_path(x) + [y]
+
+# end of CommandPropmtBits
+################################################################################
+# new_surfactant_dlg.py!!!
+# gui for new surfactant addition
+import tkinter as tk
+from hld_ift_http.solution_repository import Solution_Repository
+
+class AddNewSurfactantDialog:
+    def __init__(self, sol_rep: Solution_Repository):
+        self.sol_rep = sol_rep
+        self.root = tk.Tk()
+        self.root.geometry("550x300+300+150")
+
+        self.surfactant_name=tk.StringVar()
+        self.surfactant_density=tk.StringVar()
+
+
+        self.frame = tk.Frame(self.root)
+        self.frame.pack()
+        
+        self.placeholder_1 = tk.Label(self.frame, text = '', font=('calibre',10, 'bold'))
+        self.placeholder_2 = tk.Label(self.frame, text = '', font=('calibre',10, 'bold'))
+        
+        self.bt_OK = tk.Button (self.frame, text = "OK", command = self.update_and_close_window)
+        self.bt_Cancel = tk.Button (self.frame, text = "Cancel", command = self.close_window)
+        
+        self.surfactant_label = tk.Label(
+                                self.frame,
+                                text = 'name',
+                                font=('calibre',10, 'bold')
+                                )
+        self.surfactant_entry = tk.Entry(
+                                self.frame,
+                                textvariable = self.surfactant_name,
+                                font=('calibre',10,'normal'),
+                                width = 50
+                                )
+       
+        self.surfactant_density_label = tk.Label(
+                                self.frame,
+                                text = 'density, g/mL',
+                                font=('calibre',10, 'bold')
+                                )
+        self.surfactant_density_entry = tk.Entry(
+                                    self.frame,
+                                    textvariable = self.surfactant_density,
+                                    text = "1.0",
+                                    font=('calibre',10,'normal'),
+                                    width = 50
+                                    )
+       
+        source_row = 0
+        self.surfactant_label.grid(row= source_row,column=0)
+        self.surfactant_entry.grid(row= source_row,column=1)
+        self.placeholder_1.grid(row=1,column=0)
+        self.surfactant_density_label.grid(row=2,column=0)
+        self.surfactant_density_entry.grid(row=2,column=1)
+        self.placeholder_2.grid(row=3,column=0)
+        self.bt_OK.grid(row=4,column=1)
+        self.bt_Cancel.grid(row=4,column=2)
+        
+        self.root.mainloop()
+
+    def close_window(self): 
+        self.root.destroy()
+    def update_and_close_window(self):
+        ro = float(self.surfactant_density_entry.get())
+        name = self.surfactant_entry.get()
+        self.sol_rep.add_item(dict(
+                                mixture_type = "pure_compound",
+                                label = name,
+                                name = name,
+                                ro = ro
+                                ))
+        self.close_window()
+
+
+
+temp_params = dict(
+            source = current_params["source_folder"],
+            target = current_params["root"],
+            folder = current_params["exp_name"],
+            source_solution_repository = current_params["solution_repository_source"],
+            source_settings_path = current_params["scan_settings_source"]
+            #= current_params[""],
+        )
+
+CreateNewExperimentSet(temp_params)
+print(json.dumps(temp_params, indent = 2))
+
+ModifyCommandPropmtBits(temp_params)
+print(json.dumps(temp_params, indent = 2))
+
+#># check if config/sol_rep.json is there
+#>#   current_params["default_solution_repository"] = <value> or ""
+#>
+#>if current_params["default_solution_repository"] == "" or \
+#>        input(f'Do you want to use default solution repository?\n   {current_params["default_solution_repository"]}\n[y]es/[n]o>>> ') == "n":
+#>    #<dialog to pick repository>
+
+
+
+
+
+
+
+
 exit()
+            
+# Which folder to use as a template for new experiment?
+#    type exact location,
+#    `dlg` to start dialog, OR
+#    `exit`\n>>>
 
 if state < STATE_LOCATION_SPECIFIED:
     done = False
@@ -1093,82 +1502,6 @@ class CreateNewExperimentSet:
 
         with open(self.settings_path, "w") as f:
             json.dump(cfg, f, indent = 2)
-
-
-################################################################################
-# new_surfactant_dlg.py!!!
-# gui for new surfactant addition
-import tkinter as tk
-from hld_ift_http.solution_repository import Solution_Repository
-
-class AddNewSurfactantDialog:
-    def __init__(self, sol_rep: Solution_Repository):
-        self.sol_rep = sol_rep
-        self.root = tk.Tk()
-        self.root.geometry("550x300+300+150")
-
-        self.surfactant_name=tk.StringVar()
-        self.surfactant_density=tk.StringVar()
-
-
-        self.frame = tk.Frame(self.root)
-        self.frame.pack()
-        
-        self.placeholder_1 = tk.Label(self.frame, text = '', font=('calibre',10, 'bold'))
-        self.placeholder_2 = tk.Label(self.frame, text = '', font=('calibre',10, 'bold'))
-        
-        self.bt_OK = tk.Button (self.frame, text = "OK", command = self.update_and_close_window)
-        self.bt_Cancel = tk.Button (self.frame, text = "Cancel", command = self.close_window)
-        
-        self.surfactant_label = tk.Label(
-                                self.frame,
-                                text = 'name',
-                                font=('calibre',10, 'bold')
-                                )
-        self.surfactant_entry = tk.Entry(
-                                self.frame,
-                                textvariable = self.surfactant_name,
-                                font=('calibre',10,'normal'),
-                                width = 50
-                                )
-       
-        self.surfactant_density_label = tk.Label(
-                                self.frame,
-                                text = 'density, g/mL',
-                                font=('calibre',10, 'bold')
-                                )
-        self.surfactant_density_entry = tk.Entry(
-                                    self.frame,
-                                    textvariable = self.surfactant_density,
-                                    text = "1.0",
-                                    font=('calibre',10,'normal'),
-                                    width = 50
-                                    )
-       
-        source_row = 0
-        self.surfactant_label.grid(row= source_row,column=0)
-        self.surfactant_entry.grid(row= source_row,column=1)
-        self.placeholder_1.grid(row=1,column=0)
-        self.surfactant_density_label.grid(row=2,column=0)
-        self.surfactant_density_entry.grid(row=2,column=1)
-        self.placeholder_2.grid(row=3,column=0)
-        self.bt_OK.grid(row=4,column=1)
-        self.bt_Cancel.grid(row=4,column=2)
-        
-        self.root.mainloop()
-
-    def close_window(self): 
-        self.root.destroy()
-    def update_and_close_window(self):
-        ro = float(self.surfactant_density_entry.get())
-        name = self.surfactant_entry.get()
-        self.sol_rep.add_item(dict(
-                                mixture_type = "pure_compound",
-                                label = name,
-                                name = name,
-                                ro = ro
-                                ))
-        self.close_window()
 
 
 ################################################################################
