@@ -749,6 +749,72 @@ flowchart TB
   solutions("solution_repository.json")
   main(settings) --> opentronpp & meas & mixinggraph & solutions & scan
 ```
+
+```{mermaid generate-recipe}
+flowchart TB
+  subgraph inputs [Inputs]
+    direction LR
+    script("generate_recepies_for_solutions_v2.py") --> config(recipes_input.json)
+  end
+  subgraph effects ["Effects and outputs"]
+    direction TB
+    instructions("User readable recipe(s)")
+  end
+  inputs --> effects
+```
+
+```{mermaid edit_repository_script}
+flowchart TB
+  subgraph inputs [Inputs]
+    direction LR
+    script("solution_repository__edit.py") --> config(recipes_input.json)
+    script & config --> sol_rep("solution_repository.json")
+  end
+  subgraph effects ["Effects and outputs"]
+    direction TB
+    instructions("adds solution(s) or compound(s) to repository")
+  end
+  inputs --> effects
+```
+
+```{mermaid prepare-solutions-script}
+flowchart TB
+  subgraph inputs [Inputs]
+    direction LR
+    script("2D_HLD_scan_v2__prepare_solutions.py") --> config(scan_settings.json)
+    script & config --> sol_rep("solution_repository.json")
+  end
+  subgraph effects ["Effects and outputs"]
+    direction TB
+    instructions("mixes stock solution(s)")
+    instructions2("adds stock solution(s) to solution repository")
+    instructions3("distributes water/oil for washing/waste locations") 
+    instructions ~~~ instructions2 ~~~ instructions3
+  end
+  inputs --> effects
+```
+    
+```{mermaid prepare-configuration-script}
+flowchart TB
+  subgraph inputs [Inputs]
+    direction LR
+    script("2D_HLD_scan_v2__setup_configuration.py") --> config(scan_settings.json)
+    script & config --> sol_rep("solution_repository.json")
+  end
+  subgraph effects ["Effects and outputs"]
+    direction TB
+    op_pp("config_&ltname&gt__opentrons_pp.json")
+    op_pp@{shape: tag-doc}
+    mxg("config_&ltname&gt__mixing_graph.json")
+    meas("config_&ltname&gt__measurements.json")
+
+    instructions("create configurations")
+    instructions ~~~ op_pp & mxg & meas
+  end
+  inputs --> effects
+  script --> op_pp & mxg & meas
+```
+
 There are several helper scripts that help to prepare stock solutions and scan settings for this scan. These scripts assume that user uses particular layout[^note_on_vial_positions_in_layout].
 
 
@@ -1104,3 +1170,7 @@ how to use miniconda prompt
 	use only miniconda (anaconda) prompt!!!
 	always activate your environment in your session!!!
 ###############################################################
+
+# checklist of all things needed to run hld scans
+
+

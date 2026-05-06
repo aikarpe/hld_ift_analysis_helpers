@@ -56,4 +56,52 @@ def inspect_item():
         pick selection
         show selection
 
-def 
+def select_item() 
+
+
+# start program
+#   open repository
+#   make a copy of repository obj OR copy of its file (.bak)
+#   
+# main menu loop:
+#   make a choice
+#       if choice == exit
+#           break loop
+#       elif choice == add:
+#           add menu
+#       elif choice == delete:
+#           delete_menu
+#       elif choice == view:
+#           view_menu
+#       elif choice == recipe:
+#           recipe_menu
+#       elif choice == file_op:
+#           file_op_menu
+#
+# end program
+#   prompt: save changes y/n
+#   if y:
+#       save current state of sol rep
+#   else:
+#       restore initial from copy or bak
+
+# add menu:
+#   make a choice
+#       if choice = add compound
+#       elif choice = add mixture
+
+
+# import item(s) from another repository
+# save changes
+# discard changes
+# exit
+
+# delete item from repository
+# add new compound (1 component)
+# add new mixture
+# add new binary mixture:
+# recipe: existing mixture
+# recipe: from two mixtures
+
+# menu_main
+#   import, delete, add, recipe, view
