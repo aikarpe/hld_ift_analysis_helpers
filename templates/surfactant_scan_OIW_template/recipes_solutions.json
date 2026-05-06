@@ -1,0 +1,53 @@
+{
+  "solution_repository_path": "C:/Users/admin/Documents/Data/aikars/opentron/Tergitol_15_S_5_OIW_C7_C16/config/solution_repository.json",
+  "compounds_to_add": [
+  {
+    "mixture_type": "pure_compound",
+    "ro": 0.963,
+    "name": "Tergitol_15_S_5",
+    "label": "Tergitol_15_S_5"
+  },
+  {
+    "mixture_type": "binary_mix",
+    "name": "20g/100mL Tergitol_15_S_5 in heptane 2026-02-11",
+    "m_solute":   9.899,
+    "m_solvent":  26.665,
+    "solvent":   "heptane",
+    "solute":    "Tergitol_15_S_5",
+    "v_ro":       5.0,
+    "m_ro_water": 5.00044,
+    "m_ro":       3.69379,
+    "date":       "2026-02-11"
+  },
+  {
+    "mixture_type": "binary_mix",
+    "name": "20g/100mL Tergitol_15_S_5 in hexadecane 2026-02-11",
+    "m_solute":   9.572,
+    "m_solvent":  28.956,
+    "solvent":   "hexadecane",
+    "solute":    "Tergitol_15_S_5",
+    "v_ro":       5.0,
+    "m_ro_water": 5.00044,
+    "m_ro":       4.10178,
+    "date":       "2026-02-11"
+  }
+  ],
+  "recepies": [
+    {
+      "solution1": "Tergitol_15_S_5",
+      "solution2": "hexadecane",
+      "component_to_target": "Tergitol_15_S_5",
+      "target_concentration": 0.2,
+      "concentration_type": "m/v", 
+      "quantity": 38.5
+    },
+    {
+      "solution1": "Tergitol_15_S_5",
+      "solution2": "heptane",
+      "component_to_target": "Tergitol_15_S_5",
+      "target_concentration": 0.2,
+      "concentration_type": "m/v", 
+      "quantity": 36.5
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "frame_rate_measurement": 1.0,
+  "pipette": "left",
+  "tip_location": {
+    "slot": "3",
+    "well_location": "A1"
+  },
+  "measurement_location": {
+    "slot": "10",
+    "well_location": "A1"
+  },
+  "measurement_depth": -29,
+  "measurement_volume": 5,
+  "measurement_rate_dispensation": 0.013,
+  "rate_aspiration": 0.2,
+  "start_volume": 2.0,
+  "start_rate_dispensation": 0.1,
+  "start_dispense_location": "sample",
+  "start_delay": 10.0,
+  "flag_focus": true,
+  "end_volume": 2.0,
+  "end_flush_location": {
+    "slot": "2",
+    "well_location": "A1"
+  },
+  "washing_steps": {
+    "sequence_washing_steps": [
+      {
+        "pipette": "left",
+        "solution_inner": {
+          "slot": "2",
+          "well_location": "A4"
+        },
+        "solution_outer": {
+          "slot": "2",
+          "well_location": "A3"
+        },
+        "sponge": {
+          "sponge_loc": null,
+          "sponge_depth": 10
+        },
+        "n2": {
+          "n2_loc": null,
+          "n2_time": 3
+        },
+        "blow_out": true,
+        "volume": 2,
+        "rates": {
+          "rate_aspiration": 0.5,
+          "rate_dispensation": 0.5
+        },
+        "repeats": 1
+      },
+      {
+        "pipette": "left",
+        "solution_inner": null,
+        "solution_outer": {
+          "slot": "2",
+          "well_location": "A3"
+        },
+        "sponge": {
+          "sponge_loc": null,
+          "sponge_depth": 10
+        },
+        "n2": {
+          "n2_loc": null,
+          "n2_time": 3
+        },
+        "blow_out": true,
+        "volume": 5,
+        "rates": {
+          "rate_aspiration": 1,
+          "rate_dispensation": 0.5
+        },
+        "repeats": 1
+      },
+      {
+        "pipette": "left",
+        "solution_inner": "sample",
+        "solution_outer": {
+          "slot": "2",
+          "well_location": "A2"
+        },
+        "sponge": {
+          "sponge_loc": null,
+          "sponge_depth": 10
+        },
+        "n2": {
+          "n2_loc": null,
+          "n2_time": 3
+        },
+        "blow_out": true,
+        "volume": 5,
+        "rates": {
+          "rate_aspiration": 0.5,
+          "rate_dispensation": 0.5
+        },
+        "repeats": 2
+      }
+    ]
+  },
+  "focus_parameters": {
+    "a_range": [
+      -2.0,
+      2.0
+    ],
+    "steps_in_range": 17,
+    "images_per_location": 7,
+    "save_af_images": true
+  }
+}

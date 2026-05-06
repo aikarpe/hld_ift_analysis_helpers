@@ -240,7 +240,7 @@ class CreateNewExperimentSet:
         self.edit_settings_pathes()
         self.params["scan_settings_path"] = self.settings_path
         self.params["main_folder"] = self.main_folder
-        self.new_surfactant_add()
+        #self.new_surfactant_add()
 
     def make_folders(self):
         self.main_folder = os.path.join(self.params["target"], self.params["folder"])

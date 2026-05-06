@@ -1,0 +1,49 @@
+{
+  "note": "inverse surfactant scan settings",
+  "note1": "this is meant to work together with `2D_HLD_scan_v2__execute_OIW.py`",
+  "DATA_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\surfactant_scan_OIW_template",
+  "LOG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\surfactant_scan_OIW_template\\log.log",
+  "CONFIG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\surfactant_scan_OIW_template\\config",
+  "SOLUTION_REPOSITORY_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\surfactant_scan_OIW_template\\config\\solution_repository.json",
+  "c_surfactant_experiment": 20,
+  "c_surfactant_stock": 20,
+  "stocks": {
+    "surfactant_in_oil_1": "20g/100mL Tergitol_15_S_5 in heptane 2026-02-11",
+    "surfactant_in_oil_2": "20g/100mL Tergitol_15_S_5 in hexadecane 2026-02-11",
+    "oil_1": "heptane",
+    "oil_2": "hexadecane",
+    "stock_aqueous_1": "water",
+    "stock_aqueous_2": "30g_NaCl_in_100mL_water_20250225",
+    "run_stock_surf_oil_1": "20g/100mL Tergitol_15_S_5 in heptane 2026-02-11",
+    "run_stock_surf_oil_2": "20g/100mL Tergitol_15_S_5 in hexadecane 2026-02-11",
+    "sample_80_20": "0.800 of (20g/100mL Tergitol_15_S_5 in heptane 2026-02-11) and 0.200 of (20g/100mL Tergitol_15_S_5 in hexadecane 2026-02-11)",
+    "sample_60_40": "0.600 of (20g/100mL Tergitol_15_S_5 in heptane 2026-02-11) and 0.400 of (20g/100mL Tergitol_15_S_5 in hexadecane 2026-02-11)",
+    "sample_40_60": "0.400 of (20g/100mL Tergitol_15_S_5 in heptane 2026-02-11) and 0.600 of (20g/100mL Tergitol_15_S_5 in hexadecane 2026-02-11)",
+    "sample_28_78": "3.73e+37 of (37g/99mL Tergitol_15_S_5 in heptane 999999) and 7.8e+37 of (78g/99mL Tergitol_15_S_5 in hexadecane 999999)",
+    "sample_20_80": "0.200 of (20g/100mL Tergitol_15_S_5 in heptane 2026-02-11) and 0.800 of (20g/100mL Tergitol_15_S_5 in hexadecane 2026-02-11)"
+  },
+  "configurations": {
+    "blank": "hld_ift_experiment_OIW_blank",
+    "start": "2026-02-19_20g100mL_Tergitol_15S5_C7C16_OIW",
+    "end": "2026-02-19_20g100mL_Tergitol_15S5_C7C16_OIW_run",
+    "to_reuse": {
+      "name": "hld_ift_experiment_OIW_blank",
+      "content": []
+    }
+  },
+  "scan": {
+    "experiment_metadata": {
+      "description": "20g/100ml Tergitol 15-S-5, inverse scan oil in water",
+      "needle_dia": 0.312,
+      "oil": "C7 to C16",
+      "measurement": "pulsed, 20 steps, 6 s pause",
+      "scan_type": "2D scan: salinity, oil"
+    },
+    "scan_part_index": "3",
+    "n_expansions": 0,
+    "n_approximation": 0,
+    "number_of_oil_points": 9,
+    "oil_volume": 3000,
+    "scan_type": "linear"
+  }
+}

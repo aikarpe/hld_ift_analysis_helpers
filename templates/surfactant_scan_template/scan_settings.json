@@ -1,0 +1,43 @@
+{
+  "note": "surfactant scan settings",
+  "note1": "this is meant to work together with `2D_HLD_scan_v2__execute.py`",
+  "DATA_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\surfactant_scan_template",
+  "LOG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\surfactant_scan_template\\log.log",
+  "CONFIG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\surfactant_scan_template\\config",
+  "SOLUTION_REPOSITORY_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\surfactant_scan_template\\config\\solution_repository.json",
+  "c_surfactant_experiment": 4,
+  "c_surfactant_stock": 20,
+  "stocks": {
+    "surfactant_in_oil_1": "20g/ml tergitol_15-s-5 heptane_20250707",
+    "surfactant_in_oil_2": "20g/ml tergitol_15-s-5 hexadecane_20250707",
+    "oil_1": "heptane",
+    "oil_2": "hexadecane",
+    "stock_aqueous_1": "water",
+    "stock_aqueous_2": "30g_NaCl_in_100mL_water_20250225",
+    "run_stock_surf_oil_1": "4g/ml tergitol_15-s-5 heptane_20250805",
+    "run_stock_surf_oil_2": "4g/ml tergitol_15-s-5 hexadecane_20250805"
+  },
+  "configurations": {
+    "blank": "hld_ift_experiment__blank",
+    "start": "2025-08-05_4.00g_Tergitol_C7C16_NaCl",
+    "end": "2025-08-05_4.00g_Tergitol_C7C16_NaCl_001",
+    "to_reuse": {
+      "name": "hld_ift_experiment__blank",
+      "content": []
+    }
+  },
+  "scan": {
+    "experiment_metadata": {
+      "description": "Tergitol 4g/100ml oil (C7/C16)",
+      "needle_dia": 0.312,
+      "oil": "C7 to C16",
+      "measurement": "pulsed, 20 steps, 6 s pause",
+      "scan_type": "2D scan: salinity, oil"
+    },
+    "n_expansions": 3,
+    "n_approximation": 0,
+    "number_of_oil_points": 6,
+    "oil_volume": 3000,
+    "scan_type": "linear"
+  }
+}
