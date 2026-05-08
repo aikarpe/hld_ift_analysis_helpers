@@ -140,11 +140,59 @@ class SolutionRepositoryApp:
     def __init__(self, path: str):
         self.rep = self.open(path) 
         self.original_path = path
+        self.recipes = []
         #self.list_solutions()
         #self.list_components()
         #self.show_solution_details("nonsense")
         #self.show_solution_details_w_selection()
-        self.create_recipe_w_dialog()
+        #self.create_recipe_w_dialog()
+        self.main_dlg()
+
+    def main_dlg(self):
+        def is_unknown_choice(an_input, params):
+            return False
+        def exit_fn(an_input, params):
+            return True
+        def or_else(an_input, params):
+            return False
+        def user_recipe(an_input, params):
+            self.create_recipe_w_dialog()
+            return False
+        def user_list_solutions(an_input, params):
+            self.list_solutions()
+            return False
+        def user_list_components(an_input, params):
+            self.list_components()
+            return False
+        def user_show_solution_details(an_input, params):
+            self.show_solution_details_w_selection()
+            return False
+        def user_add_cmpd(an_input, params):
+            self.add_new_compound()
+            return False
+
+
+        mmparams = dict()
+        select_main_menu = dict(
+                        main = is_unknown_choice,
+                        exit = dict(value = "exit", fn = exit_fn), 
+                        cancel = dict(value = "cancel", fn = exit_fn), 
+                        cancel2 = dict(value = "c", fn = exit_fn),
+                        quit = dict(value = "q", fn = exit_fn),
+                        recipe = dict(value = "r", fn = user_recipe),
+                        list_sol = dict(value = "vs", fn = user_list_solutions),
+                        list_cmp = dict(value = "vc", fn = user_list_components),
+                        list_dtls = dict(value = "vd", fn = user_show_solution_details),
+                        add_cmp = dict(value = "ac", fn = user_add_cmpd)
+                        )
+
+        looping_input(
+            select_main_menu, 
+            "re[P]ository | [V]iew / list items | [R]ecipes | [q]uit ",
+            mmparams
+            )
+
+
 
     def open(self, path):
         try:
@@ -238,6 +286,77 @@ class SolutionRepositoryApp:
         details_hdr = [mk_str(headers[0], headers[1])]
         return functools.reduce(lambda x,y: x + '\n' + y, details_ro + details_hdr + details, main)
 
+    def add_new_compound(self):
+        nc_params = dict(exit = False)
+
+        def cancel_add_new_cmpd(an_input, params):
+            params["exit"] = True
+            return True
+        def is_valid_new_cmpd_name(an_input, params):
+            existing_components = self.rep.list_components()
+            status = an_input not in existing_components and len(an_input) >= 3
+            if status:
+                params["name"] = an_input
+            else:
+                if an_input in existing_components:
+                    print(f'There is already component with name `{an_input}`. Specify different name!!!')
+                else:
+                    print(f'Name `{an_input}` is too short, specify at least 3 symbols!!!')
+            return status
+
+        if not nc_params["exit"]:
+
+            select_name = dict(
+                        main = is_valid_new_cmpd_name, 
+                        exit = dict(value = "exit", fn = cancel_add_new_cmpd), 
+                        cancel = dict(value = "cancel", fn = cancel_add_new_cmpd), 
+                        cancel2 = dict(value = "c", fn = cancel_add_new_cmpd)
+                        )
+
+            looping_input(
+                select_name, 
+                "Enter name for new compound>>>",
+                nc_params
+                )
+
+        def is_valid_ro_value(an_input, params):
+            try:
+                val = float(an_input)
+                status = val < 3 and val > 0.5
+                if status:
+                    params["ro"] = val
+                else:
+                    print(f'density value `{val}` is out of range 0.5..3.0')
+                return status
+            except Exception:
+                print("Enter a float value!!!")
+                return False
+        
+        if not nc_params["exit"]:
+
+            select_ro = dict(
+                        main = is_valid_ro_value, 
+                        exit = dict(value = "exit", fn = cancel_add_new_cmpd), 
+                        cancel = dict(value = "cancel", fn = cancel_add_new_cmpd), 
+                        cancel2 = dict(value = "c", fn = cancel_add_new_cmpd)
+                        )
+
+            looping_input(
+                select_ro, 
+                "Enter density (in g/ml) for new compound (use 1.0 if not known)>>>",
+                nc_params
+                )
+
+        if not nc_params["exit"]:
+            self.rep.add_item(dict(
+                                mixture_type = "pure_compound",
+                                label = nc_params["name"],
+                                name = nc_params["name"],
+                                ro = nc_params["ro"] 
+                                ))
+        else:
+            print("Add new compound canceled! Nothing was added!")
+
     def create_recipe_w_dialog(self):
             
         fn_params = dict(exit = False)
@@ -262,7 +381,11 @@ class SolutionRepositoryApp:
 
         looping_input(
             select_sol_1, 
-            "select index of 1st solution/compound to be used for recipe optimization>>>",
+            """
+############################################################################
+# select index of 1st solution/compound to be used for recipe optimization #
+############################################################################
+...enter...""",
             fn_params
             )
 
@@ -390,14 +513,26 @@ class SolutionRepositoryApp:
                 )
 
         print(fn_params)
-        create_recepie_for(
-                        self.rep.items[fn_params["solution_1_label"]],
-                        self.rep.items[fn_params["solution_2_label"]],
-                        fn_params["component"],
-                        fn_params["target"], 
-                        fn_params["concentration_type"],
-                        fn_params["target_amount"]
-                        )
+        sol, recipe = create_recepie_for(
+                            self.rep.items[fn_params["solution_1_label"]],
+                            self.rep.items[fn_params["solution_2_label"]],
+                            fn_params["component"],
+                            fn_params["target"], 
+                            fn_params["concentration_type"],
+                            fn_params["target_amount"]
+                            )
+        print(recipe)
+        
+        recipe_dict = dict(
+            sol_1 = self.rep.items[fn_params["solution_1_label"]],
+            sol_2 = self.rep.items[fn_params["solution_2_label"]],
+            component = fn_params["component"],
+            target = fn_params["target"], 
+            concentration_type = fn_params["concentration_type"],
+            target_amount = fn_params["target_amount"],
+            solution = sol,
+            recipe = recipe
+                            )
 
         
 def create_recepie_for(sol1, sol2, component, target, concentration_type, amount_needed = 1, method = "Nelder-Mead"):
@@ -452,32 +587,47 @@ def create_recepie_for(sol1, sol2, component, target, concentration_type, amount
         '}'
  
     res = None
-    if concentration_type == "m/v":
-        print(msg_str(concentration_type))
+    is_m_v = concentration_type == "m/v"
+    if is_m_v:
+        #print(msg_str(concentration_type))
         res = minimize(optimize_by_m_v, np.array([0.5]), method = method, bounds = [(0, 1)])
     else: # assume target is mass fraction
-        print(msg_str("default"))
+        #print(msg_str("default"))
         res = minimize(optimize_by_weight_fraction, np.array([0.3]), method = method, bounds = [(0, 1)])
 
     if res is not None and res.success:
         x = res.x[0]
         resulting_mixture = temp_sol(x) 
         
-        m_solute = x * amount_needed
-        m_solvent = (1-x) * amount_needed
-        indent_str = '    '  
-        
-        print(f'Quantity: {amount_needed:0.4f} g\n\nUse:\n{indent_str}{m_solute:0.4f} g of {sol1.name} and\n{indent_str}{m_solvent:0.4f} g of {sol2.name}')
-        print(f'\n{indent_str}m({sol2.name})/m({sol1.name}): {(1 - x) / x: 0.6f}  g/g')
+        m_solute = x * amount_needed * (resulting_mixture.ro if is_m_v else 1)
+        m_solvent = (1-x) * amount_needed * (resulting_mixture.ro if is_m_v else 1)
 
-        print("\n------- dictionary for inclusion in solution repository -------\n")
-        print(binary_mix_recipe_dict_str(resulting_mixture, sol1, sol2, m_solute, m_solvent)) 
-        print(f"\n------- target solution representation -------\n\n{json.dumps(resulting_mixture.toDict(), indent = 2)}")
-        return temp_sol(x)
+        indent_str = '    '  
+        a_unit = 'ml' if is_m_v else 'g'
+        params_use = params['m/v' if is_m_v else 'default']
+        human_recipe_lst = [
+                f'optimizing for',
+                f'{indent_str}{indent_str}component: `{component}`',
+                f'{indent_str}{indent_str}concentration type: `{params_use["concentration"]}`',
+                f'{indent_str}{indent_str}target: {target} {params_use["units"]}',
+                f'Quantity: {amount_needed:0.4f} {a_unit}',
+                f'',
+                f'Use:'
+                f'{indent_str}{m_solute:0.4f} g of {sol1.name} and',
+                f'{indent_str}{m_solvent:0.4f} g of {sol2.name}',
+                f'',
+                f'{indent_str}m({sol2.name})/m({sol1.name}): {(1 - x) / x: 0.6f}  g/g'
+                ]
+        
+        human_recipe = functools.reduce(lambda x,y: x + '\n' + y, human_recipe_lst)
+        #print("\n------- dictionary for inclusion in solution repository -------\n")
+        #print(binary_mix_recipe_dict_str(resulting_mixture, sol1, sol2, m_solute, m_solvent)) 
+        #print(f"\n------- target solution representation -------\n\n{json.dumps(resulting_mixture.toDict(), indent = 2)}")
+        return temp_sol(x), human_recipe
     else:
         print('failed to create a recepie')
         print(res)
-        return None
+        return None, 'failed to create a recepie'
 
 def mix(sol1, m1, sol2, m2, ro_final, name):
     sol = Solution.combine(
