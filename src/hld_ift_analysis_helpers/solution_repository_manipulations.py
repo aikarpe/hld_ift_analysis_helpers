@@ -146,31 +146,74 @@ class SolutionRepositoryApp:
         #self.show_solution_details("nonsense")
         #self.show_solution_details_w_selection()
         #self.create_recipe_w_dialog()
+        self.recipes = dict()
         self.main_dlg()
 
     def main_dlg(self):
+        def print_title_box(a_str):
+            print("================================================================================")
+            print(f'|{a_str:^78}|')
+            print("================================================================================")
+
+        def save_rep_w_prompt():
+            k = input(f'repository @:\n{self.original_path}\nDo you want to save it? y/n>>>')
+            if k == "y":
+                save_rep()
+            elif k == "Y":
+                save_rep()
+            elif len(k) > 1 and k[0] in 'yY':
+                save_rep()
+        def save_rep():
+            with open(self.original_path, 'w') as f:
+                self.rep.toJSON(f, indent = 2)
         def is_unknown_choice(an_input, params):
             return False
         def exit_fn(an_input, params):
+            save_rep_w_prompt()
             return True
         def or_else(an_input, params):
+            k = input("... press enter to continue...")
             return False
         def user_recipe(an_input, params):
+            print_title_box("Create recipe ...")
             self.create_recipe_w_dialog()
+            k = input("... press enter to continue...")
             return False
         def user_list_solutions(an_input, params):
+            print_title_box("List solutions ...")
             self.list_solutions()
+            k = input("... press enter to continue...")
             return False
         def user_list_components(an_input, params):
+            print_title_box("List available components ...")
             self.list_components()
+            k = input("... press enter to continue...")
             return False
         def user_show_solution_details(an_input, params):
+            print_title_box("Show details of a solution/mixture ...")
             self.show_solution_details_w_selection()
+            k = input("... press enter to continue...")
             return False
         def user_add_cmpd(an_input, params):
+            print_title_box("Add new compound ...")
             self.add_new_compound()
+            k = input("... press enter to continue...")
             return False
-
+        def user_list_recipes(an_input, params):
+            print_title_box("List recipes ...")
+            self.list_recipes()
+            k = input("... press enter to continue...")
+            return False
+        def user_show_recipes_details(an_input, params):
+            print_title_box("Show details of a recipe ...")
+            self.show_recipe_details_w_selection()
+            k = input("... press enter to continue...")
+            return False
+        def user_add_sol_from_recipe(an_input, params):
+            print_title_box("Add solution created from recipe ...")
+            self.add_solution_from_recipe()
+            k = input("... press enter to continue...")
+            return False
 
         mmparams = dict()
         select_main_menu = dict(
@@ -183,7 +226,10 @@ class SolutionRepositoryApp:
                         list_sol = dict(value = "vs", fn = user_list_solutions),
                         list_cmp = dict(value = "vc", fn = user_list_components),
                         list_dtls = dict(value = "vd", fn = user_show_solution_details),
-                        add_cmp = dict(value = "ac", fn = user_add_cmpd)
+                        list_recipes = dict(value = "vr", fn = user_list_recipes),
+                        list_recipes_dtls = dict(value = "vrd", fn = user_show_recipes_details),
+                        add_cmp = dict(value = "ac", fn = user_add_cmpd),
+                        add_sol_from_recipe = dict(value = "ar", fn = user_add_sol_from_recipe)
                         )
 
         looping_input(
@@ -194,20 +240,22 @@ class SolutionRepositoryApp:
                        MAIN MENU
 ------------------------------------------------------
 Add
-    ac: a compound
-    ar: a solution/mixture based on recipe
+     ac: a compound
+     ar: a solution/mixture based on recipe
 
 Remove
 
 Recipes
-    r: binary mixtrue, optimize for 1 component
+      r: binary mixtrue, optimize for 1 component
 
 View
-    vs: available solutions/mixtures
-    vc: available components
-    vd: details of a solution/mixture
+     vs: available solutions/mixtures
+     vd: details of a solution/mixture
+     vc: available components
+     vr: available recipes
+    vrd: details of a recipe
 
-exit,q: exit program
+ exit,q: exit program
 ------------------------------------------------------
 >>>
 """,
@@ -219,11 +267,121 @@ exit,q: exit program
     def open(self, path):
         try:
             rep = Solution_Repository.fromJSON(file = path)
+            with open(f'{path}.bak', 'w') as f:
+                rep.toJSON(f, indent = 2)
+            if rep is None:
+                print(f'repository at:\n{path}\n results in NULL')
             return rep
         except Exception as e:
             print(f'while opening solution repository at:\n   `{path}`\nfollowing error occured:\n   {str(e)}')
             return None
 
+    def add_solution_from_recipe(self):
+        if len(self.recipes.keys()) == 0:
+            print("no recipes created yet!!! Will stop now ... ")
+            return
+
+        choice = self.make_a_choice([x for x in self.recipes ])
+        if choice is None:
+            print("no recipe selected!!! Will stop now ... ")
+            return
+        
+        a_recipe = self.recipes[choice]
+        sol_1_name = a_recipe["sol_1"].name
+        sol_2_name = a_recipe["sol_2"].name
+        all_solutions = self.rep.list_solution_names()
+
+        if not (sol_1_name in all_solutions and sol_2_name in all_solutions):
+            print(f'{sol_1_name} or\n{sol_2_name}\n are not in repository anymore!!! Will stop now ...')
+            
+
+        def cancel_add_by_recipe(an_input, params):
+            params["exit"] = True
+            return True
+        def is_valid_sol_name(an_input, params):
+            sol_names = self.rep.list_solution_names()
+            status = an_input not in sol_names
+            if status:
+                params["name"] = an_input
+            else:
+                print(f'solution with name: `{an_input}` is already defined, choose unique name!!!')
+            return status
+        
+        mixt_params = dict(mixture_type = "binary_mix",
+                            solute = sol_1_name,
+                            solvent = sol_2_name,
+                            v_ro = 1.0,
+                            exit = False
+                           )
+         
+        if not mixt_params["exit"]:
+
+            select_name = dict(
+                        main = is_valid_sol_name, 
+                        exit = dict(value = "exit", fn = cancel_add_by_recipe), 
+                        cancel = dict(value = "cancel", fn = cancel_add_by_recipe), 
+                        cancel2 = dict(value = "c", fn = cancel_add_by_recipe)
+                        )
+
+            looping_input(
+                select_name, 
+                "Enter name for new solution>>>",
+                mixt_params
+                )
+
+        def get_mass(sol_name, mass_key, params):
+            if not params["exit"]:
+                def is_ok_mass_value(an_input, params):
+                    try:
+                        val = float(an_input)
+                        params[mass_key] = val
+                        return True
+                    except Exception:
+                        print("Enter float number for mass value")
+                        return False
+
+                select_value = dict(
+                            main = is_ok_mass_value,
+                            exit = dict(value = "exit", fn = cancel_add_by_recipe), 
+                            cancel = dict(value = "cancel", fn = cancel_add_by_recipe), 
+                            cancel2 = dict(value = "c", fn = cancel_add_by_recipe)
+                            )
+
+                looping_input(
+                    select_value, 
+                    f"Enter mass (in g) of `{sol_name}` used>>>",
+                    params
+                    )
+
+        get_mass(mixt_params["solute"], "m_solute", mixt_params)
+        get_mass(mixt_params["solvent"], "m_solvent", mixt_params)
+        print("\nNext two entries are for density estimate ... ")
+        get_mass("water (density reference)", "m_ro_water", mixt_params)
+        get_mass(mixt_params["name"], "m_ro", mixt_params)
+
+        if not mixt_params["exit"]:
+            self.rep.add_item(mixt_params)
+
+        if not mixt_params["exit"] and mixt_params["name"] in self.rep.list_solution_names():
+            print(f'solution `{mixt_params["name"]}` successfully created!!!')
+        else:
+            print("no soltion was added ...")
+
+        #    def binary_mix_recipe_dict_str(mixture, solute, solvent, m_solute, m_solvent):
+        #        return '{\n' + \
+        #        f'    \"mixture_type\": \"binary_mix\",\n' + \
+        #        f'    \"name\": \"{mixture.name}_{datetime.datetime.now().strftime("%Y%m%d")}\",\n' + \
+        #        f'    \"m_solute\":   _{m_solute:0.4f}_,\n' + \
+        #        f'    \"m_solvent\":  _{m_solvent:0.4f}_,\n' + \
+        #        f'    \"solvent\":   \"{solvent.name}\",\n' + \
+        #        f'    \"solute\":    \"{solute.name}\",\n' + \
+        #        f'    \"v_ro\":       _1.0_,\n' + \
+        #        f'    \"m_ro_water\": _1.0_,\n' + \
+        #        f'    \"m_ro\":       _{mixture.ro:0.5f}_,\n' + \
+        #        f'    \"date\":       \"{datetime.datetime.now().strftime("%Y-%m-%d")}\"\n' + \
+        #        '}'
+
+ 
     def list_solutions(self):
         components = self.rep.list_solution_names()
         self.print_lot_of_choices(self.compact_string(components))
@@ -232,7 +390,14 @@ exit,q: exit program
         components = self.rep.list_components()
         self.print_lot_of_choices(self.compact_string(components))
 
+    def list_recipes(self):
+        recipes = [ x for x in self.recipes ]
+        self.print_lot_of_choices(self.compact_string(recipes))
+
     def compact_string(self, options, show_index = True, width = 4, terminal_width = 80):
+        if options is None or len(options) == 0:
+            return ["No choices available; (use `c` to cancel prompt, if needed)"]
+
         max_width = max(list(map(len, options))) 
         total_width = max_width + width + 2
         columns = max(1, terminal_width // total_width)
@@ -308,6 +473,17 @@ exit,q: exit program
         details_hdr = [mk_str(headers[0], headers[1])]
         return functools.reduce(lambda x,y: x + '\n' + y, details_ro + details_hdr + details, main)
 
+    def show_recipe_details(self, label):
+        #print(self.recipes.keys())
+        if label in self.recipes.keys():
+            print(self.recipe_details_pretty(self.recipes[label]))
+
+    def show_recipe_details_w_selection(self):
+        self.show_recipe_details(self.make_a_choice([x for x in self.recipes]))
+
+    def recipe_details_pretty(self, recipe):
+        return recipe["recipe"]
+
     def add_new_compound(self):
         nc_params = dict(exit = False)
 
@@ -376,6 +552,7 @@ exit,q: exit program
                                 name = nc_params["name"],
                                 ro = nc_params["ro"] 
                                 ))
+            print(f'new compound was created!\n{json.dumps(self.rep.items[nc_params["name"]].toDict(), indent = 2)}')
         else:
             print("Add new compound canceled! Nothing was added!")
 
@@ -403,11 +580,7 @@ exit,q: exit program
 
         looping_input(
             select_sol_1, 
-            """
-############################################################################
-# select index of 1st solution/compound to be used for recipe optimization #
-############################################################################
-...enter...""",
+            "\n # 1st solution/compound to be used for recipe optimization #\n ... press enter ...",
             fn_params
             )
 
@@ -433,7 +606,7 @@ exit,q: exit program
                             )
             looping_input(
                 select_sol_2, 
-                "select index of 2nd solution/compound to be used for recipe optimization>>>",
+                "\n # 2nd solution/compound to be used for recipe optimization #\n ... press enter ...",
                 fn_params
                 )
 
@@ -459,7 +632,7 @@ exit,q: exit program
                             )
             looping_input(
                 select_comp, 
-                "select index of component to be used for concentration optimizatin>>>",
+                "# component to be used for concentration optimization #\n ... press enter ...",
                 fn_params
                 )
 
@@ -481,7 +654,7 @@ exit,q: exit program
                             )
             looping_input(
                 select_conc_type, 
-                "select index of concentration type to be used>>>",
+                "# concentration type to be used #\n ... press enter ...",
                 fn_params
                 )
 
@@ -505,7 +678,7 @@ exit,q: exit program
             range_string = "0 - 1" if fn_params['concentration_type'] == "m/m" else "0 - ro in g/ml"
             looping_input(
                 select_trg_val, 
-                f"Enter target concentrationi\n   available range: ({range_string}) for `{fn_params['concentration_type']}`\n>>>",
+                f"Enter target concentration\n   available range: ({range_string}) for `{fn_params['concentration_type']}`\n>>>",
                 fn_params
                 )
 
@@ -544,6 +717,8 @@ exit,q: exit program
                             fn_params["target_amount"]
                             )
         print(recipe)
+
+        
         
         recipe_dict = dict(
             sol_1 = self.rep.items[fn_params["solution_1_label"]],
@@ -555,6 +730,27 @@ exit,q: exit program
             solution = sol,
             recipe = recipe
                             )
+
+        if sol is not None:
+            def is_valid_recipe_label(an_input, params):
+                status = len(an_input) >= 5 and an_input not in self.recipes.keys()
+                if status:
+                    self.recipes[an_input] = recipe_dict 
+                return status
+
+            select_label = dict(
+                            main = is_valid_recipe_label,
+                            exit = dict(value = "exit", fn = exit_routine), 
+                            cancel = dict(value = "cancel", fn = exit_routine), 
+                            cancel2 = dict(value = "c", fn = exit_routine)
+                            )
+            
+            looping_input(
+                select_label, 
+                f"Enter label for this recipe (5 or more symbols) >>>",
+                fn_params
+                )
+
 
         
 def create_recepie_for(sol1, sol2, component, target, concentration_type, amount_needed = 1, method = "Nelder-Mead"):
