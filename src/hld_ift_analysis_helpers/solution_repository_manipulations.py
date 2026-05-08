@@ -188,7 +188,29 @@ class SolutionRepositoryApp:
 
         looping_input(
             select_main_menu, 
-            "re[P]ository | [V]iew / list items | [R]ecipes | [q]uit ",
+            #"re[P]ository | [V]iew / list items | [R]ecipes | [q]uit ",
+            """
+------------------------------------------------------
+                       MAIN MENU
+------------------------------------------------------
+Add
+    ac: a compound
+    ar: a solution/mixture based on recipe
+
+Remove
+
+Recipes
+    r: binary mixtrue, optimize for 1 component
+
+View
+    vs: available solutions/mixtures
+    vc: available components
+    vd: details of a solution/mixture
+
+exit,q: exit program
+------------------------------------------------------
+>>>
+""",
             mmparams
             )
 
