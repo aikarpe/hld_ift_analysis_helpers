@@ -436,14 +436,27 @@ View
         return f'{index: {index_width}d}: {entry:<{width}}'
 
     def print_lot_of_choices(self, choices, n = 30):
+        k = ''
         for i,ch in enumerate(choices):
             print(ch)
             if i % n == n - 1:
                 k = input("press enter to continue")
                 if k == "q":
                     break
-    def make_a_choice(self, choices):
-        self.print_lot_of_choices(self.compact_string(choices))
+                if len(k) > 1 and k[0] == 'f':
+                    break
+        return k
+
+    def make_a_choice(self, choices, prompt = None):
+        if prompt is not None:
+            print(prompt)
+        compact_choices = self.compact_string(choices)
+        out = self.print_lot_of_choices(compact_choices)
+        while len(out) > 1 and out[0] == 'f':
+            reduced_compact_choices = filter(lambda x: out[1:] in x, compact_choices)
+            out = self.print_lot_of_choices(reduced_compact_choices)
+        if prompt is not None:
+            print(prompt)
         k = input("enter an index of item you want to select >>>")
         try:
             index = int(k)
@@ -455,6 +468,10 @@ View
         except Exception:
             return None
         
+    def pick_a_solution(self, prompt: str):
+        #print(prompt)
+        return self.make_a_choice(self.rep.list_solution_names(), prompt)
+
     def show_solution_details(self, label):
         #components = self.rep.list_solution_names()
         #label = components[2]
