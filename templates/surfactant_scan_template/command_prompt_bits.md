@@ -38,6 +38,9 @@ REM #                                                                    #
 REM #  3. in anaconda prompt                                             # 
 REM #     pip install C:\Users\Admin\code\hld_ift_http                   # 
 REM #                                                                    # 
+REM #  4. point SCRIPT variable to                                       # 
+REM # <path to hld_ift_analysis_helpers repository>\src\hld_ift_analysis_helpers\utils\acquire # 
+REM #                                                                    # 
 REM ######################################################################
 
 
@@ -60,12 +63,9 @@ REM # commands to accomplish certain task(s)                             #
 REM #                                                                    # 
 REM ######################################################################
 
-#------------------------------
-python %SCRIPT%\generate_recepies_for_solutions_v2.py  recipes_solutions.json
-python %SCRIPT%\solution_repository__edit.py recipes_solutions.json
-
-#------------------------------
 echo %SCRIPT%
+
+python %SCRIPT%\solution_repository_editor.py %SETTINGS%
 
 python %SCRIPT%\2D_HLD_scan_v2__prepare_solutions.py %SETTINGS%
 
