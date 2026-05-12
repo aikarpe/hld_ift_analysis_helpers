@@ -815,6 +815,19 @@ flowchart TB
   script --> op_pp & mxg & meas
 ```
 
+```{mermaid general-script-structure}
+flowchart TB
+  script("&ltscript&gt.py")
+  config(scan_settings.json)
+  sol_rep("solution_repository.json")
+  op_pp("config_&ltname&gt__opentrons_pp.json")
+  mxg("config_&ltname&gt__mixing_graph.json")
+  meas("config_&ltname&gt__measurements.json")
+
+  sol_rep & op_pp & mxg & meas --> config
+  config --> script
+```
+
 There are several helper scripts that help to prepare stock solutions and scan settings for this scan. These scripts assume that user uses particular layout[^note_on_vial_positions_in_layout].
 
 

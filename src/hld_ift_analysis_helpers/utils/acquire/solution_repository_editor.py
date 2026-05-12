@@ -87,25 +87,31 @@ if k == "" or k == "y":
         conc_val = 20.0
     
     
-    oil_1 = app.pick_a_solution(make_me_pretty("Select oil stock solution 1"))
-    oil_2 = app.pick_a_solution(make_me_pretty("Select oil stock solution 2"))
+    surf_in_oil_1 = app.pick_a_solution(make_me_pretty("Select main surfactant in oil stock solution 1"))
+    surf_in_oil_2 = app.pick_a_solution(make_me_pretty("Select main surfactant in oil stock solution 2"))
+    
+    oil_1 = app.pick_a_solution(make_me_pretty("Select oil stock solution 1 (for dilution)"))
+    oil_2 = app.pick_a_solution(make_me_pretty("Select oil stock solution 2 (for dilution)"))
     
     aqueous_1 = app.pick_a_solution(make_me_pretty("Select acqueous stock solution 1"))
     aqueous_2 = app.pick_a_solution(make_me_pretty("Select acqueous stock solution 2"))
     
+    
     print("selection:")
     print(conc_val)
+    print(surf_in_oil_1)
+    print(surf_in_oil_2)
     print(oil_1)
     print(oil_2)
     print(aqueous_1)
     print(aqueous_2)
     
     
-    
-    
     params["c_surfactant_stock"] = conc_val
-    params["stocks"]["surfactant_in_oil_1"] = params["stocks"]["surfactant_in_oil_1"] if oil_1 is None else oil_1  
-    params["stocks"]["surfactant_in_oil_2"] = params["stocks"]["surfactant_in_oil_2"] if oil_2 is None else oil_2  
+    params["stocks"]["surfactant_in_oil_1"] = params["stocks"]["surfactant_in_oil_1"] if surf_in_oil_1 is None else surf_in_oil_1  
+    params["stocks"]["surfactant_in_oil_2"] = params["stocks"]["surfactant_in_oil_2"] if surf_in_oil_2 is None else surf_in_oil_2  
+    params["stocks"]["oil_1"] = params["stocks"]["oil_1"] if oil_1 is None else oil_1  
+    params["stocks"]["oil_2"] = params["stocks"]["oil_2"] if oil_2 is None else oil_2  
     params["stocks"]["stock_aqueous_1"] = params["stocks"]["stock_aqueous_1"] if aqueous_1 is None else aqueous_1  
     params["stocks"]["stock_aqueous_2"] = params["stocks"]["stock_aqueous_2"] if aqueous_2 is None else aqueous_2  
     
