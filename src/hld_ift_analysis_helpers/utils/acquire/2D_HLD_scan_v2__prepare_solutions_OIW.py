@@ -70,7 +70,7 @@ SOLUTION_REPOSITORY_PATH = params["SOLUTION_REPOSITORY_PATH"]
 rep = Solution_Repository.fromJSON(file = SOLUTION_REPOSITORY_PATH)
 
 # ............................................................ inputs
-suffix_in = params["configurations"]["blank"] #"hld_ift_experiment_OIW_blank"
+suffix_in = "hld_ift_experiment_OIW_blank" # params["configurations"]["blank"] #
 suffix_out = "something"
 
 pipette = "right"
