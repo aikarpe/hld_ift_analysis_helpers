@@ -32,6 +32,7 @@ parser.add_argument("-v", "--flip_variables", help = "flips scan variable and sc
 parser.add_argument("-c", "--flip_conc_order", help = "reverse ordering of scan variable", type = bool, default = False)
 parser.add_argument("-s", "--flip_scan_order", help = "reverse ordering of scans", type = bool, default = False)
 parser.add_argument("-a", "--same_format", help = "apply uniform shape of all montages", type = bool, default = True)
+parser.add_argument("-x", "--roi_x_start", help = "x coordinate for beginning of needle roi, default: -1, needle roi determined automatically", type = int, default = -1)
 
 args = parser.parse_args()
 
@@ -181,7 +182,8 @@ for an_exp_key in exp_split.keys():
                                                                     args.width)),
                                 reverse_measurement_order = args.flip_conc_order, 
                                 reverse_scan_order = args.flip_scan_order,
-                                transpose_scan_measurement = args.flip_variables
+                                transpose_scan_measurement = args.flip_variables,
+                                roi_start = args.roi_x_start
                                 )
                                 
     print("loop ends=======================================================")

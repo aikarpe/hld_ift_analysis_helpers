@@ -36,6 +36,9 @@ https://www.baslerweb.com/en/downloads/software/?downloadCategory.values.label.d
 conda create -n hld_ift0 python=3.13
 conda activate hld_ift0
 conda install pip
+
+#pip install .\hld_ift_analysis_helpers
+pip install scikit-image
 ```
 
 ---

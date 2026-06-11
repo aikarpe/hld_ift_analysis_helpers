@@ -1,10 +1,8 @@
+print("111111111111111")
 import sys
 #> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
+print("111111111111111")
 
-
-from hld_ift_analysis_helpers.montage_bits import *
-from hld_ift_analysis_helpers.collect_files_folders import collect_data_jsons
-from hld_ift_analysis_helpers.locations import data_json_path_to_exp_montage_path
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -17,8 +15,12 @@ parser.add_argument("-o", "--output_path", help = "output path for a montage", t
 parser.add_argument("-v", "--flip_variables", help = "flips scan variable and scans", type = bool, default = False)
 parser.add_argument("-c", "--flip_conc_order", help = "reverse ordering of scan variable", type = bool, default = False)
 parser.add_argument("-s", "--flip_scan_order", help = "reverse ordering of scans", type = bool, default = False)
+parser.add_argument("-x", "--roi_x_start", help = "x coordinate for beginning of needle roi, default: -1, needle roi determined automatically", type = int, default = -1)
+parser.add_argument("-e", "--csv_file", help = "csv file as an input for montage", type = bool, default = False)
+
 
 args = parser.parse_args()
+print("111111111111111")
 
 print(args.source)
 print(args.i_start)
@@ -30,6 +32,13 @@ print(args.flip_variables)
 print(args.flip_conc_order)
 print(args.flip_scan_order)
 
+#from hld_ift_analysis_helpers.montage_bits import *
+#import hld_ift_analysis_helpers.montage_bits 
+from hld_ift_analysis_helpers.montage_bits import make_montage_of_experiment, make_montage_of_experiment_csv
+from hld_ift_analysis_helpers.collect_files_folders import collect_data_jsons
+from hld_ift_analysis_helpers.locations import data_json_path_to_exp_montage_path
+print("111111111111111")
+
 # select source files
 file_path = []
 #extraction_options = args.extraction_options if os.path.isfile(args.extraction_options) else ""
@@ -38,6 +47,27 @@ def process_string_pointing_to_data_json_file(astr):
     if os.path.split(astr)[1] == "data.json":
         file_path.append(astr)
 
+print(args.csv_file)
+print(args.source)
+
+if args.csv_file:
+    montage_output_path = args.output_path if args.output_path != "" else f'{args.source}.jpg'
+    make_montage_of_experiment_csv(
+                            args.source,
+                            i_start = args.i_start,
+                            n_images = args.n_images,
+                            roi_width = args.width, 
+                            test = args.test,
+                            output_path = montage_output_path,
+                            reverse_measurement_order = args.flip_conc_order, 
+                            reverse_scan_order = args.flip_scan_order,
+                            transpose_scan_measurement = args.flip_variables,
+                            roi_start = args.roi_x_start
+                            )
+    print("Done making montage, will exit now!")
+    exit()
+
+    
 if os.path.isfile(args.source):
     if os.path.split(args.source)[1] == "data.json":
         # a single source file
@@ -76,7 +106,8 @@ for fp in file_path:
                                     output_path = montage_output_path,
                                     reverse_measurement_order = args.flip_conc_order, 
                                     reverse_scan_order = args.flip_scan_order,
-                                    transpose_scan_measurement = args.flip_variables
+                                    transpose_scan_measurement = args.flip_variables,
+                                    roi_start = args.roi_x_start
                                     )
 
 

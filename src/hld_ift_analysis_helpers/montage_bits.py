@@ -4,27 +4,38 @@
 #import sys 
 #sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts")
 
+print("111111111111111111")
+
 import os
 import re
 
+print("111111111111111111")
 import numpy as np
+print("111111111111111111")
 import matplotlib.pyplot as plt
 
+print("111111111111111111")
 import skimage as ski
 from skimage.color import rgb2gray
 from skimage.io import imread,imsave
 
+print("111111111111111111")
 from scipy import ndimage as ndi
 from skimage.draw import ellipse
 from skimage.measure import label, regionprops, regionprops_table
 from skimage.transform import rotate
 import pandas as pd
+print("111111111111111111")
 from math import pi
+print("111111111111111111")
 from hld_ift_analysis_helpers.collect_files_folders import collect_images
+print("111111111111111111")
 from hld_ift_analysis_helpers.locations import montage_name__experiment
+print("111111111111111111")
 from functools import reduce
 # ================================================================================
 #                                                           needle roi 
+print("22222222222222www1")
 
 #> def needle(im, width = 0):
 #>     """
@@ -133,6 +144,7 @@ def needle(im, width = 0):
 #                                                            path manipulation
 #                                                            to extract process variables 
 #                                                            of HLD_IFT scan 
+print("22222222222222www1")
 
 def path_split(path, n = 1):
     out = os.path.split(path)
@@ -161,6 +173,7 @@ def image_name(path):
 def image_index(path):
     return int(re.sub("\\..*", "", image_name(path)))
 
+print("22222222222222www1")
 
 # ================================================================================
 #                                                            montage mechanics
@@ -195,6 +208,7 @@ def make_lst_im_same_shape(lst_ims):
     return lst_ims if all_same else list(map(lambda x: x[0:shape_common[0], 0:shape_common[1]], lst_ims))
 # ================================================================================
 #                                                           dataframe manipulation
+print("22222222222222www1")
 
 def aggregate_item(df, group_by, aggregate_by, fn):
     output = df.groupby(by = group_by)[aggregate_by].agg(fn) if type(aggregate_by) == list else df.groupby(by = group_by)[[aggregate_by]].agg(fn) 
@@ -240,7 +254,7 @@ def find_needle_pos(path, width):
 
 # ===============================================
 # montages to make
-
+print("22222222222222www1")
 def conditional_reverse(status):
     """ 
         fn reverses list if status == TRUE, otherwise 
@@ -290,7 +304,7 @@ def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200
    
     
 
-def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = "", reverse_measurement_order = False, reverse_scan_order = False, transpose_scan_measurement = False):
+def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = "", reverse_measurement_order = False, reverse_scan_order = False, transpose_scan_measurement = False, roi_start = -1):
     """
     im_data [pandas DataFrame] with following columns
         - path: String, path to image
@@ -315,7 +329,7 @@ def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width 
 
     #temp = aggregate_item(im_data, ['experiment_root', 'experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
     temp = aggregate_item(im_data, ['experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
-    temp['roi_x_start'] = list(map(lambda x: find_needle_pos(x[0], width = roi_width)["start"], temp['path']))
+    temp['roi_x_start'] = list(map(lambda x: find_needle_pos(x[0], width = roi_width)["start"] if roi_start < 0 else roi_start, temp['path']))
     temp['roi_x_width'] = roi_width
     temp['montage'] = list(map(lambda x,y,z: montage_row_from_path(x, y, z, padding_width = 0), temp['path'], temp['roi_x_start'], temp['roi_x_width']))
     def montage_log_make(alst, sep):
@@ -371,13 +385,14 @@ def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width 
         print(f'... saving {montage_path}')
         imsave(montage_path, ski.util.img_as_ubyte(im))
 
-def make_montage_of_experiment(root, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = "", reverse_measurement_order = False, reverse_scan_order = False, transpose_scan_measurement = False):
+def make_montage_of_experiment(root, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = "", reverse_measurement_order = False, reverse_scan_order = False, transpose_scan_measurement = False, roi_start = -1):
     im_data = collect_images_to_dataframe(root)
-    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path, reverse_measurement_order = reverse_measurement_order, reverse_scan_order = reverse_scan_order, transpose_scan_measurement = transpose_scan_measurement)
+    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path, reverse_measurement_order = reverse_measurement_order, reverse_scan_order = reverse_scan_order, transpose_scan_measurement = transpose_scan_measurement, roi_start = roi_start)
     print(f'... done making montage in `{root}`')
 
-def make_montage_of_experiment_csv(csv_path, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = "", reverse_measurement_order = False, reverse_scan_order = False, transpose_scan_measurement = False): 
+def make_montage_of_experiment_csv(csv_path, i_start = 1, n_images = 5, roi_width = 200, test = 5, output_path = "", reverse_measurement_order = False, reverse_scan_order = False, transpose_scan_measurement = False, roi_start = -1): 
     im_data = pd.read_csv(csv_path)
-    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path, reverse_measurement_order = reverse_measurement_order, reverse_scan_order = reverse_scan_order, transpose_scan_measurement = transpose_scan_measurement)
+    make_montage_of_experiment_df(im_data, i_start = i_start, n_images = n_images , roi_width = roi_width, test = test, output_path = output_path, reverse_measurement_order = reverse_measurement_order, reverse_scan_order = reverse_scan_order, transpose_scan_measurement = transpose_scan_measurement, roi_start = roi_start)
     print(f'... done making montage from `{csv_path}`')
 
+print("222333333333333331")
