@@ -246,8 +246,9 @@ def record_all_configs(suffix):
 # ............................................................ oil scan parameters
 
 # add water to measurement location
+source_location = Well_Address("9", "A1")
+water = op.well_by_address(source_location)
 
-water = op.well_by_address(Well_Address("9", "A3"))
 meas_loc = Well_Address("10","A1")
 well = op.well_by_address(meas_loc)
 well.used = True
@@ -268,9 +269,15 @@ loc_to_measure = Well_Address("2", "D6")
 intent = "setup"
 conc = "conc_1.00000"
 
+w1 = op.well_by_address(loc_to_measure)
+print(f'@address: {loc_to_measure.toDict()}\n content: {w1.solution.toDict()}')
+print(f'@address: {meas_loc.toDict()}\n content: {op.well_by_address(meas_loc).solution.toDict()}')
+k = input("...enter...")
+
 op.clear_run_if_needed()
 op.create_run() # .... starting setup a new http script run
 op.home()
+
 op.pick_up_tip_safely_for(
                           a_pipette,
                           Well_Address("10", "A1"),
