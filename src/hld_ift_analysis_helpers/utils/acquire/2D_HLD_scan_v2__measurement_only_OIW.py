@@ -106,20 +106,20 @@ wells_info  = {
                      }
               }
 
-print("\n\n\n")
-print("================================================================================")
-print("================================================================================")
-print("================================================================================")
-print(f'Following wells will be used in this scan: ')
-print(f'                                           {wells_info[index]["info"]}!!!')
-print("")
-print("make sure they are open and 1400 mkL of oil is added there")
-print("")
-print("================================================================================")
-print("================================================================================")
-print("================================================================================")
+#print("\n\n\n")
+#print("================================================================================")
+#print("================================================================================")
+#print("================================================================================")
+#print(f'Following wells will be used in this scan: ')
+#print(f'                                           {wells_info[index]["info"]}!!!')
+#print("")
+#print("make sure they are open and 1400 mkL of oil is added there")
+#print("")
+#print("================================================================================")
+#print("================================================================================")
+#print("================================================================================")
 
-k = input("... press enter to continue ...")
+#k = input("... press enter to continue ...")
 
 # ---------- path
 DATA_PATH   = params["DATA_PATH"]
@@ -213,8 +213,8 @@ to_use = list(filter(lambda x: not x.used and \
                                 x.available,
                                 op.wells()))
 to_use = list(map(lambda x: x.address, to_use))
-print_list_of_wells("all wells", op.wells())
-print_list_of_wells("wells to allocate in scan", to_use)
+#print_list_of_wells("all wells", op.wells())
+#print_list_of_wells("wells to allocate in scan", to_use)
 
 #print(f'type of 1st well is {type(to_use[0])}')
 #k = input("press enter to cont")
@@ -246,7 +246,8 @@ def record_all_configs(suffix):
 # ............................................................ oil scan parameters
 
 # add water to measurement location
-source_location = Well_Address("9", "A1")
+#source_location = Well_Address("9", "A1")
+source_location = Well_Address("2", "A1") # all configurations should have a washing solution at this location, nature of solution is not importatn as long as it is defined!!!
 water = op.well_by_address(source_location)
 
 meas_loc = Well_Address("10","A1")
@@ -265,7 +266,19 @@ exp.new_scan(active = True)
 #[expand scan_graph n_expansions times ]
 #self.scan_graph.expand(self.n_expansions)
 a_pipette = "left"
+
 loc_to_measure = Well_Address("2", "D6")
+
+well_to_test = op.well_by_address(loc_to_measure)
+well_to_test.used = True
+well_to_test.solution = water.solution
+well_to_test.volume = 1000
+well_to_test.pipette = {}
+if (well_to_test.solution == None):
+    well_to_test.volume = 0
+    well_to_test.used = False
+
+
 intent = "setup"
 conc = "conc_1.00000"
 
