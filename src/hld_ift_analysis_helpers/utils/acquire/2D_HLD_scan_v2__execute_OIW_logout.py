@@ -71,6 +71,7 @@ from hld_ift_http.experiment_and_measurement import Experiment, Scan, Measuremen
 from hld_ift_http.single_ift_measurement import Execute_Measurement
 from hld_ift_http.autofocus import Execute_Autofocus, Execute_Autofocus_Parameters
 import hld_ift_http.errors
+from hld_ift_http.opentron_well_status import pretty_config_make
 
 parser = argparse.ArgumentParser()
 parser.add_argument("source", help = "source of 2D oil scan configuration")
@@ -240,71 +241,71 @@ def record_all_configs(suffix):
 
 # ............................................................ pretty print of config
 
-import pandas as pd
-
-class pretty_table:
-    def __init__(self, tbl, conv_fn):
-        self.names = list(tbl)
-        self.tbl = tbl
-        def conversion(lst):
-            kwargs = self.convert_lst_to_dict(lst)
-            return conv_fn(**kwargs)
-        self.conv_fn = conversion
-
-    def convert_lst_to_dict(self, lst):
-        d = dict()
-        for a,b in zip(lst, self.names):
-            d[b] = a
-        return d
-
-    def convert(self):
-        print(self.tbl)
-        return functools.reduce(lambda x,y: x + '\n' + y, list(map(self.conv_fn, self.tbl.values.tolist())))
-	
-
-#..................................................
-
-from inspect import isfunction
-
-def extract(obj, label_or_fn):
-    if type(label_or_fn) == str:
-        return vars(obj)[label_or_fn]
-    elif isfunction(label_or_fn):
-        return label_or_fn(obj)
-    else:
-        return None
-
-def well_table(opentrons_pp, to_extract):
-	lst_wells = opentrons_pp.wells()
-	dout = dict()
-	for akey in to_extract.keys():
-		dout[akey] = list(map(lambda x: extract(x, to_extract[akey]), lst_wells))
-
-	return pd.DataFrame.from_dict(dout)
-	
-#..................................................
-def pretty_config_make(opentrons_pp, to_extract, filter_query, conversion_fn, lst_roles):
-    tbl = well_table(opentrons_pp, to_extract)
-    tbl['role'] = list(map(
-        lambda addr: lst_roles[addr] if addr in lst_roles.keys() else '',
-        tbl['address']))
-    tbl_use = tbl.query(filter_query)
-    x = pretty_table(tbl_use, conversion_fn)
-    print(x.convert())
-
-
-#..................................................
-
-#..................................................
-
-#> make table from wells
-    #> extraction dictionary
-#> assign roles
-    #> dictionary of roles
-#> filter table
-    #> filter string???
-#> make table pretty
-    #> conversion function
+#,,,, import pandas as pd
+#,,,, 
+#,,,, class pretty_table:
+#,,,,     def __init__(self, tbl, conv_fn):
+#,,,,         self.names = list(tbl)
+#,,,,         self.tbl = tbl
+#,,,,         def conversion(lst):
+#,,,,             kwargs = self.convert_lst_to_dict(lst)
+#,,,,             return conv_fn(**kwargs)
+#,,,,         self.conv_fn = conversion
+#,,,, 
+#,,,,     def convert_lst_to_dict(self, lst):
+#,,,,         d = dict()
+#,,,,         for a,b in zip(lst, self.names):
+#,,,,             d[b] = a
+#,,,,         return d
+#,,,, 
+#,,,,     def convert(self):
+#,,,,         print(self.tbl)
+#,,,,         return functools.reduce(lambda x,y: x + '\n' + y, list(map(self.conv_fn, self.tbl.values.tolist())))
+#,,,, 	
+#,,,, 
+#,,,, #..................................................
+#,,,, 
+#,,,, from inspect import isfunction
+#,,,, 
+#,,,, def extract(obj, label_or_fn):
+#,,,,     if type(label_or_fn) == str:
+#,,,,         return vars(obj)[label_or_fn]
+#,,,,     elif isfunction(label_or_fn):
+#,,,,         return label_or_fn(obj)
+#,,,,     else:
+#,,,,         return None
+#,,,, 
+#,,,, def well_table(opentrons_pp, to_extract):
+#,,,, 	lst_wells = opentrons_pp.wells()
+#,,,, 	dout = dict()
+#,,,, 	for akey in to_extract.keys():
+#,,,, 		dout[akey] = list(map(lambda x: extract(x, to_extract[akey]), lst_wells))
+#,,,, 
+#,,,, 	return pd.DataFrame.from_dict(dout)
+#,,,, 	
+#,,,, #..................................................
+#,,,, def pretty_config_make(opentrons_pp, to_extract, filter_query, conversion_fn, lst_roles):
+#,,,,     tbl = well_table(opentrons_pp, to_extract)
+#,,,,     tbl['role'] = list(map(
+#,,,,         lambda addr: lst_roles[addr] if addr in lst_roles.keys() else '',
+#,,,,         tbl['address']))
+#,,,,     tbl_use = tbl.query(filter_query)
+#,,,,     x = pretty_table(tbl_use, conversion_fn)
+#,,,,     print(x.convert())
+#,,,, 
+#,,,, 
+#,,,, #..................................................
+#,,,, 
+#,,,, #..................................................
+#,,,, 
+#,,,, #> make table from wells
+#,,,,     #> extraction dictionary
+#,,,, #> assign roles
+#,,,,     #> dictionary of roles
+#,,,, #> filter table
+#,,,,     #> filter string???
+#,,,, #> make table pretty
+#,,,,     #> conversion function
 
 def extract_solution_name(well):
 	return well.solution.name if well.solution is not None else ''
