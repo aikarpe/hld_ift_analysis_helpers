@@ -1,7 +1,8 @@
 ################################################################################
-#   2D scan with manual cuvette substitution
-#       A fixed number of oil mixtures that are pipetted into cuvette,
-#           but manually supervised
+#   A single measurement of solution from address `2/D6` (1000uL)
+#       - can run using existing setting files,
+#       - experiment name defaults to `exp_{timestamp}`
+# 
 ################################################################################
 #   
 #   Set cuvette volume to 0 and solution to None
@@ -87,7 +88,7 @@ except Exception as e:
 
 print(json.dumps(params))
 
-index = str(params["scan"]["scan_part_index"])
+#index = str(params["scan"]["scan_part_index"])
 wells_info  = {
                 "1": {
                     "info": "2/D1, 2/D2", 
@@ -130,7 +131,7 @@ SOLUTION_REPOSITORY_PATH = params["SOLUTION_REPOSITORY_PATH"]
 # 1st run
 configs = params["configurations"]
 suffix_in =  configs["start"]
-suffix_out = configs["end"] + index
+suffix_out = configs["end"] #+ index
 
 
 #> slot 9   :::::::::::::::::::::::::::::::::::::::::::::::::::::: stock solutions ::::::::::::::::::::::::::::::::::      
@@ -139,10 +140,14 @@ suffix_out = configs["end"] + index
 #> _B_     ....                 ....                   ....                  ....                   ....                        
 #> _C_     ....                 ....                   ....                  ....                   ....                              
 
-stock_1_loc = wells_info[index]["1"]
-stock_2_loc = wells_info[index]["2"]
-stock_wt   = Well_Address("9", "A3") 
-stock_NaCl = Well_Address("9", "A4")
+#stock_1_loc = wells_info[index]["1"]
+#stock_2_loc = wells_info[index]["2"]
+#stock_wt   = Well_Address("9", "A3") 
+#stock_NaCl = Well_Address("9", "A4")
+stock_1_loc = Well_Address("2", "A1")
+stock_2_loc = Well_Address("2", "A2")
+stock_wt   = Well_Address("2", "A1") 
+stock_NaCl = Well_Address("2", "A2")
 
 oil_points = 6
 oil_volume = 3000
@@ -157,7 +162,7 @@ camera = Camera_Capture()
 exp_metadata = params["scan"]["experiment_metadata"]
 exp = Experiment(
         DATA_PATH,
-        f"exp_{suffix_out}",
+        "", #force to use date_and_time string as experiment name
         description = exp_metadata["description"],
         needle_dia = exp_metadata["needle_dia"],
         oil = exp_metadata["oil"],
