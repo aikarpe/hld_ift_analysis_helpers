@@ -70,8 +70,8 @@ from hld_ift_http.camera_capture import Camera_Capture
 from hld_ift_http.experiment_and_measurement import Experiment, Scan, Measurement, Ift_Image
 from hld_ift_http.single_ift_measurement import Execute_Measurement
 from hld_ift_http.autofocus import Execute_Autofocus, Execute_Autofocus_Parameters
+from hld_ift_http.opentron_well_status import pretty_config_make, solution_name_str, well_address_str 
 import hld_ift_http.errors
-from hld_ift_http.opentron_well_status import pretty_config_make
 
 parser = argparse.ArgumentParser()
 parser.add_argument("source", help = "source of 2D oil scan configuration")
@@ -241,104 +241,39 @@ def record_all_configs(suffix):
 
 # ............................................................ pretty print of config
 
-#,,,, import pandas as pd
-#,,,, 
-#,,,, class pretty_table:
-#,,,,     def __init__(self, tbl, conv_fn):
-#,,,,         self.names = list(tbl)
-#,,,,         self.tbl = tbl
-#,,,,         def conversion(lst):
-#,,,,             kwargs = self.convert_lst_to_dict(lst)
-#,,,,             return conv_fn(**kwargs)
-#,,,,         self.conv_fn = conversion
-#,,,, 
-#,,,,     def convert_lst_to_dict(self, lst):
-#,,,,         d = dict()
-#,,,,         for a,b in zip(lst, self.names):
-#,,,,             d[b] = a
-#,,,,         return d
-#,,,, 
-#,,,,     def convert(self):
-#,,,,         print(self.tbl)
-#,,,,         return functools.reduce(lambda x,y: x + '\n' + y, list(map(self.conv_fn, self.tbl.values.tolist())))
-#,,,, 	
-#,,,, 
-#,,,, #..................................................
-#,,,, 
-#,,,, from inspect import isfunction
-#,,,, 
-#,,,, def extract(obj, label_or_fn):
-#,,,,     if type(label_or_fn) == str:
-#,,,,         return vars(obj)[label_or_fn]
-#,,,,     elif isfunction(label_or_fn):
-#,,,,         return label_or_fn(obj)
-#,,,,     else:
-#,,,,         return None
-#,,,, 
-#,,,, def well_table(opentrons_pp, to_extract):
-#,,,, 	lst_wells = opentrons_pp.wells()
-#,,,, 	dout = dict()
-#,,,, 	for akey in to_extract.keys():
-#,,,, 		dout[akey] = list(map(lambda x: extract(x, to_extract[akey]), lst_wells))
-#,,,, 
-#,,,, 	return pd.DataFrame.from_dict(dout)
-#,,,, 	
-#,,,, #..................................................
-#,,,, def pretty_config_make(opentrons_pp, to_extract, filter_query, conversion_fn, lst_roles):
-#,,,,     tbl = well_table(opentrons_pp, to_extract)
-#,,,,     tbl['role'] = list(map(
-#,,,,         lambda addr: lst_roles[addr] if addr in lst_roles.keys() else '',
-#,,,,         tbl['address']))
-#,,,,     tbl_use = tbl.query(filter_query)
-#,,,,     x = pretty_table(tbl_use, conversion_fn)
-#,,,,     print(x.convert())
-#,,,, 
-#,,,, 
-#,,,, #..................................................
-#,,,, 
-#,,,, #..................................................
-#,,,, 
-#,,,, #> make table from wells
-#,,,,     #> extraction dictionary
-#,,,, #> assign roles
-#,,,,     #> dictionary of roles
-#,,,, #> filter table
-#,,,,     #> filter string???
-#,,,, #> make table pretty
-#,,,,     #> conversion function
-
-def extract_solution_name(well):
-	return well.solution.name if well.solution is not None else ''
-
-def well_address_to_str(well):
-    return str(well.address)
-
 pps = {
     'to_extract': dict(
             	volume = "volume",
             	used = "used",
             	available = "available",
-            	solution_name = extract_solution_name,
-                address = well_address_to_str
+            	solution_name = solution_name_str,
+                address = well_address_str
 	            ),
     'filter_query': 'used and available and volume > 0',
-    'conversion_fn': lambda address,volume,solution_name,role,available,used: f'{address: >4}: {volume: 8d} uL, [{role: >10}]: `{solution_name}`',
-    'lst_roles': {'2/A1': "SMPL WST", '2/A2': "WASH1 WST", '2/A3': "WASH2 WST", '2/A4': "WASH1"}
+    'conversion_fn': lambda address,volume,solution_name,role,available,used: f'{address: >4}: {volume: 8d} uL, [{role: >12}]: `{solution_name}`',
+    'lst_roles': {
+        '2/A1': "SMPL WST",
+        '2/A2': "WASH1 WST",
+        '2/A3': "WASH2 WST",
+        '2/A4': "WASH1",
+        '2/D1': "OIL STCK1_1",
+        '2/D2': "OIL STCK2_1",
+        '2/D3': "OIL STCK1_2",
+        '2/D4': "OIL STCK2_2",
+        '2/D5': "OIL STCK1_3",
+        '2/D6': "OIL STCK2_3",
+        '9/A1': "AQ STCK1",
+        '9/A2': "AQ STCK2"
+        }
 }
 
-
-#> tbl = well_table(opentrons_pp, to_extract)
-#> tbl['role'] = list(map(
-#>     lambda addr: lst_roles[addr] if addr in lst_roles.keys() else '',
-#>     tbl['address']))
-#> tbl_use = tbl.query(filter_query)
-#> x = pretty_table(df, conversion_fn)
-#> print(x.convert())
-
-
-pretty_config_make(op, pps['to_extract'], pps['filter_query'], pps['conversion_fn'], pps['lst_roles'])
-
-k = input("pretty config ...enter...")
+pretty_config_make(
+        op,
+        pps['to_extract'],
+        pps['filter_query'],
+        pps['conversion_fn'],
+        pps['lst_roles'],
+        wait_for_user = True)
 
 # ............................................................ HLD_IFT_1D_Scan object
 

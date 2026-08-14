@@ -44,6 +44,7 @@ from hld_ift_http.experiment_and_measurement import Experiment, Scan, Measuremen
 from hld_ift_http.single_ift_measurement import Execute_Measurement
 from hld_ift_http.autofocus import Execute_Autofocus, Execute_Autofocus_Parameters
 from hld_ift_http.solution import Solution, Solution_Component
+from hld_ift_http.opentron_well_status import pretty_config_make, solution_name_str, well_address_str 
 import hld_ift_http.errors
 
 parser = argparse.ArgumentParser()
@@ -230,6 +231,49 @@ for mix_input in mixtures:
     if mix_input["use"]:
         add_to_mixing_graph(**mix_input)
     #    first = False
+
+
+# ............................................................ pretty print of config
+
+pps = {
+    'to_extract': dict(
+            	volume = "volume",
+            	used = "used",
+            	available = "available",
+            	solution_name = solution_name_str,
+                address = well_address_str
+	            ),
+    'filter_query': 'role != ""',
+    'conversion_fn': lambda address,volume,solution_name,role,available,used: f'{address: >4}: {volume: 8d} uL, [{role: <40}]: `{solution_name}`',
+    'lst_roles': {
+        '2/A1': "out         SMPL WST",
+        '2/A2': "out         WASH1 WST",
+        '2/A3': "out         WASH2 WST",
+        '2/A4': "out         WASH1",
+        '9/A1': "in 12500uL  SURF in OIL 1 STCK",
+        '9/A2': "in 12500uL  SURF in OIL 2 STCK",
+        '9/A3': "in 12500uL  OIL 1 STCK",
+        '9/A4': "in 12500uL  OIL 2 STCK",
+        '9/A5': "in 12500uL  WASH OIL STCK",
+        '9/B1': "out         RUN STCK 1: SURF in OIL 1",
+        '9/B2': "out         RUN STCK 2: SURF in 80:20",
+        '9/B3': "out         RUN STCK 3: SURF in 60:40",
+        '9/B4': "out         RUN STCK 4: SURF in 40:60",
+        '9/B5': "out         RUN STCK 5: SURF in 20:80",
+        '9/C1': "out         RUN STCK 6: SURF in OIL 2"
+        }
+}
+
+pretty_config_make(
+        op,
+        pps['to_extract'],
+        pps['filter_query'],
+        pps['conversion_fn'],
+        pps['lst_roles'],
+        wait_for_user = True)
+
+# ........................................ pretty print of config END
+
 
 first = True
 for mix_input in mixtures:

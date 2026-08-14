@@ -72,6 +72,7 @@ from hld_ift_http.camera_capture import Camera_Capture
 from hld_ift_http.experiment_and_measurement import Experiment, Scan, Measurement, Ift_Image
 from hld_ift_http.single_ift_measurement import Execute_Measurement
 from hld_ift_http.autofocus import Execute_Autofocus, Execute_Autofocus_Parameters
+from hld_ift_http.opentron_well_status import pretty_config_make, solution_name_str, well_address_str 
 import hld_ift_http.errors
 
 parser = argparse.ArgumentParser()
@@ -237,6 +238,42 @@ def record_all_configs(suffix):
     with open(f'{CONFIG_PATH}/config_{suffix}__execute_measurement.json', "w") as f:
         ift_measurement.toJSON(file = f, indent = 2)
     
+# ............................................................ pretty print of config
+
+pps = {
+    'to_extract': dict(
+            	volume = "volume",
+            	used = "used",
+            	available = "available",
+            	solution_name = solution_name_str,
+                address = well_address_str
+	            ),
+    'filter_query': 'used and available and volume > 0',
+    'conversion_fn': lambda address,volume,solution_name,role,available,used: f'{address: >4}: {volume: 8d} uL, [{role: >12}]: `{solution_name}`',
+    'lst_roles': {
+        '2/A1': "SMPL WST",
+        '2/A2': "WASH1 WST",
+        '2/A3': "WASH2 WST",
+        '2/A4': "WASH1",
+        '2/D1': "OIL STCK1_1",
+        '2/D2': "OIL STCK2_1",
+        '2/D3': "OIL STCK1_2",
+        '2/D4': "OIL STCK2_2",
+        '2/D5': "OIL STCK1_3",
+        '2/D6': "OIL STCK2_3",
+        '9/A3': "AQ STCK1",
+        '9/A4': "AQ STCK2"
+        }
+}
+
+pretty_config_make(
+        op,
+        pps['to_extract'],
+        pps['filter_query'],
+        pps['conversion_fn'],
+        pps['lst_roles'],
+        wait_for_user = True)
+
 
 # ............................................................ HLD_IFT_1D_Scan object
 
