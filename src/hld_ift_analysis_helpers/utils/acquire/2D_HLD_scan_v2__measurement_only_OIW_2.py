@@ -184,8 +184,21 @@ mixing_graph = Mixing_Graph.fromJSON(file = f'{CONFIG_PATH}/config_{suffix_in}__
 
 
 # ............................................................ Execute_Measurement object
+
+with open(f'{CONFIG_PATH}/config_{suffix_in}__execute_measurement.json', "r") as file:
+    meas_config = json.load(file)
+
+k = input("exclude washing steps from measurements ([y]es/[n]o):>>")
+
+if len(k) > 0 and k[0] == 'y':
+    meas_config["washing_steps"]["sequence_washing_steps"] = []
+
+print("===============================meas_config")
+print(meas_config)
+print("==========================================")
+
 ift_measurement = Execute_Measurement.fromJSON(
-            file = f'{CONFIG_PATH}/config_{suffix_in}__execute_measurement.json',
+            cfg = meas_config,
             opentron = op,
             camera = camera,
             experiment = exp
@@ -288,8 +301,8 @@ if (well_to_test.solution == None):
 intent = "setup"
 
 w1 = op.well_by_address(loc_to_measure)
+print("<test_point>========================================")
 print(f'@address: {loc_to_measure.toDict()}\n content: {w1.solution.toDict()}')
-print(f'@address: {meas_loc.toDict()}\n content: {op.well_by_address(meas_loc).solution.toDict()}')
 k = input("...enter...")
 
 op.clear_run_if_needed()
@@ -302,6 +315,7 @@ op.pick_up_tip_safely_for(
                           intent) 
 
 
+
 k = input("adjust needle, press Enter ...")
 
 k = input("how many measurements to perform? >>>")
@@ -312,10 +326,11 @@ try:
 except:
     n = 1
 
-for i in range(n)
+for i in range(n):
     if i != 0:
-        op.next_cuvette(mixing_pipette, well.slot)
+        op.next_cuvette(mixing_pipette, well.address.slot)
 
+    well = op.well_by_address(meas_loc)
     well.used = True
     well.solution = water.solution
     well.volume = 3000
@@ -324,8 +339,9 @@ for i in range(n)
         well.volume = 0
         well.used = False
 
+    print(f'@address: {meas_loc.toDict()}\n content: {op.well_by_address(meas_loc).solution.toDict()}')
    
-    ift_measurement.measure(loc_to_measure, f"conc_{i/(n-1):.05f}", "")
+    #ift_measurement.measure(loc_to_measure, f"conc_{i/(n-1):.05f}", "")
 
 
 op.drop_tip_at_origin(a_pipette, intent)
