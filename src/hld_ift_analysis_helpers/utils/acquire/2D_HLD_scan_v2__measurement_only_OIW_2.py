@@ -341,7 +341,7 @@ for i in range(n):
 
     print(f'@address: {meas_loc.toDict()}\n content: {op.well_by_address(meas_loc).solution.toDict()}')
    
-    ift_measurement.measure(loc_to_measure, f"conc_{i/(n-1):.05f}", "")
+    ift_measurement.measure(loc_to_measure, f"conc_{i/n:.05f}", "")
 
 
 op.drop_tip_at_origin(a_pipette, intent)
@@ -370,7 +370,7 @@ record_all_configs(f'{suffix_out}_start')
 
 #hld_scan.run()
     
-record_all_configs(suffix_out)
+record_all_configs(f'{suffix_out}_end')
 exp.saveConfig()
 
 
