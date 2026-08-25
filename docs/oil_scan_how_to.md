@@ -51,7 +51,7 @@ A HLD-IFT scan is series of dripping experiments where composition of outer solu
 
 Overall workflow is represented in `<diagramm-workflow>`
 
-![](<images/diagramm_workflow.png>)
+![](images/diagramm_workflow.png?raw=true)
 
 [^diagramm_workflow_definition]
 
