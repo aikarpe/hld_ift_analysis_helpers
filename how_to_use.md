@@ -3,6 +3,9 @@ title: 'How to use bits'
 date: 2025-04-29
 ---
 
+
+![](docs/images/diagramm-workflow.png?raw=true)
+
 ```{mermaid; OLD, delete once NEW is updated}
 flowchart TB
 
