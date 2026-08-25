@@ -55,7 +55,12 @@ Overall workflow is represented in `<diagramm-workflow>`
 
 - some text here
 
+
 ![](docs/images/diagramm_workflow.png?raw=true)
+
+
+![](docs/images/diagramm-workflow.png?raw=true)
+
 
 ---
 
