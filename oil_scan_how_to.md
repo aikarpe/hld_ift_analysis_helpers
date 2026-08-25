@@ -49,11 +49,7 @@ A HLD-IFT scan is series of dripping experiments where composition of outer solu
 - performs the dripping experiment,
 - records experimental conditions and a video of dripping dynamics
 
-Overall workflow is represented in `<diagramm-workflow>`
-
----
-
-- some text here
+Overall workflow is represented in the diagramm shown below:
 
 
 ![](docs/images/diagramm_workflow.png?raw=true)
@@ -64,14 +60,22 @@ Overall workflow is represented in `<diagramm-workflow>`
 
 ---
 
-- some more text
+Scans named as `2D_HLD` are two dimensional grid scans. In general a cuvette is filled with an outer solution (~ 3 mL) and very small aliquot (2 uL) of an inner solution is injected into it. All compositions of an inner solution are tested before a new outer solution is prepared in a new cuvette. 
+
+At present there are 3 different 2D scans:
+
+- direct scan: (name of a python script to execute) `2D_HLD_scan_v2__execute.py`
+    - this scan is used for dripping aqueous solutions into an oil phase. A composition of an outer phase is lineary changed; a composition of an inner phase can be changed linearly (e.g. for etoxylates) or in log scale (for ionic surfactants).
+
+- inverted scan: `2D_HLD_scan_v2__execute_OIW.py`
+    - An individual inverted scan is used to float organic phase into acqueous phase (hook-shaped needle is used). 2 organic phase samples are tested agains N compositions of aqueous phase. A set of 3 inverse scans is used to create an equivalent of 2D inverted scan. A composition of an outer phase is changed linearly; a composition of inner pase is changed linearly. The scan is useful for testing of etoxylated surfactants.
+
+- inverted scan with log spacing for outer phase: `2D_HLD_scan_v2__execute_OIW_logout.py`. This scan is the same as an inverted scan described above, except the composition of an outer phase is changed in log scale. The scan is useful for testing of ionic surfactants. Similarly each experiments has only two compositions of an inner phase and a set of several (3) experiments together yields an equivalent to a direct scan.
+
+Each scan type has a pre-defined location and volumes for stock, washing and waste solutions.  and expected volume for stock solutions. In 
           
 [^diagramm_workflow_definition]
 
-There are two type of scans at present:
-
-- direct scan: a 2D grid scan intended for dripping aqueous solutions into an oil phase. 
-- inverse scan: a 2D grid scan for dripping oil phase into an aqueous solutions (with hook-shaped needle); due to organic volatility these scans are split into few (3) chunks.
 
 ## Direct HLD-IFT scan
 
