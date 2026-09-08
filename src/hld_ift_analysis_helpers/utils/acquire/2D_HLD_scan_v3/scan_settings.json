@@ -1,0 +1,49 @@
+{
+  "note": "a json representation of inputs for solution preparation for 2D scan, surfactant in oil; this is dummy test scan",
+  "note1": "must remembet to....",
+  "DATA_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\TergitolS_15_S_3n9_C7C16_NaCl_v1",
+  "LOG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\TergitolS_15_S_3n9_C7C16_NaCl_v1\\log.log",
+  "CONFIG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\TergitolS_15_S_3n9_C7C16_NaCl_v1\\config",
+  "SOLUTION_REPOSITORY_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\TergitolS_15_S_3n9_C7C16_NaCl_v1\\config\\solution_repository.json",
+  "c_surfactant_experiment": 5.0,
+  "c_surfactant_stock": 20.0,
+  "c_surfactant_aq_experiment": 15.0,
+  "c_surfactant_aq_stock": 20.0,
+  "stocks": {
+    "surfactant_in_oil_1": "20g/100mL Tergitol 15-S-3 in heptane 20260824",
+    "surfactant_in_oil_2": "20g/100mL Tergitol 15-S-3 in hexadecane 20260824",
+    "oil_1": "heptane",
+    "oil_2": "hexadecane",
+    "stock_aqueous_1": "20g/100ml_Tergitol_15-S-9_in_wt_20260902",
+    "stock_aqueous_2": "20g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260902",
+    "run_stock_aqueous_1": "RS15g/100ml_Tergitol_15-S-9_in_wt_20260904",
+    "run_stock_aqueous_2": "RS15g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260904",
+    "diluter_aqueous_1": "water",
+    "diluter_aqueous_2": "15g/100ml_nacl_in_wt_20260902",
+    "run_stock_surf_oil_1": "RS05g/100mL_Tergitol_15-S-3_C7_20260904",
+    "run_stock_surf_oil_2": "RS05g/100mL_Tergitol_15-S-3_C16_20260904"
+  },
+  "configurations": {
+    "blank": "hld_ift_experiment__blank",
+    "start": "2026-09-04_5-15-20g_tot_Tergtls_15_S_3n9_in_C7C16",
+    "end": "2026-09-04_5-15-20g_tot_Tergtls_15_S_3n9_in_C7C16_run",
+    "to_reuse": {
+      "name": "hld_ift_experiment__blank",
+      "content": []
+    }
+  },
+  "scan": {
+    "experiment_metadata": {
+      "description": "Tergitol_15_S_3 15g/100ml in oil (C7/C16), NaCl sol as aq phase",
+      "needle_dia": 0.312,
+      "oil": "C7 to C16",
+      "measurement": "pulsed, 20 steps, 6 s pause",
+      "scan_type": "2D scan: salinity, oil"
+    },
+    "n_expansions": 3,
+    "n_approximation": 0,
+    "number_of_oil_points": 6,
+    "oil_volume": 3200,
+    "scan_type": "linear"
+  }
+}
