@@ -1,0 +1,49 @@
+{
+  "note": "this is meant to work together with <huckdrive>/temp/scripts/2D_HLD_scan_v2__execute_OIW.py",
+  "note1": "test case on Ecosurf EH-3",
+  "DATA_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\Brij_L4_C7C16_OIW_v2",
+  "LOG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\Brij_L4_C7C16_OIW_v2\\log.log",
+  "CONFIG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\Brij_L4_C7C16_OIW_v2\\config",
+  "SOLUTION_REPOSITORY_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\Brij_L4_C7C16_OIW_v2\\config\\solution_repository.json",
+  "c_surfactant_experiment": 4.0,
+  "c_surfactant_stock": 10.0,
+  "stocks": {
+    "surfactant_in_oil_1": "10g/100mL_BrijL4_in_C7_20260907",
+    "surfactant_in_oil_2": "10g/100mL_BrijL4_in_C16_20260907",
+    "oil_1": "heptane",
+    "oil_2": "hexadecane",
+    "stock_aqueous_1": "water",
+    "stock_aqueous_2": "30g_NaCl_in_100mL_water_20250225",
+    "run_stock_surf_oil_1": "RS04g/100mL_BrijL4_in_C7_20260907",
+    "run_stock_surf_oil_2": "RS04g/100mL_BrijL4_in_C16_20260907",
+    "sample_80_20": "0.800 of (RS04g/100mL_BrijL4_in_C7_20260907) and 0.200 of (RS04g/100mL_BrijL4_in_C16_20260907)",
+    "sample_60_40": "0.600 of (RS04g/100mL_BrijL4_in_C7_20260907) and 0.400 of (RS04g/100mL_BrijL4_in_C16_20260907)",
+    "sample_40_60": "0.400 of (RS04g/100mL_BrijL4_in_C7_20260907) and 0.600 of (RS04g/100mL_BrijL4_in_C16_20260907)",
+    "sample_20_80": "0.200 of (RS04g/100mL_BrijL4_in_C7_20260907) and 0.800 of (RS04g/100mL_BrijL4_in_C16_20260907)"
+  },
+  "configurations": {
+    "blank": "hld_ift_experiment_OIW_blank",
+    "preparation": "hld_ift_experiment_OIW_blank_prep",
+    "start": "2026-09-08_04g_BrijL4_in_C7C16",
+    "end": "2026-09-08_04g_BrijL4_in_C7C16_run",
+    "to_reuse": {
+      "name": "hld_ift_experiment_OIW_blank",
+      "content": []
+    }
+  },
+  "scan": {
+    "experiment_metadata": {
+      "description": "04g/100ml BrijL4, inverse scan oil in water",
+      "needle_dia": 0.312,
+      "oil": "C7 to C16",
+      "measurement": "pulsed, 20 steps, 6 s pause",
+      "scan_type": "2D scan: salinity, oil"
+    },
+    "scan_part_index": "1",
+    "n_expansions": 0,
+    "n_approximation": 0,
+    "number_of_oil_points": 9,
+    "oil_volume": 3400,
+    "scan_type": "linear"
+  }
+}

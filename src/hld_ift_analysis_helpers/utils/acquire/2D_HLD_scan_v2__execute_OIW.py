@@ -142,8 +142,8 @@ suffix_out = configs["end"] + index
 
 stock_1_loc = wells_info[index]["1"]
 stock_2_loc = wells_info[index]["2"]
-stock_wt   = Well_Address("9", "A3") 
-stock_NaCl = Well_Address("9", "A4")
+stock_wt   = Well_Address("9", "A1") 
+stock_NaCl = Well_Address("9", "A2")
 
 oil_points = 6
 oil_volume = 3000
@@ -261,8 +261,8 @@ pps = {
         '2/D4': "OIL STCK2_2",
         '2/D5': "OIL STCK1_3",
         '2/D6': "OIL STCK2_3",
-        '9/A3': "AQ STCK1",
-        '9/A4': "AQ STCK2"
+        '9/A1': "AQ STCK1",
+        '9/A2': "AQ STCK2"
         }
 }
 

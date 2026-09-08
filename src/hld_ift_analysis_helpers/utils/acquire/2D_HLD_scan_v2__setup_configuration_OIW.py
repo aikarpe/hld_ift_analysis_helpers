@@ -106,8 +106,8 @@ suffix_out = configs["start"]
 
 # ............................................................ well content, locations, volumes
 
-stock_wt_exp               = Well_Address("9", "A3")
-stock_nacl_exp             = Well_Address("9", "A4")
+stock_wt_exp               = Well_Address("9", "A1")
+stock_nacl_exp             = Well_Address("9", "A2")
 
 run_stock_surf_oil_1       = Well_Address("2", "D1")
 sample_80_20               = Well_Address("2", "D2")
