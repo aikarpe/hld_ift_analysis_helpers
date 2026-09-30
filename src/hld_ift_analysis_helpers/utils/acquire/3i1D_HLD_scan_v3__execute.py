@@ -25,19 +25,16 @@ import time
 import argparse
 
 import shutil
-def free_space_thing():
-    total,used,free = shutil.disk_usage('/')
-    threshold = 20.0
-    print(f'Total: {total / 2**30} GiB')
-    print(f' Used: {used  / 2**30} GiB')
-    print(f' Free: {free  / 2**30} GiB')
-    if free / 2**30 < threshold: 
-        print(f"Free some space on disk!!! At least {threshold} GiB needed")
-        exit()
-    
-    k = input("I am too far")
+total,used,free = shutil.disk_usage('/')
+threshold = 20.0
+print(f'Total: {total / 2**30} GiB')
+print(f' Used: {used  / 2**30} GiB')
+print(f' Free: {free  / 2**30} GiB')
+if free / 2**30 < threshold: 
+    print(f"Free some space on disk!!! At least {threshold} GiB needed")
+    exit()
 
-free_space_thing()
+k = input("I am too far")
 
 #sys.path.append("/mnt/d/projects/HLD_parameter_determination/hld_ift_http/src") # on office pc
 #> sys.path.append("C:/Users/admin/Documents/Data/aikars/opentron/hld_ift_http/src") # robolab laptop
@@ -50,7 +47,7 @@ from hld_ift_http.opentrons_pp import Opentrons_PP
 from hld_ift_http.compound_properties import Compound_Properties
 from hld_ift_http.solution import Solution
 from hld_ift_http.mixing_graph import Mixing_Graph
-from hld_ift_http.hld_scan_1d import Scan_Graph, HLD_IFT_2D_Scan_W_Slider
+from hld_ift_http.hld_scan_1d import Scan_Graph, HLD_IFT_3in1D_Scan_W_Slider
 from hld_ift_http.washing_step import Sequence_Washing_Steps
 from hld_ift_http.camera_capture import Camera_Capture
 from hld_ift_http.experiment_and_measurement import Experiment, Scan, Measurement, Ift_Image
@@ -87,14 +84,20 @@ suffix_out = configs["end"]
 
 #> slot 9   :::::::::::::::::::::::::::::::::::::::::::::::::::::: stock solutions ::::::::::::::::::::::::::::::::::      
 #>         ________1________    ________2________      ________3________     ________4________      ________5________                                                                                      
-#> _A_     stock_wt             stock_NaCl             stock_N810_C07        stock_N810_C16         ....                                                                                
-#> _B_     ....                 ....                   ....                  ....                   ....                        
+#> _A_     inner_stock_1        inner_diluter_1        inner_stock_2         inner_diluter_2        .... 
+
+#> _B_     outer_stock_1        outer_diluter_1        outer_stock_2         outer_diluter_2        ....
+
 #> _C_     ....                 ....                   ....                  ....                   ....                              
 
-stock_1_loc = Well_Address("9", "A1")
-stock_2_loc = Well_Address("9", "A2")
-heptane_well_address = Well_Address("9", "A3") 
-hexadecane_well_address = Well_Address("9", "A4")
+inner_stock_1_loc   = Well_Address("9", "A1")
+inner_diluter_1_loc = Well_Address("9", "A2")
+inner_stock_2_loc   = Well_Address("9", "A3")
+inner_diluter_2_loc = Well_Address("9", "A4")
+outer_stock_1_loc   = Well_Address("9", "B1")
+outer_diluter_1_loc = Well_Address("9", "B2")
+outer_stock_2_loc   = Well_Address("9", "B3")
+outer_diluter_2_loc = Well_Address("9", "B4")
 
 oil_points = 6
 oil_volume = 3000
@@ -172,8 +175,8 @@ print_list_of_wells("wells to allocate in scan", to_use)
 
 scan = Scan_Graph(
             a_mixing_graph = mixing_graph,
-            well_1 = stock_1_loc,
-            well_2 = stock_2_loc,
+            well_1 = inner_stock_1_loc,
+            well_2 = inner_stock_2_loc,
             scan_label = f"scan_{suffix_out}",
             wells_to_use = to_use
             )
@@ -207,10 +210,14 @@ pps = {
         '2/A2': "WASH1 WST",
         '2/A3': "WASH2 WST",
         '2/A4': "WASH1",
-        '9/A1': "AQ STCK1",
-        '9/A2': "AQ STCK2",
-        '9/A3': "OIL STCK1",
-        '9/A4': "OIL STCK2"
+        '9/A1': "INNER STCK1",
+        '9/A2': "INNER DIL1",
+        '9/A3': "INNER STCK2",
+        '9/A4': "INNER DIL2",
+        '9/B1': "OUTER STCK1",
+        '9/B2': "OUTER DIL1",
+        '9/B3': "OUTER STCK2",
+        '9/B4': "OUTER DIL2"
         }
 }
 
@@ -233,7 +240,7 @@ if "restart_index" not in  hld_scan_args.keys():
     hld_scan_args["restart_index"] = 0
 
 
-hld_scan = HLD_IFT_2D_Scan_W_Slider(
+hld_scan = HLD_IFT_3in1D_Scan_W_Slider(
                 opentron = op,
                 n_expansions = hld_scan_args["n_expansions"],
                 n_approximation = hld_scan_args["n_approximation"],
@@ -241,10 +248,19 @@ hld_scan = HLD_IFT_2D_Scan_W_Slider(
                 mixing_pipette = MIXING_PIPETTE,
                 experiment = exp,
                 measurement = ift_measurement,
-                number_of_oil_points = hld_scan_args["number_of_oil_points"],
-                oil_volume = hld_scan_args["oil_volume"],
-                oil_1_address = hexadecane_well_address,
-                oil_2_address = heptane_well_address,
+                number_of_points = hld_scan_args["number_of_oil_points"],
+                outer_volume = hld_scan_args["oil_volume"],
+                inner_volume = 1400,
+                outer_stock_1_address = outer_stock_1_loc,
+                outer_diluter_1_address = outer_diluter_1_loc,
+                outer_stock_2_address = outer_stock_2_loc,
+                outer_diluter_2_address = outer_diluter_2_loc,
+                inner_stock_1_address = inner_stock_1_loc,
+                inner_diluter_1_address = inner_diluter_1_loc,
+                inner_stock_2_address = inner_stock_2_loc,
+                inner_diluter_2_address = inner_diluter_2_loc,
+                c_surf_total_stock = params["c_surfactant_stock"],
+                c_surf_total_exp = params["c_surfactant_experiment"],
                 scan_type = hld_scan_args["scan_type"],
                 restart_index = hld_scan_args["restart_index"],
                 scan_params = {}
@@ -259,3 +275,4 @@ exp.saveConfig()
 
 
 print(" ....................aaaaaaaaaaaaaaaaaaaand we are done!!!")
+

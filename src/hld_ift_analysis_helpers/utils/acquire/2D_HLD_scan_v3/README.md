@@ -8,8 +8,22 @@ The scan assumes that a tested system contains two surfactants, one oil and one 
 
 Setup files assumes that user has:
 
-- 4 main stock solutions - 2 stocks for oil phase, 2 stocks for aqueous phase. It is expected that both oil
-- 4 diluion liquids
+- 4 main stock solutions:
+    - 2 stocks for oil phase, 
+    - 2 stocks for aqueous phase. 
+- 4 dilution liquids:
+    - 2 dilution oils - one for each oil stock
+    - 2 dilution liquids for aqueous phase - one for each stock
+- surfactant concentration values are used to calculate dilution to obtain run stocks
+
+
+# Workflow in brief
+
+- prepare setting files
+- prepare stock and dilution solutions and add their definitions to solution repository
+- prepare run stocks (using `2D_HLD_scan_v3__prepare_solutions.py`)
+- create run configuration files (using `2D_HLD_scan_v3__setup_configuration.py`)
+- execute 2D HLD scan (using `2D_HLD_scan_v3__execute.py`)
 
 
 Setup requires:
