@@ -4,28 +4,30 @@
 #import sys 
 #sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/scripts")
 
-print("111111111111111111")
+print("111111111111111111_")
 
 import os
 import re
 
-print("111111111111111111")
+print("111111111111111111__")
 import numpy as np
-print("111111111111111111")
+print("111111111111111111___")
 import matplotlib.pyplot as plt
 
-print("111111111111111111")
+print("111111111111111111____")
+print("here we are dazed and confused")
+
 import skimage as ski
 from skimage.color import rgb2gray
 from skimage.io import imread,imsave
 
-print("111111111111111111")
+print("111111111111111111_5")
 from scipy import ndimage as ndi
 from skimage.draw import ellipse
 from skimage.measure import label, regionprops, regionprops_table
 from skimage.transform import rotate
 import pandas as pd
-print("111111111111111111")
+print("111111111111111111_6")
 from math import pi
 print("111111111111111111")
 from hld_ift_analysis_helpers.collect_files_folders import collect_images
@@ -266,7 +268,7 @@ def conditional_reverse(status):
         return lambda x: x[::1]
 
 
-def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200, test = -1, output_folder = ""):
+def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200, test = -1, output_folder = "", roi_start = -1):
     use_default_fldr = output_folder == ""
     im_data = collect_images_to_dataframe(root)
     
@@ -276,7 +278,7 @@ def make_montage_of_measurement(root, i_start = 1, n_images = 5, roi_width = 200
         return lambda x: list(x.tolist())[i_start:i_start + n]
     fn = select_start_to_end(i_start) if n_images < 1 else select_N_from_start(i_start, n_images)
     temp = aggregate_item(im_data, ['experiment_root', 'experiment', 'scan', 'concentration'], "path", fn)
-    temp['roi_x_start'] = list(map(lambda x: find_needle_pos(x[0], width = roi_width)["start"], temp['path']))
+    temp['roi_x_start'] = list(map(lambda x: find_needle_pos(x[0], width = roi_width)["start"] if roi_start < 0 else roi_start, temp['path']))
     temp['roi_x_width'] = roi_width
     temp['montage_name'] = list(map(lambda x: scan(x[0]) + "_" + concentration_bit(x[0]) + "_measurement_montage.png", 
                                     temp['path'], ))
@@ -328,8 +330,13 @@ def make_montage_of_experiment_df(im_data, i_start = 1, n_images = 5, roi_width 
     order_second    = order_measurements if transpose_scan_measurement else order_scans
 
     #temp = aggregate_item(im_data, ['experiment_root', 'experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
-    temp = aggregate_item(im_data, ['experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
-    temp['roi_x_start'] = list(map(lambda x: find_needle_pos(x[0], width = roi_width)["start"] if roi_start < 0 else roi_start, temp['path']))
+    if 'roi_x_start' in list(im_data):
+        temp = aggregate_item(im_data, ['experiment', 'scan', 'concentration'], ["path","roi_x_start"], lambda x: list(x.tolist())[i_start:i_start+n_images])
+        temp['roi_x_start'] = list(map(lambda x: x[0], temp['roi_x_start']))
+    else: 
+        temp = aggregate_item(im_data, ['experiment', 'scan', 'concentration'], "path", lambda x: list(x.tolist())[i_start:i_start+n_images])
+        temp['roi_x_start'] = list(map(lambda x: find_needle_pos(x[0], width = roi_width)["start"] if roi_start < 0 else roi_start, temp['path']))
+
     temp['roi_x_width'] = roi_width
     temp['montage'] = list(map(lambda x,y,z: montage_row_from_path(x, y, z, padding_width = 0), temp['path'], temp['roi_x_start'], temp['roi_x_width']))
     def montage_log_make(alst, sep):

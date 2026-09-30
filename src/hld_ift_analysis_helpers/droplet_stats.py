@@ -120,10 +120,11 @@ def process_dir(path, csv_path, fn = None, test = -1):
             print(f'i: {i};\n test: {test};\n test < 0 or i % test == 0: {test < 0 or i % test == 0};\n test < 0: {test < 0};\n i % test == 0: {i % test == 0}')
         if test < 0 or i % test == 0: 
             df = fn(p)
-            if os.path.exists(csv_path):
-                df.to_csv(csv_path, mode='a', index=False, header=False)
-            else:
-                df.to_csv(csv_path, mode='w', index=False, header=True)
+            if df is not None:
+                if os.path.exists(csv_path):
+                    df.to_csv(csv_path, mode='a', index=False, header=False)
+                else:
+                    df.to_csv(csv_path, mode='w', index=False, header=True)
 
 
 #def droplet_distribution
@@ -208,7 +209,13 @@ def needle(im, width = 0, debug = False):
     scan_type = "inverse" if row2 - row1 == binary.shape[0] else "direct"
     roi_index = 1 if row2 - row1 == binary.shape[0] else 0
 
-    region = region_properties[index_by_area_size[roi_index]]
+    try:
+        region = region_properties[index_by_area_size[roi_index]]
+    except Exception as e:
+        print(f'error while assigning region\n{str(e)}')
+        print('Needle is None')
+        return None
+
     minr, minc, maxr, maxc = region.bbox
 
     if debug:
@@ -341,6 +348,8 @@ def load_image(a_path):
 
 def needle_image(im, width = 0):
     needle_params = needle(im, width)
+    if needle_params is None:
+        return None
     st = needle_params["start"]
     w =  needle_params["width"]
     scan_type = needle_params["scan_type"] 
@@ -447,7 +456,7 @@ def dripping_objects(im):
 def load_region_below_needle(path, width = 0, max_weight = 0.8):
     im = load_image(path)
     needle_reg_im = needle_image(im, width)
-    return region_below_needle(needle_reg_im, max_weight)
+    return None if needle_reg_im is None else region_below_needle(needle_reg_im, max_weight)
 
 def file_path(root, id, label):
     return os.path.join(root, f'{id:07d}_{label}.jpg')
@@ -466,6 +475,9 @@ def process_dripping_stats(path, root, width = 0, max_weight = 0.8, save_raw_reg
     original_region_path = output_path("original")
     object_region_path = output_path("object_regions")
     im = load_region_below_needle(path, width, max_weight)
+    if im is None:
+        return None
+
     dripping_im = dripping_objects(im)
 
     props = regionprops_table(
