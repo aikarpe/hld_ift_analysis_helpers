@@ -13,6 +13,7 @@ parser.add_argument("-n", "--n_images", help = "number of images per measurement
 parser.add_argument("-w", "--width", help = "width of image to include, default: 150 px", type = int, default = 150)
 parser.add_argument("-t", "--test", help = "images to test, default: -1, all", type = int, default = -1)
 parser.add_argument("-o", "--output_folder", help = "output folder where montages are to be saved", type = str, default = "")
+parser.add_argument("-x", "--roi_x_start", help = "x coordinate for beginning of needle roi, default: -1, needle roi determined automatically", type = int, default = -1)
 
 args = parser.parse_args()
 
@@ -22,6 +23,7 @@ print(args.n_images)
 print(args.width)
 print(args.test)
 print(args.output_folder)
+print(args.roi_x_start)
 
 # select source files
 file_path = []
@@ -67,7 +69,8 @@ for fp in file_path:
                                     n_images = args.n_images,
                                     roi_width = args.width, 
                                     test = args.test,
-                                    output_folder = montage_output_fldr)
+                                    output_folder = montage_output_fldr,
+                                    roi_start = args.roi_x_start)
 
 
 

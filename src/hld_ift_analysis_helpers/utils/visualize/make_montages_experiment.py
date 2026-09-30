@@ -1,4 +1,5 @@
 print("111111111111111")
+import os
 import sys
 #> sys.path.append("D:/projects/HLD_parameter_determination/hld_ift_analysis_helpers/src")
 print("111111111111111")
@@ -32,12 +33,16 @@ print(args.flip_variables)
 print(args.flip_conc_order)
 print(args.flip_scan_order)
 
+print("111111111111111________")
+
 #from hld_ift_analysis_helpers.montage_bits import *
 #import hld_ift_analysis_helpers.montage_bits 
 from hld_ift_analysis_helpers.montage_bits import make_montage_of_experiment, make_montage_of_experiment_csv
+print("111111111111111________1")
 from hld_ift_analysis_helpers.collect_files_folders import collect_data_jsons
+print("111111111111111________2")
 from hld_ift_analysis_helpers.locations import data_json_path_to_exp_montage_path
-print("111111111111111")
+print("111111111111111________3")
 
 # select source files
 file_path = []
