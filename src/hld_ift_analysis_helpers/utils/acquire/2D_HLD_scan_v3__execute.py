@@ -24,20 +24,9 @@ import json
 import time
 import argparse
 
-import shutil
-def free_space_thing():
-    total,used,free = shutil.disk_usage('/')
-    threshold = 20.0
-    print(f'Total: {total / 2**30} GiB')
-    print(f' Used: {used  / 2**30} GiB')
-    print(f' Free: {free  / 2**30} GiB')
-    if free / 2**30 < threshold: 
-        print(f"Free some space on disk!!! At least {threshold} GiB needed")
-        exit()
-    
-    k = input("I am too far")
+from hld_ift_analysis_helpers.utilities import free_disk_space_check
 
-free_space_thing()
+free_disk_space_check()
 
 #sys.path.append("/mnt/d/projects/HLD_parameter_determination/hld_ift_http/src") # on office pc
 #> sys.path.append("C:/Users/admin/Documents/Data/aikars/opentron/hld_ift_http/src") # robolab laptop
