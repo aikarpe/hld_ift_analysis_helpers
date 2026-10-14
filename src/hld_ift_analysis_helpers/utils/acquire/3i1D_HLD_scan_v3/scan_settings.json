@@ -1,0 +1,47 @@
+{
+  "note": "a json representation of inputs for solution preparation for 3in1D scan, surfactant in oil and aqueous phase",
+  "note1": "must remembet to....",
+  "DATA_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\TergitolS_15_S_3n15_C7C16_NaCl_v1",
+  "LOG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\TergitolS_15_S_3n15_C7C16_NaCl_v1\\log.log",
+  "CONFIG_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\TergitolS_15_S_3n15_C7C16_NaCl_v1\\config",
+  "SOLUTION_REPOSITORY_PATH": "C:/Users/admin/Documents/Data/aikars/opentron\\TergitolS_15_S_3n15_C7C16_NaCl_v1\\config\\solution_repository.json",
+  "c_surfactant_experiment": 10.0,
+  "c_surfactant_stock": 10.0,
+  "c_surfactant_aq_experiment": 10.0,
+  "c_surfactant_aq_stock": 10.0,
+  "stocks": {
+    "surfactant_in_oil_1": "10g/100ml Terigitol_15_S_3 in heptane",
+    "surfactant_in_oil_2": "10g/100ml Terigitol_15_S_3 in hexadecane",
+    "oil_1": "heptane",
+    "oil_2": "hexadecane",
+    "stock_aqueous_1": "10g/100ml_Tergitol_15-S-15_in_water_20260923",
+    "stock_aqueous_2": "10g/100ml_Tergitol_15_S_15_30g/100ml_nacl_in_water_20260923",
+    "diluter_aqueous_1": "water",
+    "diluter_aqueous_2": "30g_NaCl_in_100mL_water_20250225",
+    "run_stock_surf_oil_1": "RS00g/100ml_Tergitol_15_S_3_in_heptane_202609",
+    "run_stock_surf_oil_2": "RS00g/100ml_Tergitol_15_S_3_in_hexadecane_202609"
+  },
+  "configurations": {
+    "blank": "hld_ift_experiment__blank",
+    "start": "2026-09-30_cSurf-10_3n15_inC7C16",
+    "end": "2026-09-30_cSurf-10_3n15_inC7C16_run",
+    "to_reuse": {
+      "name": "hld_ift_experiment__blank",
+      "content": []
+    }
+  },
+  "scan": {
+    "experiment_metadata": {
+      "description": "Tergitol 15S3 and Tergitol 15S15 mixed scan, correlated variabes, S/EACN/surfactant ratio",
+      "needle_dia": 0.312,
+      "oil": "C7 to C16",
+      "measurement": "pulsed, 20 steps, 6 s pause",
+      "scan_type": "2D scan: salinity, oil"
+    },
+    "n_expansions": 3,
+    "n_approximation": 0,
+    "number_of_oil_points": 6,
+    "oil_volume": 3300,
+    "scan_type": "linear"
+  }
+}

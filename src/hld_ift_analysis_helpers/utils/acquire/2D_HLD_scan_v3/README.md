@@ -188,6 +188,46 @@ slot 9:
 
 ($) - each well is described with 1) address label, 2) role, 3) volume change; `-` indicates not used or does not change; `X->` indicates that starting volume is known, but final volume varies based on inputs
 
+
+## scan execution: layout
+
+```
+slot 2:
+
+          A1$        A2         A3         A4         A5         A6
+          SMPL WST   WASH1 WST  WASH2 WST  WASH1      empty      empty
+          0.5        0.5        0.5        1.4        0          0        
+
+          B1         B2         B3         B4         B5         B6
+          empty      empty      empty      empty      empty      empty       
+          0          0          0          0          0          0          
+          
+          C1         C2         C3         C4         C5         C6
+          empty      empty      empty      empty      empty      empty       
+          0          0          0          0          0          0          
+          
+          D1         D2         D3         D4         D5         D6
+          empty      empty      empty      empty      empty      empty       
+          0          0          0          0          0          0          
+          
+          
+slot 9:
+          A1         A2         A3         A4         A5
+          RAQ1       RAQ2       RO1        RO2        -
+          12         12         12         12         -
+
+          B1         B2         B3         B4         B5
+          -          -          -          -          -
+          -          -          -          -          -
+          
+          C1         C2         C3         C4         C5
+          -          -          -          -          -
+          -          -          -          -          -
+
+```
+
+($) - each well is described with 1) address label, 2) role, 3) volume; `-` well not used; `empty` - an empty eppendorff to mix inner solutions
+
 Setup requires:
 
 

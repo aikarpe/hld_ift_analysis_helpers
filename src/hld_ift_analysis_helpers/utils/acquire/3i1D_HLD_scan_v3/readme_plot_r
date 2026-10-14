@@ -1,0 +1,167 @@
+
+
+#>         x_S = lambda x: 1 - x
+#>         x_EACN = lambda x: 1 - x
+#>         x_SurfAQ = lambda x: 1 - x
+#>         x_dilute = self.c_surf_total_exp / self.c_surf_total_stock
+#>         x_dil_1 = lambda x: x_dilute * x_SurfAQ(x)
+#>         x_dil_2 = lambda x: x_dilute * (1 - x_SurfAQ(x))
+#> 
+#>         inner_1 = make_abc(xval, lambda x: x_S(x) * x_dil_1(x), lambda x: x_S(x) * (1 - x_dil_1(x)), self.inner_volume, self.stock_pairs["inner_1"]),
+#>         inner_2 = make_abc(xval, lambda x: (1 - x_S(x)) * x_dil_1(x), lambda x: (1 - x_S(x)) * (1 - x_dil_1(x)), self.inner_volume, self.stock_pairs["inner_2"]),
+#>         outer_1 = make_abc(xval, lambda x: x_EACN(x) * x_dil_2(x), lambda x: x_EACN(x) * (1 - x_dil_2(x)), self.outer_volume, self.stock_pairs["outer_1"]),
+#>         outer_2 = make_abc(xval, lambda x: (1 - x_EACN(x)) * x_dil_2(x), lambda x: (1 - x_EACN(x)) * (1 - x_dil_2(x)), self.outer_volume, self.stock_pairs["outer_2"])
+#> 
+#>         inner_1 = make_abc(xval, lambda x: (1-x) * x_dilute * (1-x), lambda x: (1-x) * (1 - x_dilute * (1-x)),
+#>         inner_2 = make_abc(xval, lambda x: x     * x_dilute * (1-x), lambda x: x     * (1 - x_dilute * (1-x)),
+#>         outer_1 = make_abc(xval, lambda x: (1-x) * x_dilute * x    , lambda x: (1-x) * (1 - x_dilute * x)    ,
+#>         outer_2 = make_abc(xval, lambda x: x     * x_dilute * x    , lambda x: x     * (1 - x_dilute * x)    ,
+
+        
+# version 1--------------------------------------------------------------------------------        
+        gen_bit <- function(x_dilute) {
+        data.frame(x = seq(0,1,by = 0.05)) %>% 
+            mutate(
+                x_dilute = x_dilute,
+                inner_1_stk =  (1-x) * x_dilute * (1-x), 
+                inner_1_dil =  (1-x) * (1 - x_dilute * (1-x)),
+                inner_2_stk =  x     * x_dilute * (1-x), 
+                inner_2_dil =  x     * (1 - x_dilute * (1-x)),
+                outer_1_stk =  (1-x) * x_dilute * x    ,
+                outer_1_dil =  (1-x) * (1 - x_dilute * x)    ,
+                outer_2_stk =  x     * x_dilute * x    ,
+                outer_2_dil =  x     * (1 - x_dilute * x)    ,
+            )
+        }
+
+        plot_it <- function(df) {
+            params <- list(
+                list(lt = 1, cl = "steelblue3"),
+                list(lt = 2, cl = "steelblue3"),
+                list(lt = 1, cl = "royalblue2"),
+                list(lt = 2, cl = "royalblue2"),
+                list(lt = 1, cl = "gold1"),
+                list(lt = 2, cl = "gold1"),
+                list(lt = 1, cl = "goldenrod1"),
+                list(lt = 2, cl = "goldenrod1")
+                )
+            df %>%
+                mutate(
+                    inner_stk = inner_1_stk + inner_2_stk,
+                    inner_dil = inner_1_dil + inner_2_dil,
+                    outer_stk = outer_1_stk + outer_2_stk,
+                    outer_dil = outer_1_dil + outer_2_dil,
+                    ) %>%
+                ggplot(aes(x = x)) + 
+                    geom_line(aes(y = inner_1_stk), linetype = params[[1]][["lt"]], color = params[[1]][["cl"]])  +
+                    geom_line(aes(y = inner_1_dil), linetype = params[[2]][["lt"]], color = params[[2]][["cl"]])  +
+                    geom_line(aes(y = inner_2_stk), linetype = params[[3]][["lt"]], color = params[[3]][["cl"]])  +
+                    geom_line(aes(y = inner_2_dil), linetype = params[[4]][["lt"]], color = params[[4]][["cl"]])  +
+                    #geom_line(aes(y = outer_1_stk), linetype = params[[5]][["lt"]], color = params[[5]][["cl"]])  +
+                    #geom_line(aes(y = outer_1_dil), linetype = params[[6]][["lt"]], color = params[[6]][["cl"]])  +
+                    #geom_line(aes(y = outer_2_stk), linetype = params[[7]][["lt"]], color = params[[7]][["cl"]])  +
+                    #geom_line(aes(y = outer_2_dil), linetype = params[[8]][["lt"]], color = params[[8]][["cl"]])  +
+                    geom_line(aes(y = inner_stk), linetype =                  1                              )  +
+                    geom_line(aes(y = inner_dil), linetype =                  2                              )  +
+                    facet_wrap(~ x_dilute, ncol = 1)
+        }
+
+        plot_it_2 <- function(df) {
+            params <- list(
+                list(lt = 1, cl = "steelblue3"),
+                list(lt = 2, cl = "steelblue3"),
+                list(lt = 1, cl = "royalblue2"),
+                list(lt = 2, cl = "royalblue2"),
+                list(lt = 1, cl = "gold1"),
+                list(lt = 2, cl = "gold1"),
+                list(lt = 1, cl = "goldenrod1"),
+                list(lt = 2, cl = "goldenrod1")
+                )
+            df %>%
+                mutate(
+                    inner_stk = inner_1_stk + inner_2_stk,
+                    inner_dil = inner_1_dil + inner_2_dil,
+                    outer_stk = outer_1_stk + outer_2_stk,
+                    outer_dil = outer_1_dil + outer_2_dil,
+                    ) %>%
+                ggplot(aes(x = x)) + 
+                    #geom_line(aes(y = inner_1_stk), linetype = params[[1]][["lt"]], color = params[[1]][["cl"]])  +
+                    #geom_line(aes(y = inner_1_dil), linetype = params[[2]][["lt"]], color = params[[2]][["cl"]])  +
+                    #geom_line(aes(y = inner_2_stk), linetype = params[[3]][["lt"]], color = params[[3]][["cl"]])  +
+                    #geom_line(aes(y = inner_2_dil), linetype = params[[4]][["lt"]], color = params[[4]][["cl"]])  +
+                    geom_line(aes(y = outer_1_stk), linetype = params[[5]][["lt"]], color = params[[5]][["cl"]])  +
+                    geom_line(aes(y = outer_1_dil), linetype = params[[6]][["lt"]], color = params[[6]][["cl"]])  +
+                    geom_line(aes(y = outer_2_stk), linetype = params[[7]][["lt"]], color = params[[7]][["cl"]])  +
+                    geom_line(aes(y = outer_2_dil), linetype = params[[8]][["lt"]], color = params[[8]][["cl"]])  +
+                    #geom_line(aes(y = inner_stk), linetype =                  1                              )  +
+                    #geom_line(aes(y = inner_dil), linetype =                  2                              )  +
+                    geom_line(aes(y = outer_stk), linetype =                  1                              )  +
+                    geom_line(aes(y = outer_dil), linetype =                  2                              )  +
+                    facet_wrap(~ x_dilute, ncol = 1)
+        }
+
+        gen_bit(1) %>% plot_it
+
+# version 2--------------------------------------------------------------------------------        
+
+        inner_1_stk <- function(x, x_dilute) (1-x) * x_dilute * (1-x)
+        inner_1_dil <- function(x, x_dilute) (1-x) * (1 - x_dilute * (1-x))
+        inner_2_stk <- function(x, x_dilute) x     * x_dilute * (1-x)       
+        inner_2_dil <- function(x, x_dilute) x     * (1 - x_dilute * (1-x))
+        outer_1_stk <- function(x, x_dilute) (1-x) * x_dilute * x          
+        outer_1_dil <- function(x, x_dilute) (1-x) * (1 - x_dilute * x)    
+        outer_2_stk <- function(x, x_dilute) x     * x_dilute * x          
+        outer_2_dil <- function(x, x_dilute) x     * (1 - x_dilute * x)    
+        inner_stk   <- function(x, x_dilute) inner_1_stk(x, x_dilute) + inner_2_stk(x, x_dilute)
+        inner_dil   <- function(x, x_dilute) inner_1_dil(x, x_dilute) + inner_2_dil(x, x_dilute)
+        outer_stk   <- function(x, x_dilute) outer_1_stk(x, x_dilute) + outer_2_stk(x, x_dilute)
+        outer_dil   <- function(x, x_dilute) outer_1_dil(x, x_dilute) + outer_2_dil(x, x_dilute)
+        
+        x <- seq(0,1,by=0.05)
+        
+        gen_stuff <- function(x, x_dilute) {
+            make_df <- function(fn, lbl, x_dilute_val) {
+                df <- data.frame(x = x) 
+                print(df)
+                df %>%
+                    mutate(
+                        y = map_dbl(x, .f = ~ fn(.x, x_dilute_val)),
+                        lbl = lbl,
+                        x_dilute = x_dilute_val,
+                        )
+            }
+            make_bunch <- function(x_dilute_val) {
+                list(
+                    make_df(inner_1_stk, "inner stock 1",         x_dilute_val),
+                    make_df(inner_2_stk, "inner stock 2",         x_dilute_val),
+                    make_df(inner_1_dil, "inner diluter 1",       x_dilute_val),
+                    make_df(inner_2_dil, "inner diluter 2",       x_dilute_val),
+                    make_df(outer_1_stk, "outer stock 1",         x_dilute_val),
+                    make_df(outer_2_stk, "outer stock 2",         x_dilute_val),
+                    make_df(outer_1_dil, "outer diluter 1",       x_dilute_val),
+                    make_df(outer_2_dil, "outer diluter 2",       x_dilute_val),
+                    make_df(inner_stk,   "inner stock (1 + 2)",   x_dilute_val),
+                    make_df(inner_dil,   "inner diluter (1 + 2)", x_dilute_val),
+                    make_df(outer_stk,   "outer stock (1 + 2)",   x_dilute_val),
+                    make_df(outer_dil,   "outer diluter (1 + 2)", x_dilute_val)
+                    ) %>%
+                reduce(rbind)
+            }
+            x_dilute %>%
+                map(.f = make_bunch) %>%
+                reduce(.f = rbind)
+        }
+
+     tr <- list(`TRUE` = "outer", `FALSE` = "inner")
+
+     gen_stuff(x, c(0.1, 0.5, 1)) %>%
+        mutate(
+            type = grepl("outer", lbl) %>% as.character %>% {tr[.]} %>% unlist, # %>% as.factor ,
+            ) %>% 
+        #str
+        #knitr::kable(.)
+        #filter(grepl("outer", lbl)) %>%
+        #filter(grepl("outer", lbl)) %>%
+        ggplot(aes(x, y)) + 
+        geom_line(aes(color = lbl)) +
+        facet_wrap(~ x_dilute + type, ncol = 2) + xlab("scan variable") + ylab("volume fraction")

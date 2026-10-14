@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>README</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">README</h1>
+</header>
+<p>The folder contains files required to run 3i1D_HLD_scan_v3. The scan
+simultaneously varies 3 variables - EACN, salinity, and ratio between
+concentration of oil soluble surfactant and concentration of aqueous
+phase soluble surfactant.</p>
+<p>The scan assumes that a tested system contains two surfactants, one
+oil and one water soluble.</p>
+<p>Setup files assumes that user has:</p>
+<ul>
+<li>4 main stock solutions:
+<ul>
+<li>2 stocks for oil phase,</li>
+<li>2 stocks for aqueous phase.</li>
+</ul></li>
+<li>4 dilution liquids:
+<ul>
+<li>2 dilution oils - one for each oil stock</li>
+<li>2 dilution liquids for aqueous phase - one for each stock</li>
+</ul></li>
+<li>surfactant concentration values are used to calculate dilution to
+obtain run stocks</li>
+</ul>
+<h1 id="workflow-in-brief">Workflow in brief</h1>
+<ul>
+<li>prepare setting files</li>
+<li>prepare stock and dilution solutions and add their definitions to
+solution repository</li>
+<li>create run configuration files (using
+<code>3i1D_HLD_scan_v3__setup_configuration.py</code>)</li>
+<li>execute 2D HLD scan (using
+<code>3i1D_HLD_scan_v3__execute.py</code>)</li>
+</ul>
+<h1 id="abbreviations">abbreviations</h1>
+<ul>
+<li><p><code>SMPL WST</code>: Sample waste; here remaining sample is
+discarded after measurement.</p></li>
+<li><p><code>WASH1 WST</code>: Wash 1 waste; here a washing fluid is
+discarded after first set of washing steps.</p></li>
+<li><p><code>WASH2 WST</code>: Wash 2 waste; here a sample fluid is
+discarded after washing steps with a sample fluid</p></li>
+<li><p><code>WASH1</code>: A washing fluid source vial</p></li>
+<li><p><code>RAQ1</code>: A run stock of aqueous phase 1;</p></li>
+<li><p><code>RAQ2</code>: A run stock of aqueous phase 2;</p></li>
+<li><p><code>RO1</code>: A run stock of oil phase 1;</p></li>
+<li><p><code>RO2</code>: A run stock of oil phase 2;</p></li>
+<li><p><code>SAQ1</code>: A main stock of aqueous phase 1;</p></li>
+<li><p><code>SAQ2</code>: A main stock of aqueous phase 2;</p></li>
+<li><p><code>SO1</code>: A main stock of oil phase 1;</p></li>
+<li><p><code>SO2</code>: A main stock of oil phase 2;</p></li>
+<li><p><code>DAQ1</code>: A dilution fluid for aqueous phase 1;</p></li>
+<li><p><code>DAQ2</code>: A dilution fluid for aqueous phase 2;</p></li>
+<li><p><code>DO1</code>: A dilution fluid for oil phase 1;</p></li>
+<li><p><code>DO2</code>: A dilution fluid for oil phase 2;</p></li>
+<li><p><code>WASH</code>: A location of washing fluid for
+distribution;</p>
+<pre><code>  &#39;9/A1&#39;: &quot;INNER STCK1&quot;,
+  &#39;9/A2&#39;: &quot;INNER DIL1&quot;,
+  &#39;9/A3&#39;: &quot;INNER STCK2&quot;,
+  &#39;9/A4&#39;: &quot;INNER DIL2&quot;,
+  &#39;9/B1&#39;: &quot;OUTER STCK1&quot;,
+  &#39;9/B2&#39;: &quot;OUTER DIL1&quot;,
+  &#39;9/B3&#39;: &quot;OUTER STCK2&quot;,
+  &#39;9/B4&#39;: &quot;OUTER DIL2&quot;</code></pre></li>
+</ul>
+<h1 id="settings-file">settings file</h1>
+<ul>
+<li>A setting file contains inputs necessary to prepare run stocks,
+generate configuration files and execute experimental scan</li>
+</ul>
+<h2 id="general-parameters">general parameters</h2>
+<ul>
+<li><code>DATA_PATH</code>: an absolute path to this set of
+experiment(s)</li>
+<li><code>LOG_PATH</code>: an absolute path to log file generated during
+a scan</li>
+<li><code>CONFIG_PATH</code>: an absolut path to folder that contains
+configuration files (opentron, mixing graph, measurement)</li>
+<li><code>SOLUTION_REPOSITORY_PATH</code>: an absolute path to solution
+repository</li>
+<li><code>c_surfactant_experiment</code>: a concentration of a
+surfactant in oil used in an experiment; float value that is less or
+eaqul to <code>c_surfactant_stock</code></li>
+<li><code>c_surfactant_stock</code>: a concentration of a surfactant in
+main oil stock, it is expected that both oil stocks contain the same
+concentration.</li>
+<li><code>c_surfactant_aq_experiment</code>: a concentration of a
+surfactant in aqueous phase used in an experiment; float value that is
+less or eaqul to <code>c_surfactant_aq_stock</code></li>
+<li><code>c_surfactant_aq_stock</code>: a concentration of a surfactant
+in main aqueous stock, it is expected that both aqueous stocks contain
+the same concentration.
+<ul>
+<li>The necessary dilution is estimated from c_surfactant_stock and
+c_surfactant_experiment values, and scan variable (x).</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>solution</th>
+<th>fraction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inner stock 1</td>
+<td>(1-x) * x_dilute * (1-x)</td>
+</tr>
+<tr>
+<td>inner diluter 1</td>
+<td>(1-x) * (1 - x_dilute * (1-x))</td>
+</tr>
+<tr>
+<td>inner stock 2</td>
+<td>x * x_dilute * (1-x)</td>
+</tr>
+<tr>
+<td>inner diluter 2</td>
+<td>x * (1 - x_dilute * (1-x))</td>
+</tr>
+<tr>
+<td>outer stock 1</td>
+<td>(1-x) * x_dilute * x</td>
+</tr>
+<tr>
+<td>outer diluter 1</td>
+<td>(1-x) * (1 - x_dilute * x)</td>
+</tr>
+<tr>
+<td>outer stock 2</td>
+<td>x * x_dilute * x</td>
+</tr>
+<tr>
+<td>outer diluter 2</td>
+<td>x * (1 - x_dilute * x)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>x_dilute = c_surfactant_experiment / c_surfactant_stock</code></li>
+<li>few examples of dilutions are shown below for
+<code>x_dilute = {0.1, 0.5, 1.0}</code></li>
+</ul>
+<img src="scan_fractions.jpg" style="width:100.0%" /></li>
+</ul>
+<h2 id="stocks">Stocks</h2>
+<ul>
+<li>subsection <code>stocks</code> in settings file contains names of
+various solutions used in experiment. The solutions are stored in the
+solution repository associated with the experiment(s). The names given
+in this section have to match exactly names of solutions availabel in
+the solution repository. E.g. <code>heptane</code> and
+<code>Heptane</code> are two different names!</li>
+<li>running solutions are created from main stocks and diluter fluids.
+Their names can be arbitrarily chosen and definition of these solutions
+are created during the solution prep step
+(<strong>add_script_name</strong>).</li>
+<li><code>surfactant_in_oil_1</code>: a name of main stock of an oil
+phase 1,</li>
+<li><code>surfactant_in_oil_2</code>: a name of main stock of an oil
+phase 2,</li>
+<li><code>oil_1</code>: a name of a diluter of an oil phase 1,</li>
+<li><code>oil_2</code>: a name of a diluter of an oil phase 2,</li>
+<li><code>stock_aqueous_1</code>: a name of main stock of an aqueous
+phase 1,</li>
+<li><code>stock_aqueous_2</code>: a name of main stock of an aqueous
+phase 2,</li>
+<li><code>diluter_aqueous_1</code>: a name of diluter fluid of an
+aqueous phase 1,</li>
+<li><code>diluter_aqueous_2</code>: a name of diluter fluid of an
+aqueous phase 2,</li>
+</ul>
+<h2 id="configurations">Configurations</h2>
+<ul>
+<li>this section contains labels to derive names of configurations
+files.</li>
+<li><code>blank</code>: a generic name of blank configuration files used
+as template</li>
+<li><code>start</code>: a label of start configuration</li>
+<li><code>end</code>: a label of end configuration</li>
+<li><code>to_reuse</code>: a label of configuration to be reused; handy
+in case when some intermediate solutions are prepared in previous runs
+and can be reused</li>
+</ul>
+<h2 id="scan">Scan</h2>
+<ul>
+<li><code>experiment_metadata</code>: string entries of user defined
+metadata; these fields are added into experimental data</li>
+<li>`n_expansions”: integer, not used</li>
+<li><code>n_approximation</code>: integer, not used at the moment, leave
+value at <code>0</code></li>
+<li>`number_of_oil_points”: integer, number of points to sample in the
+scan</li>
+<li>`oil_volume”: float, volume of outer solution in uL added to a
+cuvette</li>
+<li>`scan_type”: a string, not used, leave as “linear”</li>
+</ul>
+<h1 id="opentron-starting-conditions">opentron starting conditions</h1>
+<h2 id="run-stock-preparation-layout">run stock preparation: layout</h2>
+<ul>
+<li>there are no run buffers that needs preparation. For 3i1D scan this
+step is skipped!</li>
+</ul>
+<h2 id="scan-execution-layout">scan execution: layout</h2>
+<pre><code>slot 2:
+
+          A1$        A2         A3         A4         A5         A6
+          SMPL WST   WASH1 WST  WASH2 WST  WASH1      empty      empty
+          0.5        0.5        0.5        1.4        0          0        
+
+          B1         B2         B3         B4         B5         B6
+          empty      empty      empty      empty      empty      empty       
+          0          0          0          0          0          0          
+          
+          C1         C2         C3         C4         C5         C6
+          empty      empty      empty      empty      empty      empty       
+          0          0          0          0          0          0          
+          
+          D1         D2         D3         D4         D5         D6
+          empty      empty      empty      empty      empty      empty       
+          0          0          0          0          0          0          
+          
+          
+slot 9:
+          A1         A2         A3         A4         A5
+          SAQ1       DAQ1       SAQ2       DAQ2       -
+          12         12         12         12         -
+
+          B1         B2         B3         B4         B5
+          SO1        DO1        SO2        DO2        -
+          12         12         12         12         -
+          
+          C1         C2         C3         C4         C5
+          -          -          -          -          -
+          -          -          -          -          -
+        
+ </code></pre>
+<p>($) - each well is described with 1) address label, 2) role, 3)
+volume; <code>-</code> well not used; <code>empty</code> - an empty
+eppendorff to mix inner solutions</p>
+<p>Setup requires:</p>
+<ul>
+<li>surfactant_in_oil_1<a href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>: main stock of oil_1 with
+surfactant_oil</li>
+<li>surfactant_in_oil_2: main stock of oil_2 with surfactant_oil</li>
+<li>stock_aqueous_1: main stock of aqueous_solution_1 with
+surfactant_aq</li>
+<li>stock_aqueous_2: main stock of aqueous_solution_2 with
+surfactant_aq</li>
+</ul>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>[variable name in <code>scan_settings.json</code>]:
+[description]<a href="#fnref1" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+</body>
+</html>

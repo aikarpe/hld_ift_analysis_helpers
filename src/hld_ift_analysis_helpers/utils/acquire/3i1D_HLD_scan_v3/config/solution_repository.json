@@ -1,0 +1,2154 @@
+{
+  " 20g/100ml BrijY heptane_20250701": {
+    "name": " 20g/100ml BrijY heptane_20250701",
+    "ro": 0.74802,
+    "label": "_7.3e-01_heptane_2.7e-01_BrijY",
+    "components": {
+      "BrijY": {
+        "label": "BrijY",
+        "w": 0.27084245525012546
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7291575447498745
+      }
+    }
+  },
+  " 20g/100ml BrijY hexadecane_20250701": {
+    "name": " 20g/100ml BrijY hexadecane_20250701",
+    "ro": 0.81381,
+    "label": "_2.5e-01_BrijY_7.5e-01_hexadecane",
+    "components": {
+      "BrijY": {
+        "label": "BrijY",
+        "w": 0.24781927710843374
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.7521807228915662
+      }
+    }
+  },
+  "03g_BrijL4_in_100mL_C07_20250320": {
+    "name": "03g_BrijL4_in_100mL_C07_20250320",
+    "ro": 0.6891049295896827,
+    "label": "_9.6e-01_heptane_4.4e-02_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.04372449704301484
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9562755029569855
+      }
+    }
+  },
+  "03g_BrijL4_in_100mL_C16_20250320": {
+    "name": "03g_BrijL4_in_100mL_C16_20250320",
+    "ro": 0.7695727954486308,
+    "label": "_3.9e-02_BrijL4_9.6e-01_hexadecane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.03891137375927828
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9610886262407218
+      }
+    }
+  },
+  "04g/100ml BrijL4 heptane_20250701": {
+    "name": "04g/100ml BrijL4 heptane_20250701",
+    "ro": 0.6879600000000001,
+    "label": "_9.4e-01_heptane_5.6e-02_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.0563690274167151
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9436309725832848
+      }
+    }
+  },
+  "04g/100ml BrijL4 hexadecane_20250701": {
+    "name": "04g/100ml BrijL4 hexadecane_20250701",
+    "ro": 0.77018,
+    "label": "_5.1e-02_BrijL4_9.5e-01_hexadecane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.05129031990527508
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9487096800947248
+      }
+    }
+  },
+  "04g_BrijL4_in_100mL_C07_20250320": {
+    "name": "04g_BrijL4_in_100mL_C07_20250320",
+    "ro": 0.6922732394529102,
+    "label": "_9.4e-01_heptane_5.8e-02_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.05803251228755234
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9419674877124476
+      }
+    }
+  },
+  "04g_BrijL4_in_100mL_C16_20250320": {
+    "name": "04g_BrijL4_in_100mL_C16_20250320",
+    "ro": 0.7718637272648411,
+    "label": "_5.2e-02_BrijL4_9.5e-01_hexadecane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.05172784369556557
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9482721563044344
+      }
+    }
+  },
+  "05.00g_IB45_07.50g_nalc_in_100mL_wt_20250507": {
+    "name": "05.00g_IB45_07.50g_nalc_in_100mL_wt_20250507",
+    "ro": 1.066352606971799,
+    "label": "_4.7e-02_aerosol_ib-45_8.8e-01_water_7.2e-02_NaCl",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.07233520788123315
+      },
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.04705756822535871
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8806072238934077
+      }
+    }
+  },
+  "05.00g_IB45_in_100mL_wt_20250507": {
+    "name": "05.00g_IB45_in_100mL_wt_20250507",
+    "ro": 1.0177276069717989,
+    "label": "_9.5e-01_water_4.9e-02_aerosol_ib-45",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.0493058852006311
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9506941147993687
+      }
+    }
+  },
+  "05.00g_aot_in_100mL_C07_20250407": {
+    "name": "05.00g_aot_in_100mL_C07_20250407",
+    "ro": 0.7004843901279248,
+    "label": "_7.2e-02_aot_9.3e-01_heptane",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.07206191450995987
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9279380854900402
+      }
+    }
+  },
+  "05.00g_aot_in_100mL_C07_20250507": {
+    "name": "05.00g_aot_in_100mL_C07_20250507",
+    "ro": 0.7004843901279248,
+    "label": "_9.3e-01_heptane_7.2e-02_aot",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.07206191450995987
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9279380854900402
+      }
+    }
+  },
+  "05.00g_aot_in_100mL_C16_20250407": {
+    "name": "05.00g_aot_in_100mL_C16_20250407",
+    "ro": 0.7807276225588936,
+    "label": "_6.8e-02_aot_9.3e-01_hexadecane",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.06842280186212303
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9315771981378769
+      }
+    }
+  },
+  "05g/100ml BrijY heptane_20250701": {
+    "name": "05g/100ml BrijY heptane_20250701",
+    "ro": 0.696705,
+    "label": "_9.3e-01_heptane_7.3e-02_BrijY",
+    "components": {
+      "BrijY": {
+        "label": "BrijY",
+        "w": 0.07269776066491515
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9273022393350848
+      }
+    }
+  },
+  "05g/100ml BrijY hexadecane_20250701": {
+    "name": "05g/100ml BrijY hexadecane_20250701",
+    "ro": 0.7754775000000002,
+    "label": "_9.3e-01_hexadecane_6.5e-02_BrijY",
+    "components": {
+      "BrijY": {
+        "label": "BrijY",
+        "w": 0.0650172976983905
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9349827023016095
+      }
+    }
+  },
+  "05g/ml tergitol_15-s-5 heptane_20250707": {
+    "name": "05g/ml tergitol_15-s-5 heptane_20250707",
+    "ro": 0.7035,
+    "label": "_7.5e-02_tergitol_15-s-5_9.3e-01_heptane",
+    "components": {
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9254151223749423
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.07458487762505783
+      }
+    }
+  },
+  "05g/ml tergitol_15-s-5 hexadecane_20250707": {
+    "name": "05g/ml tergitol_15-s-5 hexadecane_20250707",
+    "ro": 0.7778675000000002,
+    "label": "_6.6e-02_tergitol_15-s-5_9.3e-01_hexadecane",
+    "components": {
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9342092105754479
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.06579078942455215
+      }
+    }
+  },
+  "05g_BrijL4_in_100mL_C07_20250326": {
+    "name": "05g_BrijL4_in_100mL_C07_20250326",
+    "ro": 0.695441549316138,
+    "label": "_7.2e-02_BrijL4_9.3e-01_heptane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.07221015791046735
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9277898420895329
+      }
+    }
+  },
+  "05g_BrijL4_in_100mL_C16_20250326": {
+    "name": "05g_BrijL4_in_100mL_C16_20250326",
+    "ro": 0.7741546590810515,
+    "label": "_9.4e-01_hexadecane_6.4e-02_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.06446845886974789
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9355315411302522
+      }
+    }
+  },
+  "05g_Novel810_35_in_100mL_C07_20250610": {
+    "name": "05g_Novel810_35_in_100mL_C07_20250610",
+    "ro": 0.6939467943307762,
+    "label": "_9.3e-01_heptane_7.2e-02_Novel 810-3.5",
+    "components": {
+      "Novel 810-3.5": {
+        "label": "Novel 810-3.5",
+        "w": 0.07175126536216123
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.928248734637839
+      }
+    }
+  },
+  "05g_Novel810_35_in_100mL_C16_20250610": {
+    "name": "05g_Novel810_35_in_100mL_C16_20250610",
+    "ro": 0.7750867939038169,
+    "label": "_9.4e-01_hexadecane_6.5e-02_Novel 810-3.5",
+    "components": {
+      "Novel 810-3.5": {
+        "label": "Novel 810-3.5",
+        "w": 0.0646537500200039
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9353462499799962
+      }
+    }
+  },
+  "06g_BrijL4_in_100mL_C07_20250320": {
+    "name": "06g_BrijL4_in_100mL_C07_20250320",
+    "ro": 0.6986098591793655,
+    "label": "_8.6e-02_BrijL4_9.1e-01_heptane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.08625920765436851
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9137407923456317
+      }
+    }
+  },
+  "06g_BrijL4_in_100mL_C16_20250320": {
+    "name": "06g_BrijL4_in_100mL_C16_20250320",
+    "ro": 0.7764455908972616,
+    "label": "_7.7e-02_BrijL4_9.2e-01_hexadecane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.0771338907187808
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9228661092812194
+      }
+    }
+  },
+  "07.50g_nacl_in_100mL_wt_20250417": {
+    "name": "07.50g_nacl_in_100mL_wt_20250417",
+    "ro": 1.0486250000000001,
+    "label": "_7.4e-02_NaCl_9.3e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.0735580760519728
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9264419239480272
+      }
+    }
+  },
+  "07.50g_nacl_in_100mL_wt_20250506": {
+    "name": "07.50g_nacl_in_100mL_wt_20250506",
+    "ro": 1.0486250000000001,
+    "label": "_7.4e-02_NaCl_9.3e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.0735580760519728
+      },
+      "water": {
+        "label": "water",
+        "w": 0.926441923948027
+      }
+    }
+  },
+  "07.50g_nacl_in_100mL_wt_20250507": {
+    "name": "07.50g_nacl_in_100mL_wt_20250507",
+    "ro": 1.0486250000000001,
+    "label": "_9.3e-01_water_7.4e-02_NaCl",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.0735580760519728
+      },
+      "water": {
+        "label": "water",
+        "w": 0.926441923948027
+      }
+    }
+  },
+  "07.50g_nacl_in_100mL_wt_20250508": {
+    "name": "07.50g_nacl_in_100mL_wt_20250508",
+    "ro": 1.0486250000000001,
+    "label": "_7.4e-02_NaCl_9.3e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.0735580760519728
+      },
+      "water": {
+        "label": "water",
+        "w": 0.926441923948027
+      }
+    }
+  },
+  "07.50g_nacl_in_100mL_wt_20250512": {
+    "name": "07.50g_nacl_in_100mL_wt_20250512",
+    "ro": 1.0486250000000001,
+    "label": "_9.3e-01_water_7.4e-02_NaCl",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.0735580760519728
+      },
+      "water": {
+        "label": "water",
+        "w": 0.926441923948027
+      }
+    }
+  },
+  "07.50g_nacl_in_100mL_wt_20250513": {
+    "name": "07.50g_nacl_in_100mL_wt_20250513",
+    "ro": 1.0486250000000001,
+    "label": "_7.4e-02_NaCl_9.3e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.0735580760519728
+      },
+      "water": {
+        "label": "water",
+        "w": 0.926441923948027
+      }
+    }
+  },
+  "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250417": {
+    "name": "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250417",
+    "ro": 1.0777845395497203,
+    "label": "_9.4e-02_aerosol_ib-45_7.2e-02_NaCl_8.3e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.07156795692414143
+      },
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09357384306692659
+      },
+      "water": {
+        "label": "water",
+        "w": 0.834858200008932
+      }
+    }
+  },
+  "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250506": {
+    "name": "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250506",
+    "ro": 1.0777845395497203,
+    "label": "_9.4e-02_aerosol_ib-45_7.2e-02_NaCl_8.3e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.07156795692414145
+      },
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09357384306692659
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8348582000089317
+      }
+    }
+  },
+  "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250508": {
+    "name": "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250508",
+    "ro": 1.069345774603428,
+    "label": "_8.3e-01_water_7.2e-02_NaCl_9.4e-02_aerosol_ib-45",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.07213273697986586
+      },
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09390485317257977
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8339624098475542
+      }
+    }
+  },
+  "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250512": {
+    "name": "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250512",
+    "ro": 1.069345774603428,
+    "label": "_8.3e-01_water_7.2e-02_NaCl_9.4e-02_aerosol_ib-45",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.07213273697986586
+      },
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09390485317257977
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8339624098475542
+      }
+    }
+  },
+  "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250513": {
+    "name": "10.00g_IB45_07.50g_nalc_in_100mL_wt_20250513",
+    "ro": 1.074075,
+    "label": "_7.2e-02_NaCl_9.3e-02_aerosol_ib-45_8.4e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.07181513162488652
+      },
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09307409794424296
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8351107704308703
+      }
+    }
+  },
+  "10.00g_IB45_in_100mL_wt_20250417": {
+    "name": "10.00g_IB45_in_100mL_wt_20250417",
+    "ro": 1.0291595395497202,
+    "label": "_9.8e-02_aerosol_ib-45_9.0e-01_water",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09799495363751903
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9020050463624809
+      }
+    }
+  },
+  "10.00g_IB45_in_100mL_wt_20250506": {
+    "name": "10.00g_IB45_in_100mL_wt_20250506",
+    "ro": 1.0291595395497202,
+    "label": "_9.8e-02_aerosol_ib-45_9.0e-01_water",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.097994953637519
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9020050463624809
+      }
+    }
+  },
+  "10.00g_IB45_in_100mL_wt_20250508": {
+    "name": "10.00g_IB45_in_100mL_wt_20250508",
+    "ro": 1.0207207746034277,
+    "label": "_9.8e-02_aerosol_ib-45_9.0e-01_water",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09837828371218126
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9016217162878185
+      }
+    }
+  },
+  "10.00g_IB45_in_100mL_wt_20250512": {
+    "name": "10.00g_IB45_in_100mL_wt_20250512",
+    "ro": 1.0207207746034277,
+    "label": "_9.8e-02_aerosol_ib-45_9.0e-01_water",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09837828371218126
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9016217162878185
+      }
+    }
+  },
+  "10.00g_IB45_in_100mL_wt_20250513": {
+    "name": "10.00g_IB45_in_100mL_wt_20250513",
+    "ro": 1.0254500000000002,
+    "label": "_9.0e-01_water_9.7e-02_aerosol_ib-45",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09748750475348657
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9025124952465134
+      }
+    }
+  },
+  "10.00g_aot_in_100mL_C07_20250407": {
+    "name": "10.00g_aot_in_100mL_C07_20250407",
+    "ro": 0.7422531703837747,
+    "label": "_2.0e-01_aot_8.0e-01_heptane",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.20402033262125624
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7959796673787438
+      }
+    }
+  },
+  "10.00g_aot_in_100mL_C07_20250417": {
+    "name": "10.00g_aot_in_100mL_C07_20250417",
+    "ro": 0.7213687802558497,
+    "label": "_8.6e-01_heptane_1.4e-01_aot",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.13995129154066427
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8600487084593358
+      }
+    }
+  },
+  "10.00g_aot_in_100mL_C07_20250506": {
+    "name": "10.00g_aot_in_100mL_C07_20250506",
+    "ro": 0.7213687802558496,
+    "label": "_1.4e-01_aot_8.6e-01_heptane",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.13995129154066427
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8600487084593359
+      }
+    }
+  },
+  "10.00g_aot_in_100mL_C07_20250508": {
+    "name": "10.00g_aot_in_100mL_C07_20250508",
+    "ro": 0.7213687802558496,
+    "label": "_1.4e-01_aot_8.6e-01_heptane",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.13995129154066427
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8600487084593359
+      }
+    }
+  },
+  "10.00g_aot_in_100mL_C07_20250512": {
+    "name": "10.00g_aot_in_100mL_C07_20250512",
+    "ro": 0.7213687802558496,
+    "label": "_1.4e-01_aot_8.6e-01_heptane",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.13995129154066427
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8600487084593359
+      }
+    }
+  },
+  "10.00g_aot_in_100mL_C07_20250513": {
+    "name": "10.00g_aot_in_100mL_C07_20250513",
+    "ro": 0.7213687802558496,
+    "label": "_1.4e-01_aot_8.6e-01_heptane",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.13995129154066427
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8600487084593359
+      }
+    }
+  },
+  "10.00g_aot_in_100mL_C16_20250407": {
+    "name": "10.00g_aot_in_100mL_C16_20250407",
+    "ro": 0.816782867676681,
+    "label": "_8.0e-01_hexadecane_2.0e-01_aot",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.19620724261241268
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8037927573875876
+      }
+    }
+  },
+  "10g/100ml BrijL4 heptane_20250702": {
+    "name": "10g/100ml BrijL4 heptane_20250702",
+    "ro": 0.7005,
+    "label": "_8.6e-01_heptane_1.4e-01_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.13839984333191763
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8616001566680823
+      }
+    }
+  },
+  "10g/100ml BrijL4 hexadecane_20250702": {
+    "name": "10g/100ml BrijL4 hexadecane_20250702",
+    "ro": 0.7814,
+    "label": "_1.3e-01_BrijL4_8.7e-01_hexadecane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.12638462562274372
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8736153743772562
+      }
+    }
+  },
+  "10g/100ml Tergitol_15_S_3 in heptane 20260824": {
+    "name": "10g/100ml Tergitol_15_S_3 in heptane 20260824",
+    "ro": 0.7199479721121813,
+    "label": "_1.4e-01_Tergitol_15_S_3_8.6e-01_heptane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.14440933797843564
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8555906620215643
+      }
+    }
+  },
+  "10g/100ml Tergitol_15_S_3 in hexadecane 20260824": {
+    "name": "10g/100ml Tergitol_15_S_3 in hexadecane 20260824",
+    "ro": 0.7815954239694087,
+    "label": "_8.7e-01_hexadecane_1.3e-01_Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.12860288821655025
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8713971117834497
+      }
+    }
+  },
+  "10g/100ml Terigitol_15_S_3 in heptane": {
+    "name": "10g/100ml Terigitol_15_S_3 in heptane",
+    "ro": 0.7024725345069013,
+    "label": "_8.6e-01_heptane_1.4e-01_Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.14114992772166135
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8588500722783389
+      }
+    }
+  },
+  "10g/100ml Terigitol_15_S_3 in hexadecane": {
+    "name": "10g/100ml Terigitol_15_S_3 in hexadecane",
+    "ro": 0.780729875975195,
+    "label": "_8.7e-01_hexadecane_1.3e-01_Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.12839068584347313
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8716093141565266
+      }
+    }
+  },
+  "10g/100ml_Tergitol_15-S-9_in_water_20260828": {
+    "name": "10g/100ml_Tergitol_15-S-9_in_water_20260828",
+    "ro": 0.9950336319245331,
+    "label": "_9.0e-01_water_1.0e-01_Tergitol_15-S-9",
+    "components": {
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.10040838719782542
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8995916128021746
+      }
+    }
+  },
+  "10g/100ml_Tergitol_15_S_9_15g/100ml_nacl_in_water_20260828": {
+    "name": "10g/100ml_Tergitol_15_S_9_15g/100ml_nacl_in_water_20260828",
+    "ro": 1.0838161675153772,
+    "label": "_7.7e-01_water_1.4e-01_NaCl_9.1e-02_Tergitol_15-S-9",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.1383335389041582
+      },
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.09115089811466719
+      },
+      "water": {
+        "label": "water",
+        "w": 0.7705155629811747
+      }
+    }
+  },
+  "10g/ml tergitol_15-s-5 heptane_20250707": {
+    "name": "10g/ml tergitol_15-s-5 heptane_20250707",
+    "ro": 0.7274,
+    "label": "_8.6e-01_heptane_1.4e-01_tergitol_15-s-5",
+    "components": {
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8557314781159523
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.14426852188404776
+      }
+    }
+  },
+  "10g/ml tergitol_15-s-5 hexadecane_20250707": {
+    "name": "10g/ml tergitol_15-s-5 hexadecane_20250707",
+    "ro": 0.793035,
+    "label": "_8.7e-01_hexadecane_1.3e-01_tergitol_15-s-5",
+    "components": {
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.870935035924763
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.1290649640752371
+      }
+    }
+  },
+  "10g_Novel810_35_in_100mL_C07_20250612": {
+    "name": "10g_Novel810_35_in_100mL_C07_20250612",
+    "ro": 0.7082935886615523,
+    "label": "_8.6e-01_heptane_1.4e-01_Novel 810-3.5",
+    "components": {
+      "Novel 810-3.5": {
+        "label": "Novel 810-3.5",
+        "w": 0.1405958246250364
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8594041753749636
+      }
+    }
+  },
+  "10g_Novel810_35_in_100mL_C16_20250612": {
+    "name": "10g_Novel810_35_in_100mL_C16_20250612",
+    "ro": 0.787473587807634,
+    "label": "_1.3e-01_Novel 810-3.5_8.7e-01_hexadecane",
+    "components": {
+      "Novel 810-3.5": {
+        "label": "Novel 810-3.5",
+        "w": 0.1272735202621303
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8727264797378697
+      }
+    }
+  },
+  "15g/100ml BrijL4 heptane_20250703": {
+    "name": "15g/100ml BrijL4 heptane_20250703",
+    "ro": 0.71095,
+    "label": "_8.0e-01_heptane_2.0e-01_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.20454833023561772
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7954516697643823
+      }
+    }
+  },
+  "15g/100ml BrijL4 hexadecane_20250703": {
+    "name": "15g/100ml BrijL4 hexadecane_20250703",
+    "ro": 0.79075,
+    "label": "_8.1e-01_hexadecane_1.9e-01_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.18733533947823944
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8126646605217602
+      }
+    }
+  },
+  "15g/100ml Tergitol_15_S_3 in heptane": {
+    "name": "15g/100ml Tergitol_15_S_3 in heptane",
+    "ro": 0.7139088017603522,
+    "label": "_7.9e-01_heptane_2.1e-01_Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.2083332224528011
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.791666777547199
+      }
+    }
+  },
+  "15g/100ml Tergitol_15_S_3 in heptane 20260826": {
+    "name": "15g/100ml Tergitol_15_S_3 in heptane 20260826",
+    "ro": 0.7401219581682721,
+    "label": "_2.1e-01_Tergitol_15_S_3_7.9e-01_heptane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.2107096179573144
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7892903820426854
+      }
+    }
+  },
+  "15g/100ml Tergitol_15_S_3 in hexadecane": {
+    "name": "15g/100ml Tergitol_15_S_3 in hexadecane",
+    "ro": 0.7897448139627928,
+    "label": "_8.1e-01_hexadecane_1.9e-01_Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.19038765901855145
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8096123409814483
+      }
+    }
+  },
+  "15g/100ml Tergitol_15_S_3 in hexadecane 20260826": {
+    "name": "15g/100ml Tergitol_15_S_3 in hexadecane 20260826",
+    "ro": 0.7910431359541132,
+    "label": "_1.9e-01_Tergitol_15_S_3_8.1e-01_hexadecane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.19060040667327618
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8093995933267236
+      }
+    }
+  },
+  "15g/100ml_nacl_in_wt_20260828": {
+    "name": "15g/100ml_nacl_in_wt_20260828",
+    "ro": 1.094461151728538,
+    "label": "_8.6e-01_water_1.4e-01_NaCl",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.13691273317112732
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8630872668288728
+      }
+    }
+  },
+  "15g/100ml_nacl_in_wt_20260902": {
+    "name": "15g/100ml_nacl_in_wt_20260902",
+    "ro": 1.093280739339472,
+    "label": "_8.6e-01_water_1.4e-01_NaCl",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.1364973511023363
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8635026488976638
+      }
+    }
+  },
+  "15g/ml tergitol_15-s-5 heptane_20250707": {
+    "name": "15g/ml tergitol_15-s-5 heptane_20250707",
+    "ro": 0.7513,
+    "label": "_2.1e-01_tergitol_15-s-5_7.9e-01_heptane",
+    "components": {
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7904813200749574
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.20951867992504272
+      }
+    }
+  },
+  "15g/ml tergitol_15-s-5 hexadecane_20250707": {
+    "name": "15g/ml tergitol_15-s-5 hexadecane_20250707",
+    "ro": 0.8082025,
+    "label": "_1.9e-01_tergitol_15-s-5_8.1e-01_hexadecane",
+    "components": {
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8100357884588227
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.18996421154117743
+      }
+    }
+  },
+  "15g_BrijL4_in_100mL_C07_20250320": {
+    "name": "15g_BrijL4_in_100mL_C07_20250320",
+    "ro": 0.7271246479484136,
+    "label": "_2.1e-01_BrijL4_7.9e-01_heptane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.20719120539501135
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7928087946049889
+      }
+    }
+  },
+  "15g_BrijL4_in_100mL_C16_20250320": {
+    "name": "15g_BrijL4_in_100mL_C16_20250320",
+    "ro": 0.7970639772431539,
+    "label": "_8.1e-01_hexadecane_1.9e-01_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.18784649371714834
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8121535062828521
+      }
+    }
+  },
+  "15g_IB-45_in_100mL_water_20250508": {
+    "name": "15g_IB-45_in_100mL_water_20250508",
+    "ro": 1.0310811619051417,
+    "label": "_8.5e-01_water_1.5e-01_aerosol_ib-45",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.14608465608465607
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8539153439153438
+      }
+    }
+  },
+  "15g_Novel810_35_in_100mL_C07_20250612": {
+    "name": "15g_Novel810_35_in_100mL_C07_20250612",
+    "ro": 0.7226403829923284,
+    "label": "_7.9e-01_heptane_2.1e-01_Novel 810-3.5",
+    "components": {
+      "Novel 810-3.5": {
+        "label": "Novel 810-3.5",
+        "w": 0.2067068008892767
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7932931991107235
+      }
+    }
+  },
+  "15g_Novel810_35_in_100mL_C16_20250612": {
+    "name": "15g_Novel810_35_in_100mL_C16_20250612",
+    "ro": 0.7998603817114514,
+    "label": "_8.1e-01_hexadecane_1.9e-01_Novel 810-3.5",
+    "components": {
+      "Novel 810-3.5": {
+        "label": "Novel 810-3.5",
+        "w": 0.1879538065492346
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.812046193450765
+      }
+    }
+  },
+  "20.0g_IB-45_in_100mL_water_20250513": {
+    "name": "20.0g_IB-45_in_100mL_water_20250513",
+    "ro": 1.0509,
+    "label": "_1.9e-01_aerosol_ib-45_8.1e-01_water",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.19025323389373447
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8097467661062655
+      }
+    }
+  },
+  "20g/100mL Tergitol 15-S-3 in heptane 20260824": {
+    "name": "20g/100mL Tergitol 15-S-3 in heptane 20260824",
+    "ro": 0.7602959442243625,
+    "label": "_7.3e-01_heptane_2.7e-01_Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.2734914234948404
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7265085765051595
+      }
+    }
+  },
+  "20g/100mL Tergitol 15-S-3 in hexadecane 20260824": {
+    "name": "20g/100mL Tergitol 15-S-3 in hexadecane 20260824",
+    "ro": 0.8004908479388174,
+    "label": "_2.5e-01_Tergitol_15_S_3_7.5e-01_hexadecane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.25113448629205964
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.7488655137079404
+      }
+    }
+  },
+  "20g/100mL_Tergitol_15-S-9_15g/100mL_NaCl_in_wt_20260827": {
+    "name": "20g/100mL_Tergitol_15-S-9_15g/100mL_NaCl_in_wt_20260827",
+    "ro": 1.0730683554925133,
+    "label": "_1.9e-01_Tergitol_15-S-9_1.4e-01_NaCl_6.8e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.13979666819326766
+      },
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.18501703734800623
+      },
+      "water": {
+        "label": "water",
+        "w": 0.6751862944587261
+      }
+    }
+  },
+  "20g/100mL_Tergitol_15S3_C16_20260914": {
+    "name": "20g/100mL_Tergitol_15S3_C16_20260914",
+    "ro": 0.8024942971839545,
+    "label": "_2.5e-01_Tergitol_15_S_3_7.5e-01_hexadecane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.2513224747527547
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.7486775252472454
+      }
+    }
+  },
+  "20g/100mL_Tergitol_15S3_C7_20260914": {
+    "name": "20g/100mL_Tergitol_15S3_C7_20260914",
+    "ro": 0.7314785484465429,
+    "label": "_2.7e-01_Tergitol_15_S_3_7.3e-01_heptane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.27386723105983024
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7261327689401698
+      }
+    }
+  },
+  "20g/100ml BrijL4 heptane_20250701": {
+    "name": "20g/100ml BrijL4 heptane_20250701",
+    "ro": 0.7214,
+    "label": "_7.3e-01_heptane_2.7e-01_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.2687803999279409
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.731219600072059
+      }
+    }
+  },
+  "20g/100ml BrijL4 hexadecane_20250701": {
+    "name": "20g/100ml BrijL4 hexadecane_20250701",
+    "ro": 0.8001,
+    "label": "_2.5e-01_BrijL4_7.5e-01_hexadecane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.2468615084654716
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.7531384915345284
+      }
+    }
+  },
+  "20g/100ml Tergitol_15_S_3 in heptane": {
+    "name": "20g/100ml Tergitol_15_S_3 in heptane",
+    "ro": 0.7253450690138027,
+    "label": "_2.7e-01_Tergitol_15_S_3_7.3e-01_heptane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.27339800519196616
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7266019948080339
+      }
+    }
+  },
+  "20g/100ml Tergitol_15_S_3 in hexadecane": {
+    "name": "20g/100ml Tergitol_15_S_3 in hexadecane",
+    "ro": 0.7987597519503901,
+    "label": "_2.5e-01_Tergitol_15_S_3_7.5e-01_hexadecane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.25098521549235675
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.7490147845076432
+      }
+    }
+  },
+  "20g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260902": {
+    "name": "20g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260902",
+    "ro": 1.0742369204128144,
+    "label": "_6.8e-01_water_1.4e-01_NaCl_1.9e-01_Tergitol_15-S-9",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.13981427500624632
+      },
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.18516282168734904
+      },
+      "water": {
+        "label": "water",
+        "w": 0.6750229033064046
+      }
+    }
+  },
+  "20g/100ml_Tergitol_15-S-9_in_30g/100mlNaCl_wt_sol": {
+    "name": "20g/100ml_Tergitol_15-S-9_in_30g/100mlNaCl_wt_sol",
+    "ro": 1.137661069766841,
+    "label": "_2.1e-01_NaCl_6.1e-01_water_1.8e-01_Tergitol_15-S-9",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.212925204906121
+      },
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.1756670348195082
+      },
+      "water": {
+        "label": "water",
+        "w": 0.6114077602743708
+      }
+    }
+  },
+  "20g/100ml_Tergitol_15-S-9_in_water_20260827": {
+    "name": "20g/100ml_Tergitol_15-S-9_in_water_20260827",
+    "ro": 0.9900152796780284,
+    "label": "_8.0e-01_water_2.0e-01_Tergitol_15-S-9",
+    "components": {
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.2028910337362439
+      },
+      "water": {
+        "label": "water",
+        "w": 0.797108966263756
+      }
+    }
+  },
+  "20g/100ml_Tergitol_15-S-9_in_wt_20260902": {
+    "name": "20g/100ml_Tergitol_15-S-9_in_wt_20260902",
+    "ro": 0.9858648668540476,
+    "label": "_8.0e-01_water_2.0e-01_Tergitol_15-S-9",
+    "components": {
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.2028297601744186
+      },
+      "water": {
+        "label": "water",
+        "w": 0.7971702398255814
+      }
+    }
+  },
+  "20g/ml tergitol_15-s-5 heptane_20250707": {
+    "name": "20g/ml tergitol_15-s-5 heptane_20250707",
+    "ro": 0.7752,
+    "label": "_2.7e-01_tergitol_15-s-5_7.3e-01_heptane",
+    "components": {
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7292545850917018
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.2707454149082982
+      }
+    }
+  },
+  "20g/ml tergitol_15-s-5 hexadecane_20250707": {
+    "name": "20g/ml tergitol_15-s-5 hexadecane_20250707",
+    "ro": 0.82337,
+    "label": "_2.5e-01_tergitol_15-s-5_7.5e-01_hexadecane",
+    "components": {
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.7513802208353336
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.24861977916466632
+      }
+    }
+  },
+  "20g_BrijL4_in_100mL_C07_20250319": {
+    "name": "20g_BrijL4_in_100mL_C07_20250319",
+    "ro": 0.7429661972645519,
+    "label": "_2.7e-01_BrijL4_7.3e-01_heptane",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.27036462373933284
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7296353762606672
+      }
+    }
+  },
+  "20g_BrijL4_in_100mL_C16_20250319": {
+    "name": "20g_BrijL4_in_100mL_C16_20250319",
+    "ro": 0.8085186363242055,
+    "label": "_7.5e-01_hexadecane_2.5e-01_BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 0.2469135802469136
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.7530864197530864
+      }
+    }
+  },
+  "20g_IB-45_in_100mL_water_20250407": {
+    "name": "20g_IB-45_in_100mL_water_20250407",
+    "ro": 1.0583190790994406,
+    "label": "_1.9e-01_aerosol_ib-45_8.1e-01_water",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.1905898577385641
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8094101422614359
+      }
+    }
+  },
+  "20g_Novel810-3.5_in_100mL_C07_20250610": {
+    "name": "20g_Novel810-3.5_in_100mL_C07_20250610",
+    "ro": 0.7369871773231048,
+    "label": "_2.7e-01_Novel 810-3.5_7.3e-01_heptane",
+    "components": {
+      "Novel 810-3.5": {
+        "label": "Novel 810-3.5",
+        "w": 0.2702438366328285
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7297561633671714
+      }
+    }
+  },
+  "20g_aot_in_100mL_heptane_20250407": {
+    "name": "20g_aot_in_100mL_heptane_20250407",
+    "ro": 0.7631375605116996,
+    "label": "_2.6e-01_aot_7.4e-01_heptane",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.2645826852139905
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7354173147860096
+      }
+    }
+  },
+  "20g_aot_in_100mL_hexadecane_20250407": {
+    "name": "20g_aot_in_100mL_hexadecane_20250407",
+    "ro": 0.8348104902355746,
+    "label": "_7.4e-01_hexadecane_2.6e-01_aot",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.2559602307419933
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.7440397692580066
+      }
+    }
+  },
+  "20g_novel810-3.5_in_100mL_C16_20250610": {
+    "name": "20g_novel810-3.5_in_100mL_C16_20250610",
+    "ro": 0.812247175615268,
+    "label": "_2.5e-01_Novel 810-3.5_7.5e-01_hexadecane",
+    "components": {
+      "Novel 810-3.5": {
+        "label": "Novel 810-3.5",
+        "w": 0.24678334044758823
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.7532166595524117
+      }
+    }
+  },
+  "30g_NaCl_in_100mL_water_20250225": {
+    "name": "30g_NaCl_in_100mL_water_20250225",
+    "ro": 1.1945,
+    "label": "_2.6e-01_NaCl_7.4e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.2583
+      },
+      "water": {
+        "label": "water",
+        "w": 0.7417
+      }
+    }
+  },
+  "44perc_IB-45_in_wt": {
+    "name": "44perc_IB-45_in_wt",
+    "ro": 1.12,
+    "label": "_4.4e-01_aerosol_ib-45_5.6e-01_water",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.44
+      },
+      "water": {
+        "label": "water",
+        "w": 0.56
+      }
+    }
+  },
+  "4g/ml tergitol_15-s-5 heptane_20250805": {
+    "name": "4g/ml tergitol_15-s-5 heptane_20250805",
+    "ro": 0.69872,
+    "label": "_9.4e-01_heptane_6.0e-02_tergitol_15-s-5",
+    "components": {
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9399239049585204
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.06007609504147949
+      }
+    }
+  },
+  "4g/ml tergitol_15-s-5 hexadecane_20250805": {
+    "name": "4g/ml tergitol_15-s-5 hexadecane_20250805",
+    "ro": 0.7748339999999999,
+    "label": "_9.5e-01_hexadecane_5.3e-02_tergitol_15-s-5",
+    "components": {
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9471613100171621
+      },
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 0.052838689982837944
+      }
+    }
+  },
+  "5g/100ml Tergitol_15_S_3 in heptane": {
+    "name": "5g/100ml Tergitol_15_S_3 in heptane",
+    "ro": 0.6910362672534507,
+    "label": "_7.2e-02_Tergitol_15_S_3_9.3e-01_heptane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.07174294040035874
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9282570595996414
+      }
+    }
+  },
+  "5g/100ml Tergitol_15_S_3 in hexadecane": {
+    "name": "5g/100ml Tergitol_15_S_3 in hexadecane",
+    "ro": 0.7717149379875974,
+    "label": "_9.4e-01_hexadecane_6.5e-02_Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.06494525329283961
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9350547467071607
+      }
+    }
+  },
+  "7.5g_IB-45_in_100mL_water_20250507": {
+    "name": "7.5g_IB-45_in_100mL_water_20250507",
+    "ro": 1.026591410457698,
+    "label": "_9.3e-01_water_7.3e-02_aerosol_ib-45",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.07332025191866579
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9266797480813342
+      }
+    }
+  },
+  "BrijL4": {
+    "name": "BrijL4",
+    "ro": 0.95,
+    "label": "BrijL4",
+    "components": {
+      "BrijL4": {
+        "label": "BrijL4",
+        "w": 1
+      }
+    }
+  },
+  "BrijX": {
+    "name": "BrijX",
+    "ro": 0.96,
+    "label": "BrijX",
+    "components": {
+      "BrijX": {
+        "label": "BrijX",
+        "w": 1
+      }
+    }
+  },
+  "BrijY": {
+    "name": "BrijY",
+    "ro": 0.96,
+    "label": "BrijY",
+    "components": {
+      "BrijY": {
+        "label": "BrijY",
+        "w": 1
+      }
+    }
+  },
+  "NaCl": {
+    "name": "NaCl",
+    "ro": 2.16,
+    "label": "NaCl",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 1
+      }
+    }
+  },
+  "RS02.5g/100mL_Tergitol_15-S-3_C16_20260914": {
+    "name": "RS02.5g/100mL_Tergitol_15-S-3_C16_20260914",
+    "ro": 0.7676742871479943,
+    "label": "_9.7e-01_hexadecane_3.3e-02_Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.032840238386212015
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9671597616137879
+      }
+    }
+  },
+  "RS02.5g/100mL_Tergitol_15-S-3_C7_20260914": {
+    "name": "RS02.5g/100mL_Tergitol_15-S-3_C7_20260914",
+    "ro": 0.686084818555818,
+    "label": "_9.6e-01_heptane_3.6e-02_Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.03649840355460739
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9635015964453926
+      }
+    }
+  },
+  "RS05g/100mL_Tergitol_15-S-3_C16_20260904": {
+    "name": "RS05g/100mL_Tergitol_15-S-3_C16_20260904",
+    "ro": 0.7721477119847043,
+    "label": "_6.5e-02_Tergitol_15_S_3_9.3e-01_hexadecane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.06508821264324115
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.9349117873567591
+      }
+    }
+  },
+  "RS05g/100mL_Tergitol_15-S-3_C7_20260904": {
+    "name": "RS05g/100mL_Tergitol_15-S-3_C7_20260904",
+    "ro": 0.6997739860560908,
+    "label": "_7.4e-02_Tergitol_15_S_3_9.3e-01_heptane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.07428627821505199
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.9257137217849479
+      }
+    }
+  },
+  "RS15g/100mL_Tergitol_15-S-3_C16_20260903": {
+    "name": "RS15g/100mL_Tergitol_15-S-3_C16_20260903",
+    "ro": 0.7910431359541132,
+    "label": "_1.9e-01_Tergitol_15_S_3_8.1e-01_hexadecane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.19060040667327618
+      },
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 0.8093995933267236
+      }
+    }
+  },
+  "RS15g/100mL_Tergitol_15-S-3_C7_20260903": {
+    "name": "RS15g/100mL_Tergitol_15-S-3_C7_20260903",
+    "ro": 0.7401219581682721,
+    "label": "_2.1e-01_Tergitol_15_S_3_7.9e-01_heptane",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 0.2107096179573144
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.7892903820426854
+      }
+    }
+  },
+  "RS15g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260904": {
+    "name": "RS15g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260904",
+    "ro": 1.0789978751444786,
+    "label": "_1.4e-01_Tergitol_15-S-9_7.2e-01_water_1.4e-01_NaCl",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.13897406736971277
+      },
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.1382593589336755
+      },
+      "water": {
+        "label": "water",
+        "w": 0.7227665736966119
+      }
+    }
+  },
+  "RS15g/100ml_Tergitol_15-S-9_in_wt_20260904": {
+    "name": "RS15g/100ml_Tergitol_15-S-9_in_wt_20260904",
+    "ro": 0.9893986501405356,
+    "label": "_1.5e-01_Tergitol_15-S-9_8.5e-01_water",
+    "components": {
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.15157899281547585
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8484210071845241
+      }
+    }
+  },
+  "RS17.5g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260914": {
+    "name": "RS17.5g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260914",
+    "ro": 1.0766173977786466,
+    "label": "_1.6e-01_Tergitol_15-S-9_7.0e-01_water_1.4e-01_NaCl",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.13939324230866473
+      },
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.1616592368704255
+      },
+      "water": {
+        "label": "water",
+        "w": 0.6989475208209096
+      }
+    }
+  },
+  "RS17.5g/100ml_Tergitol_15-S-9_in_wt_20260914": {
+    "name": "RS17.5g/100ml_Tergitol_15-S-9_in_wt_20260914",
+    "ro": 0.9876317584972919,
+    "label": "_8.2e-01_water_1.8e-01_Tergitol_15-S-9",
+    "components": {
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.17715853220542466
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8228414677945751
+      }
+    }
+  },
+  "RS5g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260903": {
+    "name": "RS5g/100ml_Tergitol_15-S-9_15g/100ml_nacl_in_wt_20260903",
+    "ro": 1.0885197846078076,
+    "label": "_8.2e-01_water_4.6e-02_Tergitol_15-S-9_1.4e-01_NaCl",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.13731570143692942
+      },
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.045683308231285746
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8170009903317846
+      }
+    }
+  },
+  "RS5g/100ml_Tergitol_15-S-9_in_wt_20260903": {
+    "name": "RS5g/100ml_Tergitol_15-S-9_in_wt_20260903",
+    "ro": 0.996466216713512,
+    "label": "_5.0e-02_Tergitol_15-S-9_9.5e-01_water",
+    "components": {
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.0501679663480959
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9498320336519039
+      }
+    }
+  },
+  "Tergitol_15-S-9": {
+    "name": "Tergitol_15-S-9",
+    "ro": 0.93,
+    "label": "Tergitol_15-S-9",
+    "components": {
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 1
+      }
+    }
+  },
+  "Tergitol_15_S_3": {
+    "name": "Tergitol_15_S_3",
+    "ro": 0.918,
+    "label": "Tergitol_15_S_3",
+    "components": {
+      "Tergitol_15_S_3": {
+        "label": "Tergitol_15_S_3",
+        "w": 1
+      }
+    }
+  },
+  "aerosol_ib-45": {
+    "name": "aerosol_ib-45",
+    "ro": 1.0,
+    "label": "aerosol_ib-45",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 1
+      }
+    }
+  },
+  "aot": {
+    "name": "aot",
+    "ro": 1.1,
+    "label": "aot",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 1
+      }
+    }
+  },
+  "double_water": {
+    "name": "double_water",
+    "ro": 2.0,
+    "label": "double_water",
+    "components": {
+      "double_water": {
+        "label": "double_water",
+        "w": 1
+      }
+    }
+  },
+  "heptane": {
+    "name": "heptane",
+    "ro": 0.6796,
+    "label": "heptane",
+    "components": {
+      "heptane": {
+        "label": "heptane",
+        "w": 1
+      }
+    }
+  },
+  "hexadecane": {
+    "name": "hexadecane",
+    "ro": 0.7627,
+    "label": "hexadecane",
+    "components": {
+      "hexadecane": {
+        "label": "hexadecane",
+        "w": 1
+      }
+    }
+  },
+  "novel_810-3.5": {
+    "name": "novel_810-3.5",
+    "ro": 0.95,
+    "label": "Novel 810-3.5",
+    "components": {
+      "Novel 810-3.5": {
+        "label": "Novel 810-3.5",
+        "w": 1
+      }
+    }
+  },
+  "temp_20260902_nacl_terg15s9": {
+    "name": "temp_20260902_nacl_terg15s9",
+    "ro": 1.2317733873448515,
+    "label": "_4.3e-01_NaCl_5.7e-01_Tergitol_15-S-9",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.430228088159918
+      },
+      "Tergitol_15-S-9": {
+        "label": "Tergitol_15-S-9",
+        "w": 0.569771911840082
+      }
+    }
+  },
+  "tergitol_15-s-5": {
+    "name": "tergitol_15-s-5",
+    "ro": 0.963,
+    "label": "tergitol_15-s-5",
+    "components": {
+      "tergitol_15-s-5": {
+        "label": "tergitol_15-s-5",
+        "w": 1
+      }
+    }
+  },
+  "test_50_50_dw_w_solution": {
+    "name": "test_50_50_dw_w_solution",
+    "ro": 1.5,
+    "label": "_3.3e-01_water_6.7e-01_double_water",
+    "components": {
+      "double_water": {
+        "label": "double_water",
+        "w": 0.6666666666666666
+      },
+      "water": {
+        "label": "water",
+        "w": 0.3333333333333333
+      }
+    }
+  },
+  "test_BH_SBH": {
+    "name": "test_BH_SBH",
+    "ro": 1.1264095395497202,
+    "label": "_1.4e-01_NaCl_7.7e-01_water_9.0e-02_aerosol_ib-45",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.13695700327757251
+      },
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.08953443469956834
+      },
+      "water": {
+        "label": "water",
+        "w": 0.7735085620228591
+      }
+    }
+  },
+  "test_BH_SBL": {
+    "name": "test_BH_SBL",
+    "ro": 1.0972499999999998,
+    "label": "_1.4e-01_NaCl_8.6e-01_water",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.14059665071770333
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8594033492822968
+      }
+    }
+  },
+  "test_BL_SBH": {
+    "name": "test_BL_SBH",
+    "ro": 1.0291595395497204,
+    "label": "_9.0e-01_water_9.8e-02_aerosol_ib-45",
+    "components": {
+      "aerosol_ib-45": {
+        "label": "aerosol_ib-45",
+        "w": 0.09799495363751902
+      },
+      "water": {
+        "label": "water",
+        "w": 0.9020050463624809
+      }
+    }
+  },
+  "test_BL_SBL": {
+    "name": "test_BL_SBL",
+    "ro": 1.0,
+    "label": "_1.0e+00_water",
+    "components": {
+      "water": {
+        "label": "water",
+        "w": 1.0
+      }
+    }
+  },
+  "test_aot_stock": {
+    "name": "test_aot_stock",
+    "ro": 0.7213687802558497,
+    "label": "_1.4e-01_aot_8.6e-01_heptane",
+    "components": {
+      "aot": {
+        "label": "aot",
+        "w": 0.13995129154066427
+      },
+      "heptane": {
+        "label": "heptane",
+        "w": 0.8600487084593359
+      }
+    }
+  },
+  "test_c7": {
+    "name": "test_c7",
+    "ro": 0.6796,
+    "label": "heptane",
+    "components": {
+      "heptane": {
+        "label": "heptane",
+        "w": 1
+      }
+    }
+  },
+  "water": {
+    "name": "water",
+    "ro": 1.0,
+    "label": "_1.0e+00_water",
+    "components": {
+      "water": {
+        "label": "water",
+        "w": 1.0
+      }
+    }
+  },
+  "Tergitol_15-S-12": {
+    "name": "Tergitol_15-S-12",
+    "ro": 1.027,
+    "label": "Tergitol_15-S-12",
+    "components": {
+      "Tergitol_15-S-12": {
+        "label": "Tergitol_15-S-12",
+        "w": 1
+      }
+    }
+  },
+  "10g/100mL_Tergitol_15-S-12_in_water_20260916": {
+    "name": "10g/100mL_Tergitol_15-S-12_in_water_20260916",
+    "ro": 0.9972840512570705,
+    "label": "_9.0e-01_water_1.0e-01_Tergitol_15-S-12",
+    "components": {
+      "water": {
+        "label": "water",
+        "w": 0.9002235101869321
+      },
+      "Tergitol_15-S-12": {
+        "label": "Tergitol_15-S-12",
+        "w": 0.09977648981306785
+      }
+    }
+  },
+  "10g/100mL_Tergitol_15-S-12_30g/100mL_NaCl_in_water_20260916": {
+    "name": "10g/100mL_Tergitol_15-S-12_30g/100mL_NaCl_in_water_20260916",
+    "ro": 1.1657881917865414,
+    "label": "_2.4e-01_NaCl_6.8e-01_water_8.5e-02_Tergitol_15-S-12",
+    "components": {
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.236341678511399
+      },
+      "water": {
+        "label": "water",
+        "w": 0.6786473981877842
+      },
+      "Tergitol_15-S-12": {
+        "label": "Tergitol_15-S-12",
+        "w": 0.08501092330081673
+      }
+    }
+  },
+  "Tergitol_15-S-15": {
+    "name": "Tergitol_15-S-15",
+    "ro": 1.007,
+    "label": "Tergitol_15-S-15",
+    "components": {
+      "Tergitol_15-S-15": {
+        "label": "Tergitol_15-S-15",
+        "w": 1
+      }
+    }
+  },
+  "10g/100ml_Tergitol_15-S-15_in_water_20260923": {
+    "name": "10g/100ml_Tergitol_15-S-15_in_water_20260923",
+    "ro": 0.9948167477874789,
+    "label": "_1.0e-01_Tergitol_15-S-15_9.0e-01_water",
+    "components": {
+      "Tergitol_15-S-15": {
+        "label": "Tergitol_15-S-15",
+        "w": 0.10024962556165752
+      },
+      "water": {
+        "label": "water",
+        "w": 0.8997503744383425
+      }
+    }
+  },
+  "10g/100ml_Tergitol_15_S_15_30g/100ml_nacl_in_water_20260923": {
+    "name": "10g/100ml_Tergitol_15_S_15_30g/100ml_nacl_in_water_20260923",
+    "ro": 1.167197645277139,
+    "label": "_8.5e-02_Tergitol_15-S-15_6.8e-01_water_2.4e-01_NaCl",
+    "components": {
+      "Tergitol_15-S-15": {
+        "label": "Tergitol_15-S-15",
+        "w": 0.08540847689469767
+      },
+      "water": {
+        "label": "water",
+        "w": 0.6783525326872027
+      },
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.23623899041809956
+      }
+    }
+  },
+  "30g/100ml_NaCl_in_water_20260923": {
+    "name": "30g/100ml_NaCl_in_water_20260923",
+    "ro": 1.1966660557622892,
+    "label": "_7.4e-01_water_2.6e-01_NaCl",
+    "components": {
+      "water": {
+        "label": "water",
+        "w": 0.741581377328641
+      },
+      "NaCl": {
+        "label": "NaCl",
+        "w": 0.2584186226713589
+      }
+    }
+  }
+}
