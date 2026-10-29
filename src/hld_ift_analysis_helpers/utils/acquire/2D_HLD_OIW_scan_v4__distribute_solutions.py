@@ -10,6 +10,7 @@ import functools
 import json
 import time
 import argparse
+import copy
 
 #sys.path.append("/mnt/d/projects/HLD_parameter_determination/hld_ift_http/src") # on office pc
 #> sys.path.append("C:/Users/admin/Documents/Data/aikars/opentron/hld_ift_http/src") # robolab laptop
@@ -98,8 +99,8 @@ inner_run_sol_2     = Well_Address("9", "A4") #"C4")
 #    address, soluton, quantity, container
 stock_names = params["stocks"]
 stocks = [
-dict(address = inner_run_sol_1, name = stock_names["inner_run_solution_1"], volume = 12000),
-dict(address = inner_run_sol_2, name = stock_names["inner_run_solution_2"], volume = 12000) 
+dict(address = inner_run_sol_1, solution = stock_names["inner_run_solution_1"], volume = 12000),
+dict(address = inner_run_sol_2, solution = stock_names["inner_run_solution_2"], volume = 12000) 
 ]
 
 def fraction_name(name, fraction):
@@ -242,10 +243,6 @@ with open(SOLUTION_REPOSITORY_PATH, "w") as f:
 
 params_out = copy.deepcopy(params)
 
-
-        oiw_scan_status = k
-
-logout = logout_oiw_choice in oiw_scan_status
 
 for mix_input in mixtures:
     if mix_input["address"] == sample_80_20:

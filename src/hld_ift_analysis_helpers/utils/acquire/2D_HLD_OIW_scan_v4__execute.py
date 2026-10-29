@@ -83,7 +83,7 @@ from hld_ift_http.opentrons_pp import Opentrons_PP
 from hld_ift_http.compound_properties import Compound_Properties
 from hld_ift_http.solution import Solution
 from hld_ift_http.mixing_graph import Mixing_Graph
-from hld_ift_http.hld_scan_1d import Scan_Graph, HLD_IFT_2D_Scan_log_outer_W_Slider #HLD_IFT_2D_Scan_W_Slider
+from hld_ift_http.hld_scan_1d import Scan_Graph, HLD_IFT_2D_Scan_log_outer_W_Slider, HLD_IFT_2D_Scan_W_Slider
 from hld_ift_http.washing_step import Sequence_Washing_Steps
 from hld_ift_http.camera_capture import Camera_Capture
 from hld_ift_http.experiment_and_measurement import Experiment, Scan, Measurement, Ift_Image
@@ -318,8 +318,8 @@ if params["scan"]["oiw_scan_logout"]:
 
     hld_scan = HLD_IFT_2D_Scan_log_outer_W_Slider(
                     opentron = op,
-                    n_expansions = 0 #hld_scan_args["n_expansions"],
-                    n_approximation = 0 #hld_scan_args["n_approximation"],
+                    n_expansions = 0, #hld_scan_args["n_expansions"],
+                    n_approximation = 0, #hld_scan_args["n_approximation"],
                     scan_graph = scan,
                     mixing_pipette = MIXING_PIPETTE,
                     experiment = exp,
@@ -339,8 +339,8 @@ else:
 
     hld_scan = HLD_IFT_2D_Scan_W_Slider(
                     opentron = op,
-                    n_expansions = 0 #hld_scan_args["n_expansions"],
-                    n_approximation = 0 #hld_scan_args["n_approximation"],
+                    n_expansions = 0, #hld_scan_args["n_expansions"],
+                    n_approximation = 0, #hld_scan_args["n_approximation"],
                     scan_graph = scan,
                     mixing_pipette = MIXING_PIPETTE,
                     experiment = exp,
