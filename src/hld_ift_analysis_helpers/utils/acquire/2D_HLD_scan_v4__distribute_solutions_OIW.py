@@ -47,6 +47,20 @@ except Exception as e:
 print(json.dumps(params))
 k = input("... press enter to continue ...")
 
+not_valid_out = True
+
+logout_oiw_choice = "logout"
+linear_oiw_choice = "oiw"
+
+while not_valid_out:
+    k = input("enter `logout` to create logout_OIW configuration, `oiw` otherwise!!! >>>")
+    if logout_oiw_choice in k or linear_oiw_choice in k:
+        not_valid_out = False
+        oiw_scan_string = k
+        oiw_scan_status = True
+
+oiw_scan_logout = logout_oiw_choice in oiw_scan_string
+
 # ---------- path
 DATA_PATH   = params["DATA_PATH"]
 LOG_PATH    = params["LOG_PATH"]
@@ -161,8 +175,8 @@ for st in stocks:
 first = True
 for mix_input in mixtures:
     #if first:
-    #if mix_input["use"]:
-    add_to_mixing_graph(**mix_input)
+    if mix_input["use"]:
+        add_to_mixing_graph(**mix_input)
     #    first = False
 
 # ............................................................ pretty print of config
@@ -208,8 +222,8 @@ for mix_input in mixtures:
 first = True
 for mix_input in mixtures:
     #if first:
-    if mix_input["use"]:
-        add_to_repository(**mix_input)
+    #if mix_input["use"]:
+    add_to_repository(**mix_input)
     #    first = False
 
 # ---- end run here!!!
@@ -225,6 +239,31 @@ print(str(rep))
 
 with open(SOLUTION_REPOSITORY_PATH, "w") as f:
     rep.toJSON(file = f, sort_keys = True, indent = 2)
+
+params_out = copy.deepcopy(params)
+
+
+        oiw_scan_status = k
+
+logout = logout_oiw_choice in oiw_scan_status
+
+for mix_input in mixtures:
+    if mix_input["address"] == sample_80_20:
+        params_out["stocks"]["sample_80_20"] = mix_input["name"]
+    if mix_input["address"] == sample_60_40:
+        params_out["stocks"]["sample_60_40"] = mix_input["name"]
+    if mix_input["address"] == sample_40_60:
+        params_out["stocks"]["sample_40_60"] = mix_input["name"]
+    if mix_input["address"] == sample_20_80:
+        params_out["stocks"]["sample_20_80"] = mix_input["name"]
+
+params_out["scan"]["oiw_scan"] = oiw_scan_status
+params_out["scan"]["oiw_scan_logout"] = oiw_scan_logout
+
+with open(args.source, "w") as f:
+    json.dump(params_out, f, indent = 2)    
+
+
 
 print(" ....................aaaaaaaaaaaaaaaaaaaand we are done!!!")
 
