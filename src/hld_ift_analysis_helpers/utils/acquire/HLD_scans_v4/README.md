@@ -86,6 +86,22 @@ Most of systems have several formulation parameters and cannot be properly chara
 
 ### set up configuration (3i1D_HLD_scan_v4__setup_configuration.py)
 
+- blank configuration is supplemented in following way:
+    - slot 2: "<name of labware>"
+        - `2/A1`: sample waste, 500 uL of washing solution
+        - `2/A1`: sample waste, 500 uL of washing solution
+        - `2/A1`: sample waste, 500 uL of washing solution
+    - slot 9: "<name_of labware>"
+        - `9/B1`: `outer stock 1`, 12000 uL
+        - `9/B2`: `outer stock 2`, 12000 uL
+        - `9/B3`: `inner stock 1`, 12000 uL
+        - `9/B4`: `inner stock 2`, 12000 uL
+        - `9/C1`: `outer diluter 1`, 12000 uL
+        - `9/C2`: `outer diluter 2`, 12000 uL
+        - `9/C3`: `inner diluter 1`, 12000 uL
+        - `9/C4`: `inner diluter 2`, 12000 uL
+
+
 ### execution (3i1D_HLD_scan_v4__execute.py)
 
 
@@ -94,7 +110,7 @@ slot 2:
 
           A1$        A2         A3         A4         A5         A6
           SMPL WST   WASH1 WST  WASH2 WST  WASH1      empty      empty
-          0.5        0.5        0.5        1.4        0          0        
+          0.5->      0.5->      0.5->      1.4->      0          0        
 
           B1         B2         B3         B4         B5         B6
           empty      empty      empty      empty      empty      empty       
@@ -116,11 +132,11 @@ slot 9:
 
           B1         B2         B3         B4         B5
           OS1        OS2        IS1        IS2        -
-          12         12         12         12         -
+          12->       12->       12->       12->       -
           
           C1         C2         C3         C4         C5
           OD1        OD2        ID1        ID2        -
-          12         12         12         12         -
+          12->       12->       12->       12->       -
 
 ```
 
@@ -128,6 +144,11 @@ slot 9:
 ## Workflow: 2D_HLD_scan_v4
 
 ### setting up scan_settings.json
+
+- requires:
+    - inner and outer stocks and diluters should be valid solutions in the solution repository
+    - valid and unique names for inner and outer run solutions
+    - 
 
 ### prepare solutions (2D_HLD_scan_v4__prepare_solutions.py)
 
@@ -161,16 +182,57 @@ slot 9:
           12->       12->       12->       12->       -
           
           C1         C2         C3         C4         C5
-          OD1        OD2        ID1        ID2        -
-          12->       12->       12->       12->       -
+          OD1        OD2        ID1        ID2        WASH
+          12->       12->       12->       12->       12->
 
 ```
+
+### execution ()
+
+
+```
+slot 2:
+
+          A1$        A2         A3         A4         A5         A6
+          SMPL WST   WASH1 WST  WASH2 WST  WASH1      empty      empty
+          0.5->      0.5->      0.5->      1.4->      0          0        
+
+          B1         B2         B3         B4         B5         B6
+          empty      empty      empty      empty      empty      empty       
+          0          0          0          0          0          0          
+          
+          C1         C2         C3         C4         C5         C6
+          empty      empty      empty      empty      empty      empty       
+          0          0          0          0          0          0          
+          
+          D1         D2         D3         D4         D5         D6
+          empty      empty      empty      empty      empty      empty       
+          0          0          0          0          0          0          
+          
+          
+slot 9:
+          A1         A2         A3         A4         A5
+          ORS1       ORS2       IRS1       IRS2       -
+          12         12         12         12         -
+
+          B1         B2         B3         B4         B5
+          -          -          -          -          -
+          -          -          -          -          -
+          
+          C1         C2         C3         C4         C5
+          -          -          -          -          -
+          -          -          -          -          -
+
+```
+
 
 ## Workflow: 2D_HLD_OIW_scan_v4
 
 ### setting up scan_settings.json
 
 ### prepare solutions ()
+
+- this step is the same as for 
 
 ### distribute solutions: (2D_HLD_OIW_scan_v4__distribute_solutions.py)
 
@@ -179,7 +241,7 @@ slot 9:
 slot 9:
           A1         A2         A3         A4         A5
           -          -          IRS1       IRS2       -
-          -          -          12         12         -
+          -          -          12->       12->       -
 
           B1         B2         B3         B4         B5
           -          I80/20     I60/40     I40/60     I20/80
@@ -216,17 +278,14 @@ slot 2:
           
           
 slot 9:
-          A1         A2         A3         A4         A5
-          ORS1       ORS2       -          -          -
-          12         12         -          -          -
+          A1                        A2                        A3 
+          ORS1                      ORS2                      - 
+          ??->                      ??->                      - 
 
-          B1         B2         B3         B4         B5
-          -          -          -          -          -
-          -          -          -          -          -
+          B1                        B2                        B3
+          -                         -                         - 
+          -                         -                         - 
           
-          C1         C2         C3         C4         C5
-          -          -          -          -          -   
-          -          -          -          -          -
 
 ```
 
