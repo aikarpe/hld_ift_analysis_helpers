@@ -61,6 +61,7 @@ The scripts included at package/utils/acquire represent individual steps in the 
  | inner diluter 1 |   `(1-x) * (1 - x_dilute * (1-x))` | inner phase     |
  | inner stock 2   |   `x     * x_dilute * (1-x)`       | inner phase     |
  | inner diluter 2 |   `x     * (1 - x_dilute * (1-x))` | inner phase     |
+ |                 |                                    |                 |
  | outer stock 1   |   `(1-x) * x_dilute * x`           | outer phase     |
  | outer diluter 1 |   `(1-x) * (1 - x_dilute * x)`     | outer phase     |
  | outer stock 2   |   `x     * x_dilute * x`           | outer phase     |
@@ -174,40 +175,6 @@ The scripts included at package/utils/acquire represent individual steps in the 
  ![](3i1D_scan_v4__execute__slot2.png)
  ![](3i1D_scan_v4__execute__slot9.png)
 
-```
-slot 2:
-
-          A1$        A2         A3         A4         A5         A6
-          SMPL WST   WASH1 WST  WASH2 WST  WASH1      empty      empty
-          0.5->      0.5->      0.5->      1.4->      0          0        
-
-          B1         B2         B3         B4         B5         B6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          C1         C2         C3         C4         C5         C6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          D1         D2         D3         D4         D5         D6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          
-slot 9:
-          A1         A2         A3         A4         A5
-          -          -          -          -          -
-          -          -          -          -          -
-
-          B1         B2         B3         B4         B5
-          OS1        OS2        IS1        IS2        -
-          12->       12->       12->       12->       -
-          
-          C1         C2         C3         C4         C5
-          OD1        OD2        ID1        ID2        -
-          12->       12->       12->       12->       -
-
-```
 
 
 ---
@@ -250,40 +217,7 @@ slot 9:
 ![](2D_scan_v4__prepare_solutions__slot2.png)
 ![](2D_scan_v4__prepare_solutions__slot9.png)
 
-```
-slot 2:
 
-          A1$        A2         A3         A4         A5         A6
-          SMPL WST   WASH1 WST  WASH2 WST  WASH1      -          -  
-          0->0.5     0->0.5     0->0.5     0->1.4     -          -        
-
-          B1         B2         B3         B4         B5         B6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          C1         C2         C3         C4         C5         C6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          D1         D2         D3         D4         D5         D6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          
-slot 9:
-          A1         A2         A3         A4         A5
-          ORS1       ORS2       IRS1       IRS2       -
-          ->12       ->12       ->12       ->12       -
-
-          B1         B2         B3         B4         B5
-          OS1        OS2        IS1        IS2        -
-          12->       12->       12->       12->       -
-          
-          C1         C2         C3         C4         C5
-          OD1        OD2        ID1        ID2        WASH
-          12->       12->       12->       12->       12->
-
-```
 ### set up configuration 
 
 - create configuration by running the script `2D_HLD_scan_v4__setup_configuration.py`
@@ -310,41 +244,6 @@ slot 9:
 ![](2D_scan_v4__execute__slot9.png)
 
 
-```
-slot 2:
-
-          A1$        A2         A3         A4         A5         A6
-          SMPL WST   WASH1 WST  WASH2 WST  WASH1      empty      empty
-          0.5->      0.5->      0.5->      1.4->      0          0        
-
-          B1         B2         B3         B4         B5         B6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          C1         C2         C3         C4         C5         C6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          D1         D2         D3         D4         D5         D6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          
-slot 9:
-          A1         A2         A3         A4         A5
-          ORS1       ORS2       IRS1       IRS2       -
-          12         12         12         12         -
-
-          B1         B2         B3         B4         B5
-          -          -          -          -          -
-          -          -          -          -          -
-          
-          C1         C2         C3         C4         C5
-          -          -          -          -          -
-          -          -          -          -          -
-
-```
-
 
 ---
 
@@ -354,7 +253,35 @@ slot 9:
 
 ### prepare solutions 
 
-- this step is exactly the same as for scan `2D_HLD_scan_v4`
+- *this step is exactly the same as for scan* `2D_HLD_scan_v4`
+- run the script `2D_HLD_scan_v4__prepare_solutions.py`
+- inputs: 
+    - slot 9: `3dprinted_15_tuberack_15000ul`
+        - `9/B1`: `outer stock 1`, 12000 uL
+        - `9/B2`: `outer stock 2`, 12000 uL
+        - `9/B3`: `inner stock 1`, 12000 uL
+        - `9/B4`: `inner stock 2`, 12000 uL
+        - `9/C1`: `outer diluter 1`, 12000 uL
+        - `9/C2`: `outer diluter 2`, 12000 uL
+        - `9/C3`: `inner diluter 1`, 12000 uL
+        - `9/C4`: `inner diluter 2`, 12000 uL
+        - `9/C5`: `washing solution`, 12000 uL
+
+- outputs: 
+    - slot 2: `eppendorf_24_reservoir_1500ul`
+        - `2/A1`: `sample waste`, 500 uL
+        - `2/A2`: `wash waste 1`, 500 uL
+        - `2/A3`: `wash waste 2`, 500 uL
+        - `2/A4`: `washing solution 1`, 1400 uL
+    - slot 9: `3dprinted_15_tuberack_15000ul`
+        - `9/A1`: `outer run solution 1`, 12000 uL
+        - `9/A2`: `outer run solution 2`, 12000 uL
+        - `9/A3`: `inner run solution 1`, 12000 uL
+        - `9/A4`: `inner run solution 2`, 12000 uL
+
+![](2D_scan_v4__prepare_solutions__slot2.png)
+![](2D_scan_v4__prepare_solutions__slot9.png)
+
 
 ### distribute solutions: (2D_HLD_OIW_scan_v4__distribute_solutions.py)
 
@@ -376,21 +303,6 @@ slot 9:
 ![](2D_OIW_scan_v4__distribute__slot9.png){width=30%}
 
 
-```
-slot 9:
-          A1         A2         A3         A4         A5
-          -          -          IRS1       IRS2       -
-          -          -          12->       12->       -
-
-          B1         B2         B3         B4         B5
-          -          I80/20     I60/40     I40/60     I20/80
-          -          ->4        ->4        ->4        ->4
-          
-          C1         C2         C3         C4         C5
-          -          -          -          -          -
-          -          -          -          -          -
-
-```
 
 ### setup configuration (2D_HLD_OIW_scan_v4__setup_configuration.py)
 
@@ -418,41 +330,11 @@ slot 9:
 ![](2D_OIW_scan_v4__execute__slot2.png)
 ![](2D_OIW_scan_v4__execute__slot9.png)
 
-```
-slot 2:
-
-          A1$        A2         A3         A4         A5         A6
-          SMPL WST   WASH1 WST  WASH2 WST  WASH1      empty      empty
-          0.5        0.5        0.5        1.4        0          0        
-
-          B1         B2         B3         B4         B5         B6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          C1         C2         C3         C4         C5         C6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          D1         D2         D3         D4         D5         D6
-          IRS1       I80/20     I60/40     I40/60     I20/80     IRS2        
-          1.4        1.4        1.4        1.4        1.4        1.4        
-          
-          
-slot 9:
-          A1                        A2                        A3 
-          ORS1                      ORS2                      - 
-          ??->                      ??->                      - 
-
-          B1                        B2                        B3
-          -                         -                         - 
-          -                         -                         - 
-          
-
-```
 
 ---
 
 # Components
+
 
 ## settings file
 
@@ -591,131 +473,6 @@ Setup files assumes that user has:
     - 2 dilution liquids for aqueous phase - one for each stock
 - surfactant concentration values are used to calculate dilution to obtain run stocks
 
-
-# Workflow in brief
-
-- prepare setting files
-- prepare stock and dilution solutions and add their definitions to solution repository
-- prepare run stocks (using `2D_HLD_scan_v3__prepare_solutions.py`)
-- create run configuration files (using `2D_HLD_scan_v3__setup_configuration.py`)
-- execute 2D HLD scan (using `2D_HLD_scan_v3__execute.py`)
-
-# abbreviations
-
-- `SMPL WST`: Sample waste; here remaining sample is discarded after measurement.
-- `WASH1 WST`: Wash 1 waste; here a washing fluid is discarded after first set of washing steps.
-- `WASH2 WST`: Wash 2 waste; here a sample fluid is discarded after washing steps with a sample fluid
-- `WASH1`: A washing fluid source vial
-- `IRS1`: An inner run solution 1; 
-- `IRS2`: An inner run solution 2;
-- `ORS1`: An outer run solution 1;
-- `ORS2`: An outer run solution 2;
-- `IS1`: A main inner stock 1; 
-- `IS2`: A main inner stock 2;
-- `OS1`: A main outer stock 1;
-- `OS2`: A main outer stock 2;
-- `ID1`: An inner diluter 1;
-- `ID2`: An inner diluter 2;
-- `OD1`: An outer diluter 1;
-- `OD1`: An outer diluter 2;
-- `WASH`: A location of washing fluid for distribution;
-
-
-# opentron starting conditions
-
-## run stock preparation: layout
-
-```
-slot 2:
-
-          A1$        A2         A3         A4         A5         A6
-          SMPL WST   WASH1 WST  WASH2 WST  WASH1      -          -  
-          0->0.5     0->0.5     0->0.5     0->1.4     -          -        
-
-          B1         B2         B3         B4         B5         B6
-          -          -          -          -          -          -           
-          -          -          -          -          -          -          
-          
-          C1         C2         C3         C4         C5         C6
-          -          -          -          -          -          -           
-          -          -          -          -          -          -          
-          
-          D1         D2         D3         D4         D5         D6
-          -          -          -          -          -          -           
-          -          -          -          -          -          -          
-          
-          
-slot 9:
-          A1         A2         A3         A4         A5
-          RAQ1       RAQ2       RO1        RO2        -
-          0->12.5    0->12.5    0->12.5    0->12.5    -
-
-          B1         B2         B3         B4         B5
-          SAQ1       SAQ2       SO1        SO2        -
-          12.5->     12.5->     12.5->     12.5->     -
-          
-          C1         C2         C3         C4         C5
-          DAQ1       DAQ2       DO1        DO2        WASH
-          12.5->     12.5->     12.5->     12.5->     12.5->
-
-```
-
-($) - each well is described with 1) address label, 2) role, 3) volume change; `-` indicates not used or does not change; `X->` indicates that starting volume is known, but final volume varies based on inputs
-
-
-## scan execution: layout
-
-```
-slot 2:
-
-          A1$        A2         A3         A4         A5         A6
-          SMPL WST   WASH1 WST  WASH2 WST  WASH1      empty      empty
-          0.5        0.5        0.5        1.4        0          0        
-
-          B1         B2         B3         B4         B5         B6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          C1         C2         C3         C4         C5         C6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          D1         D2         D3         D4         D5         D6
-          empty      empty      empty      empty      empty      empty       
-          0          0          0          0          0          0          
-          
-          
-slot 9:
-          A1         A2         A3         A4         A5
-          RAQ1       RAQ2       RO1        RO2        -
-          12         12         12         12         -
-
-          B1         B2         B3         B4         B5
-          -          -          -          -          -
-          -          -          -          -          -
-          
-          C1         C2         C3         C4         C5
-          -          -          -          -          -
-          -          -          -          -          -
-
-```
-
-($) - each well is described with 1) address label, 2) role, 3) volume; `-` well not used; `empty` - an empty eppendorff to mix inner solutions
-
-Setup requires:
-
-
-
-- surfactant_in_oil_1[^note_1]: main stock of oil_1 with surfactant_oil
-- surfactant_in_oil_2: main stock of oil_2 with surfactant_oil
-- stock_aqueous_1: main stock of aqueous_solution_1 with surfactant_aq
-- stock_aqueous_2: main stock of aqueous_solution_2 with surfactant_aq
-
-[^note_1]: [variable name in `scan_settings.json`]: [description]
-
-
-```
-does not give Depending on IFT magnitude a dripping
 
 Scans `3i1D_HLD_scan_v4` and `2D_HLD_scan_v4` were designed to characterize system with two surfactants, one oil and one water soluble; both scans use 8 stock solutions to explore system's behaviour versus salinity, EACN and surfactant concentration. `2D_HLD_scan_v4` can be used also to characterize a single surfactant versus salinity and EACN. `2D_HLD_OIW_scan_v4` is a 2D scan meant to probe volatile inner phase samples. All available runs where reworked to have more consistent terminology for the run; The inputs used in settings file are kept - at least attempted - consistent accross all runs. It is meant to allow switch from one type of scan to another in a simple manner.
 
