@@ -53,21 +53,23 @@ The scripts included at package/utils/acquire represent individual steps in the 
 
 - `3i1D_HLD_scan_v4` is designed to simultanously vary 3 distinct variables - salinity, EACN, and oil vs aqueous surfactant ration - and locate a parameter space with low IFT for further characterization.
 - The scan requires 8 input solutions, their role is given in a table below
-- A single variable `x` is changed in discrete fashion from 0 to 1 during a scan. The volume fraction of each particular input solution in an inner and an outer solution is given below:
+- A single variable `x` is changed in discrete fashion from 0 to 1 during a scan.
+    - `x` values: {0, 1/N, 2/N, ..., N/N}, where `N = number_of_outer_solution_points - 1` 
+    - `c_surfactant_outer_run_solution` and `c_surfactant_outer_stock` determine dilutions at evey sampled point; the volume fraction of each particular input solution in an inner and an outer solution is given below:
 
- | source solution | fraction                           | target solution |
- |-----------------|------------------------------------|-----------------|
- | inner stock 1   |   `(1-x) * x_dilute * (1-x)`       | inner phase     |
- | inner diluter 1 |   `(1-x) * (1 - x_dilute * (1-x))` | inner phase     |
- | inner stock 2   |   `x     * x_dilute * (1-x)`       | inner phase     |
- | inner diluter 2 |   `x     * (1 - x_dilute * (1-x))` | inner phase     |
- |                 |                                    |                 |
- | outer stock 1   |   `(1-x) * x_dilute * x`           | outer phase     |
- | outer diluter 1 |   `(1-x) * (1 - x_dilute * x)`     | outer phase     |
- | outer stock 2   |   `x     * x_dilute * x`           | outer phase     |
- | outer diluter 2 |   `x     * (1 - x_dilute * x)`     | outer phase     |
+     | source solution | fraction                           | target solution |
+     |-----------------|------------------------------------|-----------------|
+     | inner stock 1   |   `(1-x) * x_dilute * (1-x)`       | inner phase     |
+     | inner diluter 1 |   `(1-x) * (1 - x_dilute * (1-x))` | inner phase     |
+     | inner stock 2   |   `x     * x_dilute * (1-x)`       | inner phase     |
+     | inner diluter 2 |   `x     * (1 - x_dilute * (1-x))` | inner phase     |
+     |                 |                                    |                 |
+     | outer stock 1   |   `(1-x) * x_dilute * x`           | outer phase     |
+     | outer diluter 1 |   `(1-x) * (1 - x_dilute * x)`     | outer phase     |
+     | outer stock 2   |   `x     * x_dilute * x`           | outer phase     |
+     | outer diluter 2 |   `x     * (1 - x_dilute * x)`     | outer phase     |
  
-    - `x_dilute = c_surfactant_experiment / c_surfactant_stock` 
+    - `x_dilute = c_surfactant_outer_run_solution / c_surfactant_outer_stock` 
     - few examples of dilutions are shown below for `x_dilute = {0.1, 0.5, 1.0}`
 
 
@@ -76,7 +78,7 @@ The scripts included at package/utils/acquire represent individual steps in the 
 
 ## 2D_HLD_scan_v4
 
-- `2D_HLD_scan_v4` is designed to create 2D grid scans for 2 distinct variables - salinity and EACN. 
+- `2D_HLD_scan_v4` is designed to create 2D grid scans for 2 distinct variables - salinity and EACN. It is intended to test systems with two surfactants (one in inner and another in outer solution) and each surfactant is independently controlled by concentration variables (see 2D_HLD_scan_v4, solution preparation section below).
 - The scan requires 4 input solutions: 
     - 2 inner run solutions, and
     - 2 outer run solutions
@@ -104,7 +106,7 @@ The scripts included at package/utils/acquire represent individual steps in the 
 - a solution definition requires:
     - density, g/ml
     - composition of all ingredients as mass fraction (w/w)
-- there is a tool to plan solution preparation (solution repository editor [ ] add script name!!!)
+- there is a tool to plan solution preparation `solution_repository_editor.py`
 - weighing all components befor mixing is easiest way to create solutions (even liquids)
 - for a density estimate small aliquots can be weighted and compared with standard liquid with known density (e.g. water)
 
@@ -117,6 +119,236 @@ The scripts included at package/utils/acquire represent individual steps in the 
 
 ## Workflow: 3i1D_HLD_scan_v4
 
+### planning script
+
+- this script is meant only for planning; it does not affect how it is performed!!!
+- you can see how different experimental variables change over the 3i1D_scan_v4
+
+```
+... more explanation on code should come here...
+... the bit below is war code that needs reworking...
+
+import numpy as np
+import pandas as pd
+from itertools import product
+
+
+def plan_a_3i1D_scan_solution(
+    stock_param_lst,
+    fns,
+    n_points=6,
+    x_diluter=1.0
+):
+    """
+    Generate a 1D scan of component concentrations.
+
+    Parameters
+    ----------
+    stock_param_lst : dict
+        Dictionary containing two stock parameter lists.
+    fns : dict
+        Dictionary containing the concentration functions.
+    n_points : int
+        Number of scan points.
+    x_diluter : float
+        Dilution factor.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Component concentrations across the scan.
+    """
+
+    if n_points < 2:
+        raise ValueError("n_points must be at least 2")
+
+    # Equivalent to expand.grid() in R
+    def my_expand(lst):
+        keys = list(lst.keys())[:2]
+        values = [lst[k] for k in keys]
+
+        # R expand.grid: first variable changes fastest
+        combinations = [
+            tuple(reversed(item))
+            for item in product(*reversed(values))
+        ]
+
+        return pd.DataFrame(combinations, columns=keys)
+
+    # Calculate the concentration of a component
+    def component_conc_fn(var, fns):
+        def calculate(x, x_diluter):
+            if len(var) != len(fns):
+                raise ValueError(
+                    "The number of stock combinations must match "
+                    "the number of concentration functions."
+                )
+
+            return sum(
+                stock * fn(x, x_diluter)
+                for stock, fn in zip(var, fns.values())
+            )
+
+        return calculate
+
+    # Expand stock parameter combinations
+    df_stocks = my_expand(stock_param_lst)
+
+    component_names = df_stocks.columns
+
+    # Generate scan points
+    scan_points = np.linspace(0, 1, n_points)
+
+    # Calculate concentrations for each component
+    result = {}
+
+    for name in component_names:
+
+        var = df_stocks[name].tolist()
+
+        fn = component_conc_fn(var, fns)
+
+        result[name] = [
+            fn(x, x_diluter)
+            for x in scan_points
+        ]
+
+    return pd.DataFrame(result)
+
+
+def plan_3i1D_scan(
+    inner_solution_lst,
+    outer_solution_lst,
+    n_points=6,
+    x_diluter=1.0
+):
+    """
+    Generate inner and outer solution concentration scans.
+
+    Returns
+    -------
+    dict
+        Contains inner_solution and outer_solution DataFrames.
+    """
+
+    # Inner solution functions
+    inner_sol_fns = {
+        "inner_diluter_1": lambda x, xd: (1-x) * (1-xd*(1-x)),
+        "inner_stock_1":   lambda x, xd: (1-x) * xd * (1-x),
+        "inner_diluter_2": lambda x, xd: x * (1-xd*(1-x)),
+        "inner_stock_2":   lambda x, xd: x * xd * (1-x)
+    }
+
+    # Outer solution functions
+    outer_sol_fns = {
+        "outer_diluter_1": lambda x, xd: (1-x) * (1-xd*x),
+        "outer_stock_1":   lambda x, xd: (1-x) * xd * x,
+        "outer_diluter_2": lambda x, xd: x * (1-xd*x),
+        "outer_stock_2":   lambda x, xd: x * xd * x
+    }
+
+    # Calculate inner solution
+    inner_solution = plan_a_3i1D_scan_solution(
+        inner_solution_lst,
+        inner_sol_fns,
+        n_points,
+        x_diluter
+    )
+
+    # Calculate outer solution
+    outer_solution = plan_a_3i1D_scan_solution(
+        outer_solution_lst,
+        outer_sol_fns,
+        n_points,
+        x_diluter
+    )
+
+    # Combine both solutions (equivalent to cbind)
+    combined = pd.concat(
+        [inner_solution, outer_solution],
+        axis=1
+    )
+
+    # Display results (equivalent to knitr::kable)
+    print(combined.to_string(index=False))
+
+    # Return results
+    out = {
+        "inner_solution": inner_solution,
+        "outer_solution": outer_solution
+    }
+
+    return out
+
+
+```
+
+This could be run to show variable change over the scan, see example below
+
+| solution        | name and composition                                                  |                           
+|-----------------|-----------------------------------------------------------------------|                           
+| inner stock 1   |  "10g/100mL Tergitol 15S5 in heptane"                                 |                           
+| inner stock 2   |  "10g/100mL Tergitol 15S5 in hexadecane"                              |                              
+| inner diluter 1 |  "heptane"                                                            | 
+| inner diluter 2 |  "hexadecane"                                                         |    
+| outer stock 1   |  "10g/100mL Tergitol 15S9 in water"                                   |                         
+| outer stock 2   |  "10g/100mL Tergitol 15S9, 15g/100mL NaCl in water"                   |                       
+| outer diluter 1 |  "water"                                                              |         
+| outer diluter 2 |  "15g/100ml NaCl in water"                                            |                       
+
+| solution | variable  | range  |
+|----------|-----------|--------|
+| inner    | cTerg15S5 | [0,10] |
+| inner    | EACN      | [7,16] |
+| outer    | cTerg15S9 | [0,10] |
+| outer    | S         | [0,15] |
+
+
+
+```
+{python}
+inner = dict(cTerg15S5 = [0,10], EACN = [7,16])
+outer = dict(cTerg15S9 = [0,10], S    = [0,15])
+
+plan_3i1D_scan(inner, outer, 6, 1.0)
+```
+
+```
+> cTerg15S5  EACN  cTerg15S9    S
+>      10.0   7.0        0.0  0.0
+>       8.0   8.8        2.0  3.0
+>       6.0  10.6        4.0  6.0
+>       4.0  12.4        6.0  9.0
+>       2.0  14.2        8.0 12.0
+>       0.0  16.0       10.0 15.0
+>
+>{
+>'inner_solution':    cTerg15S5  EACN
+>                  0       10.0   7.0
+>                  1        8.0   8.8
+>                  2        6.0  10.6
+>                  3        4.0  12.4
+>                  4        2.0  14.2
+>                  5        0.0  16.0, 
+>'outer_solution':    cTerg15S9     S
+>                  0        0.0   0.0
+>                  1        2.0   3.0
+>                  2        4.0   6.0
+>                  3        6.0   9.0
+>                  4        8.0  12.0
+>                  5       10.0  15.0
+>}
+```
+
+```
+!!! should add on effect of swapping solutions on a scan
+
+`inner = dict(cTerg15S5 = [0,10], EACN = [**7,16**])`
+replace with: 
+`inner = dict(cTerg15S5 = [0,10], EACN = [**16,7**])`
+
+```
+
 ### in brief
 
 - edit scan_settings file
@@ -125,10 +357,19 @@ The scripts included at package/utils/acquire represent individual steps in the 
 - create configuration files
 - execute run
 
-- related commands:
+related commands:
 
 ```
-[ ] add command prompt bits!!!
+conda activate hld_ift0
+cd __EXPERIMENT_PATH__
+set SCRIPT=__SCRIPT_PATH__
+set SETTINGS=scan_settings.json
+
+python %SCRIPT%\new_profile_wizard.py
+python %SCRIPT%\solution_repository_editor.py %SETTINGS%
+
+python %SCRIPT%\3i1D_HLD_scan_v4__setup_configuration.py %SETTINGS%
+python %SCRIPT%\3i1D_HLD_scan_v4__execute.py %SETTINGS%
 ```
 
 ### setting up scan_settings.json
@@ -175,11 +416,54 @@ The scripts included at package/utils/acquire represent individual steps in the 
  ![](3i1D_scan_v4__execute__slot2.png)
  ![](3i1D_scan_v4__execute__slot9.png)
 
+- A single variable `x` is changed in discrete fashion from 0 to 1 during a scan.
+    - `x` values: {0, 1/N, 2/N, ..., N/N}, where `N = number_of_outer_solution_points - 1` 
+    - `c_surfactant_outer_run_solution` and `c_surfactant_outer_stock` determine dilutions at evey sampled point; the volume fraction of each particular input solution in an inner and an outer solution is given below:
+
+     | source solution | fraction                           | target solution |
+     |-----------------|------------------------------------|-----------------|
+     | inner stock 1   |   `(1-x) * x_dilute * (1-x)`       | inner phase     |
+     | inner diluter 1 |   `(1-x) * (1 - x_dilute * (1-x))` | inner phase     |
+     | inner stock 2   |   `x     * x_dilute * (1-x)`       | inner phase     |
+     | inner diluter 2 |   `x     * (1 - x_dilute * (1-x))` | inner phase     |
+     |                 |                                    |                 |
+     | outer stock 1   |   `(1-x) * x_dilute * x`           | outer phase     |
+     | outer diluter 1 |   `(1-x) * (1 - x_dilute * x)`     | outer phase     |
+     | outer stock 2   |   `x     * x_dilute * x`           | outer phase     |
+     | outer diluter 2 |   `x     * (1 - x_dilute * x)`     | outer phase     |
+ 
+    - `x_dilute = c_surfactant_outer_run_solution / c_surfactant_outer_stock` 
+    - few examples of dilutions are shown below for `x_dilute = {0.1, 0.5, 1.0}`
+
 
 
 ---
 
 ## Workflow: 2D_HLD_scan_v4
+
+### in brief
+
+- edit scan_settings file
+- prepare all solutions and add them to a solution repository
+- prepare run solutions and distribute washing solution
+- create configuration files
+- execute run
+
+related commands:
+
+```
+conda activate hld_ift0
+cd __EXPERIMENT_PATH__
+set SCRIPT=__SCRIPT_PATH__
+set SETTINGS=scan_settings.json
+
+python %SCRIPT%\new_profile_wizard.py
+python %SCRIPT%\solution_repository_editor.py %SETTINGS%
+
+python %SCRIPT%\2D_HLD_scan_v4__prepare_solutions.py %SETTINGS%
+python %SCRIPT%\2D_HLD_scan_v4__setup_configuration.py %SETTINGS%
+python %SCRIPT%\2D_HLD_scan_v4__execute.py %SETTINGS%
+```
 
 ### setting up scan_settings.json
 
@@ -213,6 +497,27 @@ The scripts included at package/utils/acquire represent individual steps in the 
         - `9/A2`: `outer run solution 2`, 12000 uL
         - `9/A3`: `inner run solution 1`, 12000 uL
         - `9/A4`: `inner run solution 2`, 12000 uL
+
+- dilution is performed according to the concentration terms given in `scan_settings.json` file
+
+ | source solution | fraction                  | target solution      |
+ |-----------------|---------------------------|----------------------|
+ | inner stock 1   |   ` x_dilute_inner`       | inner run solution 1 |
+ | inner diluter 1 |   ` 1 - x_dilute_inner`   | inner run solution 1 |
+ |                 |                           |                      |
+ | inner stock 2   |   ` x_dilute_inner`       | inner run solution 2 |
+ | inner diluter 2 |   ` 1 - x_dilute_inner`   | inner run solution 2 |
+ |                 |                           |                      |
+ | outer stock 1   |   ` x_dilute_outer`       | outer run solution 1 |
+ | outer diluter 1 |   ` 1 - x_dilute_outer`   | outer run solution 1 |
+ |                 |                           |                      |
+ | outer stock 2   |   ` x_dilute_outer`       | outer run solution 2 |
+ | outer diluter 2 |   ` 1 - x_dilute_outer`   | outer run solution 2 |
+
+     - `x_dilute_outer = c_surfactant_outer_run_solution / c_surfactant_outer_stock` 
+     - `x_dilute_inner = c_surfactant_inner_run_solution / c_surfactant_inner_stock` 
+
+ 
 
 ![](2D_scan_v4__prepare_solutions__slot2.png)
 ![](2D_scan_v4__prepare_solutions__slot9.png)
@@ -248,6 +553,33 @@ The scripts included at package/utils/acquire represent individual steps in the 
 ---
 
 ## Workflow: 2D_HLD_OIW_scan_v4
+
+### in brief
+
+- edit scan_settings file
+- prepare all solutions and add them to a solution repository
+- prepare run solutions and distribute washing solution
+- mix and distribute inner solutions
+- create configuration files
+- execute run
+
+related commands:
+
+```
+conda activate hld_ift0
+cd __EXPERIMENT_PATH__
+set SCRIPT=__SCRIPT_PATH__
+set SETTINGS=scan_settings.json
+
+python %SCRIPT%\new_profile_wizard.py
+python %SCRIPT%\solution_repository_editor.py %SETTINGS%
+
+python %SCRIPT%\2D_HLD_scan_v4__prepare_solutions.py %SETTINGS%
+python %SCRIPT%\2D_HLD_OIW_scan_v4__distribute_solutions.py %SETTINGS%
+python %SCRIPT%\2D_HLD_OIW_scan_v4__setup_configuration.py %SETTINGS%
+python %SCRIPT%\2D_HLD_OIW_scan_v4__execute.py %SETTINGS%
+```
+
 
 ### setting up scan_settings.json
 
@@ -342,36 +674,36 @@ The scripts included at package/utils/acquire represent individual steps in the 
 
 ### general parameters
 
-- `DATA_PATH`: an absolute path to this set of experiment(s)
-- `LOG_PATH`: an absolute path to log file generated during a scan
-- `CONFIG_PATH`: an absolut path to folder that contains configuration files (opentron, mixing graph, measurement)
-- `SOLUTION_REPOSITORY_PATH`: an absolute path to a solution repository
-- `c_surfactant_outer_run_solution`: a concentration of a surfactant in an outer run solution used in an experiment; float value that is less or eaqul to `c_surfactant_outer_stock`
-- `c_surfactant_outer_stock`: a concentration of a surfactant in main oil stock, it is expected that both oil stocks contain the same concentration. 
-- `c_surfactant_inner_run_solution`: a concentration of a surfactant in aqueous phase used in an experiment; float value that is less or eaqul to `c_surfactant_inner_stock`
-- `c_surfactant_inner_stock`: a concentration of a surfactant in main aqueous stock, it is expected that both aqueous stocks contain the same concentration. 
-    - The necessary dilution is estimated from c_surfactant_stock and c_surfactant_experiment values. A main stock is diluted with a diluter solution: 
-        - v_stock = c_surfactant_experiment / c_surfactant_stock * v_total
-        - v_diluter = v_total - v_stock
+- path entries: 
+    - `DATA_PATH`: an absolute path to this set of experiment(s)
+    - `LOG_PATH`: an absolute path to log file generated during a scan
+    - `CONFIG_PATH`: an absolut path to folder that contains configuration files (opentron, mixing graph, measurement)
+    - `SOLUTION_REPOSITORY_PATH`: an absolute path to a solution repository
+- concentration entries:
+    - NOTE: a role of entries can slightly change depending on context, e.g. 3i1D_scan_v4 uses only variables `c_surfactant_outer_run_solution` and `c_surfactant_outer_stock` to determine fractions of all 8 input solutions. See details for various scans and dilution scripts.
+    - `c_surfactant_outer_run_solution`: a concentration of a surfactant in an outer run solution used in an experiment; float value that is less or eaqul to `c_surfactant_outer_stock`
+    - `c_surfactant_outer_stock`: a concentration of a surfactant in main oil stock, it is expected that both oil stocks contain the same concentration. 
+    - `c_surfactant_inner_run_solution`: a concentration of a surfactant in aqueous phase used in an experiment; float value that is less or eaqul to `c_surfactant_inner_stock`
+    - `c_surfactant_inner_stock`: a concentration of a surfactant in main aqueous stock, it is expected that both aqueous stocks contain the same concentration. 
 
 ### Stocks
 
 - subsection `stocks` in settings file contains names of various solutions used in experiment. The solutions are stored in the solution repository associated with the experiment(s). The names given in this section have to match exactly names of solutions availabel in the solution repository. E.g. `heptane` and `Heptane` are two different names!
-- running solutions are created from main stocks and diluter fluids. Their names can be arbitrarily chosen and definition of these solutions are created during the solution prep step (__add_script_name__).
-
-- `outer_stock_1`: a name of main stock of an oil phase 1,
-- `outer_stock_2`: a name of main stock of an oil phase 2,
-- `outer_diluter_1`: a name of a diluter of an oil phase 1,
-- `outer_diluter_2`: a name of a diluter of an oil phase 2,
-- `outer_run_solution_1`: a name of run stock of an oil phase 1,
-- `outer_run_solution_2`: a name of run stock of an oil phase 2,
-- `inner_stock_1`: a name of main stock of an aqueous phase 1,
-- `inner_stock_2`: a name of main stock of an aqueous phase 2,
-- `inner_diluter_1`: a name of diluter fluid of an aqueous phase 1,
-- `inner_diluter_2`: a name of diluter fluid of an aqueous phase 2,
-- `inner_run_solution_1`: a name of run stock of an aqueous phase 1,
-- `inner_run_solution_2`: a name of run stock of an aqueous phase 2,
-- `washing_solution`: a name of washing and waste solution
+- running solutions are created from main stocks and diluter fluids. Their names can be arbitrarily chosen and definition of these solutions are created during the solution prep step (`2D_HLD_scan_v4__prepare_solutions.py`, `2D_HLD_OIW_scan_v4__distribute_solutions.py`)
+- detailed explanation:
+    - `outer_stock_1`: a name of main stock of an oil phase 1,
+    - `outer_stock_2`: a name of main stock of an oil phase 2,
+    - `outer_diluter_1`: a name of a diluter of an oil phase 1,
+    - `outer_diluter_2`: a name of a diluter of an oil phase 2,
+    - `outer_run_solution_1`: a name of run stock of an oil phase 1,
+    - `outer_run_solution_2`: a name of run stock of an oil phase 2,
+    - `inner_stock_1`: a name of main stock of an aqueous phase 1,
+    - `inner_stock_2`: a name of main stock of an aqueous phase 2,
+    - `inner_diluter_1`: a name of diluter fluid of an aqueous phase 1,
+    - `inner_diluter_2`: a name of diluter fluid of an aqueous phase 2,
+    - `inner_run_solution_1`: a name of run stock of an aqueous phase 1,
+    - `inner_run_solution_2`: a name of run stock of an aqueous phase 2,
+    - `washing_solution`: a name of washing and waste solution
 
 ### Configurations
 
@@ -386,6 +718,10 @@ The scripts included at package/utils/acquire represent individual steps in the 
 ### Scan
 
 - `experiment_metadata`: string entries of user defined metadata; these fields are added as header variable into an experimental data 
+- `n_approximation`: integer, not used at the moment, leave value at `0`
+- `number_of_outer_solution_points`: integer, number of different outer solution blends. outer solution is linearly blended from two stocks.
+- `volume_of_outer_solution`: float, volume of outer solution in uL added to a cuvette; suggested value: 3000 to 3500
+- `scan_type`: a string from set {"linear", "log", "log_and_mid"}, unrecognized string defaults to "linear"
 - `n_expansions": integer, number of times new data points are added to scan. The manner in which the data points are added depends on scan type:
     - `scan_type == "linear"`: a new data point is added at the midpoint between any two nearest neighbours
         - every expansion `n-1` data point is added, where `n` is number of data points in the scan before expansion
@@ -398,6 +734,8 @@ The scripts included at package/utils/acquire represent individual steps in the 
          | 1                          | {0, 0.5, 1}                                                   |
          | 2                          | {0, 0.25, 0.5, 0.75, 1}                                       |
          | 3                          | {0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1}           |
+         |                            |                                                               |
+         | (general form)             |                                                               |
          | m                          | {0/2^m, 1/2^m, 2/2^m, ..., (2^m - 1)/2^m, 2^m/2^m}            |
 
 
@@ -413,6 +751,8 @@ The scripts included at package/utils/acquire represent individual steps in the 
          | 1                          | {0, 0.5, 1}                                                   |
          | 2                          | {0, 0.25, 0.5, 1}                                             |
          | 3                          | {0, 0.125, 0.25, 0.5, 1}                                      |
+         |                            |                                                               |
+         | (general form)             |                                                               |
          | m                          | {0, 1/2^(m-0), 1/2^(m-1), 1/2^(m-2), ..., 1/2^1, 1/2^0}       |
         
          (**) point {0} is never measured
@@ -429,14 +769,13 @@ The scripts included at package/utils/acquire represent individual steps in the 
          | 1                          | {0, 0.5, 0.75, 1}                                                 |
          | 2                          | {0, 0.25, 0.375, 0.5, 0.75, 1}                                    |
          | 3                          | {0, 0.125, 0.1875, 0.25, 0.375, 0.5, 0.75, 1}                     |
+         |                            |                                                               |
+         | (general form)             |                                                               |
          | m                          | {0, 2/2^(m+1), 3/2^(m+1), 2/2^m, 3/2^m, ..., 2/2^2, 3/2^2, 2/2^1} |
         
          
+         (***) point {0} is never measured
 
-- `n_approximation`: integer, not used at the moment, leave value at `0`
-- `number_of_outer_solution_points`: integer, number of different outer solution blends. outer solution is linearly blended from two stocks.
-- `volume_of_outer_solution`: float, volume of outer solution in uL added to a cuvette; suggested value: 3000 to 3500
-- `scan_type`: a string from set {"linear", "log", "log_and_mid"}, unrecognized string defaults to "linear"
 
 
 ---
@@ -453,11 +792,66 @@ The scripts included at package/utils/acquire represent individual steps in the 
         - its mass fraction
 - hld scans require generation of various solutions. A composition of solution/mixture created by volumetric mixing of two or more components can be easily estimated providing that a) volume, density and mass fractions of each input solution and b) density of resulting solution/mixture is known
     - density of mixture/solution is calculated by as sum of mass of all components divided by sum of volums of all components. (Here we assume that obtained mixture does not exhibit contraction of expansion upon mixing - a reasonable assumption)  
-
-- [ ] list scripts that can edit solution repository!!!
+- use `solution_repository_editor.py` to edit entries of the solution repository
 
 
 ---
+
+## scripts
+
+
+### `solution_repository_editor.py`
+
+- [ ] **add content**!!!
+
+---
+
+
+### `create_new_profile.py`
+
+- [ ] **add content**!!!
+
+
+---
+
+
+
+### `new_profile_wizard.py`
+
+- [ ] **add content**!!!
+
+
+---
+
+
+### `update_labware_well_positions.py`
+
+- [ ] **add content**!!!
+
+
+---
+
+
+
+### ``
+
+- [ ] **add content**!!!
+
+
+---
+
+
+
+### ``
+
+- [ ] **add content**!!!
+
+
+---
+
+
+
+
 
 
 

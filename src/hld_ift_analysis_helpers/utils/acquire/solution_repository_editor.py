@@ -87,33 +87,39 @@ if k == "" or k == "y":
         conc_val = 20.0
     
     
-    surf_in_oil_1 = app.pick_a_solution(make_me_pretty("Select main surfactant in oil stock solution 1"))
-    surf_in_oil_2 = app.pick_a_solution(make_me_pretty("Select main surfactant in oil stock solution 2"))
+    outer_stock_1 = app.pick_a_solution(make_me_pretty("Select main outer stock 1 solution"))
+    outer_stock_2 = app.pick_a_solution(make_me_pretty("Select main outer stock 2 solution"))
     
-    oil_1 = app.pick_a_solution(make_me_pretty("Select oil stock solution 1 (for dilution)"))
-    oil_2 = app.pick_a_solution(make_me_pretty("Select oil stock solution 2 (for dilution)"))
+    outer_diluter_1 = app.pick_a_solution(make_me_pretty("Select outer diluter 1 solution"))
+    outer_diluter_2 = app.pick_a_solution(make_me_pretty("Select outer diluter 2 solution"))
     
-    aqueous_1 = app.pick_a_solution(make_me_pretty("Select acqueous stock solution 1"))
-    aqueous_2 = app.pick_a_solution(make_me_pretty("Select acqueous stock solution 2"))
+    inner_stock_1 = app.pick_a_solution(make_me_pretty("Select main inner stock 1 solution"))
+    inner_stock_2 = app.pick_a_solution(make_me_pretty("Select main inner stock 2 solution"))
+    
+    inner_diluter_1 = app.pick_a_solution(make_me_pretty("Select inner diluter 1 solution"))
+    inner_diluter_2 = app.pick_a_solution(make_me_pretty("Select inner diluter 2 solution"))
     
     
     print("selection:")
     print(conc_val)
-    print(surf_in_oil_1)
-    print(surf_in_oil_2)
-    print(oil_1)
-    print(oil_2)
-    print(aqueous_1)
-    print(aqueous_2)
+    print(outer_stock_1)
+    print(outer_stock_2)
+    print(outer_diluter_1)
+    print(outer_diluter_2)
+    print(inner_stock_1)
+    print(inner_stock_2)
     
     
-    params["c_surfactant_stock"] = conc_val
-    params["stocks"]["surfactant_in_oil_1"] = params["stocks"]["surfactant_in_oil_1"] if surf_in_oil_1 is None else surf_in_oil_1  
-    params["stocks"]["surfactant_in_oil_2"] = params["stocks"]["surfactant_in_oil_2"] if surf_in_oil_2 is None else surf_in_oil_2  
-    params["stocks"]["oil_1"] = params["stocks"]["oil_1"] if oil_1 is None else oil_1  
-    params["stocks"]["oil_2"] = params["stocks"]["oil_2"] if oil_2 is None else oil_2  
-    params["stocks"]["stock_aqueous_1"] = params["stocks"]["stock_aqueous_1"] if aqueous_1 is None else aqueous_1  
-    params["stocks"]["stock_aqueous_2"] = params["stocks"]["stock_aqueous_2"] if aqueous_2 is None else aqueous_2  
+    params["c_surfactant_outer_stock"] = conc_val
+    params["c_surfactant_inner_stock"] = conc_val
+    params["stocks"]["outer_stock_1"]   = params["stocks"]["outer_stock_1"] if outer_stock_1 is None else outer_stock_1  
+    params["stocks"]["outer_stock_2"]   = params["stocks"]["outer_stock_2"] if outer_stock_2 is None else outer_stock_2  
+    params["stocks"]["outer_diluter_1"] = params["stocks"]["outer_diluter_1"] if outer_diluter_1 is None else outer_diluter_1  
+    params["stocks"]["outer_diluter_2"] = params["stocks"]["outer_diluter_2"] if outer_diluter_2 is None else outer_diluter_2  
+    params["stocks"]["inner_stock_1"]   = params["stocks"]["inner_stock_1"] if inner_stock_1 is None else inner_stock_1  
+    params["stocks"]["inner_stock_2"]   = params["stocks"]["inner_stock_2"] if inner_stock_2 is None else inner_stock_2  
+    params["stocks"]["inner_diluter_1"] = params["stocks"]["inner_diluter_1"] if inner_diluter_1 is None else inner_diluter_1  
+    params["stocks"]["inner_diluter_2"] = params["stocks"]["inner_diluter_2"] if inner_diluter_2 is None else inner_diluter_2  
     
     print(args.source)
 
@@ -121,28 +127,56 @@ k = input("Do you want to set up hld-ift run stocks??? [y/n] >>>")
 
 if k == "" or k == "y":
      
-    conc_set = False
-    while not conc_set:
-        conc = input("HLD_IFT scan concentration >>>")
-        try:
-            conc_val = float(conc)
-            if conc_val <= params["c_surfactant_stock"]:
-                params["c_surfactant_experiment"] = conc_val
-                conc_set = True
-            else:
-                print(f'A concentration of stock for an experiment cannot exceed a general stock ({params["c_surfactant_stock"]})!!!')
-        except:
-            print(f'Use float value, should be less than concentration of surfactant stock({params["c_surfactant_stock"]})!!!')
+    def get_run_conc_val(label, stock_conc_lbl, run_conc_lbl):
+        conc_set = False
+        while not conc_set:
+            conc = input("HLD_IFT scan: surfactant concentration in {label}>>>")
+            try:
+                conc_val = float(conc)
+                if conc_val <= params[stock_conc_lbl]:
+                    params[run_conc_lbl] = conc_val
+                    conc_set = True
+                else:
+                    print(f'A concentration of surfactant in a run solution cannot exceed a concentration in a stock ({params[stock_conc_lbl]})!!!')
+            except:
+                print(f'Use float value, should be less than concentration of surfactant in a stock({params[stock_conc_lbl]})!!!')
     
-    k = input(f'Enter a name for run stock #1:\n   name of general stock: {params["stocks"]["surfactant_in_oil_1"]}\n>>>')
-    params["stocks"]["run_stock_surf_oil_1"] = k
+    #conc_set = False
+    #while not conc_set:
+    #    conc = input("HLD_IFT scan concentration >>>")
+    #    try:
+    #        conc_val = float(conc)
+    #        if conc_val <= params["c_surfactant_stock"]:
+    #            params["c_surfactant_experiment"] = conc_val
+    #            conc_set = True
+    #        else:
+    #            print(f'A concentration of stock for an experiment cannot exceed a general stock ({params["c_surfactant_stock"]})!!!')
+    #    except:
+    #        print(f'Use float value, should be less than concentration of surfactant stock({params["c_surfactant_stock"]})!!!')
 
-    k = input(f'Enter a name for run stock #2:\n   name of general stock: {params["stocks"]["surfactant_in_oil_2"]}\n>>>')
-    params["stocks"]["run_stock_surf_oil_2"] = k
+    get_run_conc_val("outer run solution", "c_surfactant_outer_stock", "c_surfactant_outer_run_solution")
+    get_run_conc_val("inner run solution", "c_surfactant_inner_stock", "c_surfactant_inner_run_solution")
+
+    
+    def get_run_sol_name(stock_name, run_sol_name, label):
+        k = input(f'Enter a name for {label}:\n   name of general stock: {params["stocks"][stock_name]}\n>>>')
+        params["stocks"][run_sol_name] = k
+
+    get_run_sol_name("outer_stock_1", "outer_run_solution_1", "outer run solution 1")
+    get_run_sol_name("outer_stock_2", "outer_run_solution_2", "outer run solution 2")
+    get_run_sol_name("inner_stock_1", "inner_run_solution_1", "inner run solution 1")
+    get_run_sol_name("inner_stock_2", "inner_run_solution_2", "inner run solution 2")
+
+    #k = input(f'Enter a name for run stock #1:\n   name of general stock: {params["stocks"]["outer_stock_1"]}\n>>>')
+    #params["stocks"]["outer_run_solution_1"] = k
+
+    #k = input(f'Enter a name for run stock #2:\n   name of general stock: {params["stocks"]["outer_stock_2"]}\n>>>')
+    #params["stocks"]["outer_run_solution_2"] = k
 
     k = input(f'Enter a configuration name:\n   [date]_[conc]_[surfactant]_in_[oils]\n e.g. `2026-03-25_05g_surfA_in_C7C16`\n>>>')
     params["configurations"]["start"] = k
     params["configurations"]["end"] = f'{k}_run'
+
 
 try:
     with open(args.source, "w") as f:
