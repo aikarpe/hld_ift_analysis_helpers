@@ -214,6 +214,11 @@ class SolutionRepositoryApp:
             self.add_solution_from_recipe()
             k = input("... press enter to continue...")
             return False
+        def user_add_mixture_directly(an_input, params):
+            print_title_box("Add solution directly from ingredients ...")
+            self.create_mixture_w_dialog() 
+            k = input("... press enter to continue...")
+            return False
 
         mmparams = dict()
         select_main_menu = dict(
@@ -229,7 +234,8 @@ class SolutionRepositoryApp:
                         list_recipes = dict(value = "vr", fn = user_list_recipes),
                         list_recipes_dtls = dict(value = "vrd", fn = user_show_recipes_details),
                         add_cmp = dict(value = "ac", fn = user_add_cmpd),
-                        add_sol_from_recipe = dict(value = "ar", fn = user_add_sol_from_recipe)
+                        add_sol_from_recipe = dict(value = "ar", fn = user_add_sol_from_recipe),
+                        add_sol_mix_direct = dict(value = "am", fn = user_add_mixture_directly)
                         )
 
         looping_input(
@@ -242,6 +248,7 @@ class SolutionRepositoryApp:
 Add
      ac: a compound
      ar: a solution/mixture based on recipe
+     am: add a mixture directly
 
 Remove
 
@@ -573,6 +580,187 @@ View
         else:
             print("Add new compound canceled! Nothing was added!")
 
+    def create_mixture_w_dialog(self):
+            
+        fn_params = dict(
+                        exit = False,
+                        make_recipe = False,
+                        selected_components = [],
+                        selected_quantity = []
+                         )
+        def make_recipe(an_input, params):
+            params["make_recipe"] = True
+            N = min(len(params["selected_quantity"]), len(params["selected_components"]))
+            params["selected_components"] = [params["selected_components"][x] for x in range(N)]
+            params["selected_quantity"]   = [params["selected_quantity"][x] for x in range(N)]
+
+        def exit_routine(an_input, params):
+            params["exit"] = True
+        
+        if not fn_params["exit"]: 
+            def is_valid_mixture_type_selection(an_input, params):
+                choice = self.make_a_choice(["by mass", "by volume"], "Choose type of mixture to create")
+                if choice is None:
+                    return False
+                else: 
+                    params["type_mixture"] = choice
+                    return True
+
+            select_mix_type = dict(
+                            main = is_valid_mixture_type_selection, 
+                            exit = dict(value = "exit", fn = exit_routine), 
+                            cancel = dict(value = "cancel", fn = exit_routine), 
+                            cancel2 = dict(value = "c", fn = exit_routine)
+                            )
+
+            looping_input(
+                select_mix_type, 
+                "\n # select how components are to be mixed #\n ... press enter ...",
+                fn_params
+                )
+
+        def pick_another_component(params):
+            def is_valid_sol_selection(an_input, params):
+                choice = self.make_a_choice(remove_matching_items(self.rep.list_solution_names(), params["selected_components"]), "select a new component to add to mixture")
+                if choice is None:
+                    return False
+                else: 
+                    params["selected_components"].append(choice)
+                    return True
+            def make_recipe(an_input, params):
+                params["make_recipe"] = True
+                return True
+                
+            if not params["exit"] and not params["make_recipe"]: 
+                select_component = dict(
+                                main = is_valid_sol_selection, 
+                                exit = dict(value = "exit", fn = exit_routine), 
+                                cancel = dict(value = "cancel", fn = exit_routine), 
+                                cancel2 = dict(value = "c", fn = exit_routine),
+                                make = dict(value = "m", fn = make_recipe),
+                                make2 = dict(value = "make", fn = make_recipe)
+                                )
+
+                looping_input(
+                    select_component, 
+                    "\n choose: \n  `<NOTHING>`: to select a new component to add to mixture \n  `m`        : make solution from inputs so far \n  `c`        : cancel \n  >>>",
+                    params
+                    )
+
+            if not params["exit"] and not params["make_recipe"]: 
+                def is_valid_quantity(an_input,params):
+                    try:
+                        params["selected_quantity"].append(float(an_input))
+                        return True
+                    except Exception:
+                        print("please enter float value!")
+                        return False
+
+                select_quantity = dict(
+                        main = is_valid_quantity, 
+                                exit = dict(value = "exit", fn = exit_routine), 
+                                cancel = dict(value = "cancel", fn = exit_routine), 
+                                cancel2 = dict(value = "c", fn = exit_routine),
+                                make = dict(value = "m", fn = make_recipe),
+                                make2 = dict(value = "make", fn = make_recipe)
+                                )
+
+                components = params["selected_components"]
+                last_component = components[len(components) - 1]
+
+                looping_input(
+                    select_quantity, 
+                    f"\n # select a quantity of a component\n   `{last_component}`\n   to add to mixture #\n >>>",
+                    params
+                    )
+
+
+        while not fn_params["make_recipe"]:
+            pick_another_component(fn_params)
+            
+
+        if not fn_params["exit"]: 
+            def is_valid_density(an_input, params):
+                try:
+                    value_temp =  float(an_input)
+                    params["density"] = value_temp if value_temp > 0 else -1
+                    return True
+                except Exception:
+                    print("Will estimate density from available components without volume change!")
+                    params["density"] = -1
+                    return True
+
+            select_density = dict(
+                            main = is_valid_density, 
+                            exit = dict(value = "exit", fn = exit_routine), 
+                            cancel = dict(value = "cancel", fn = exit_routine), 
+                            cancel2 = dict(value = "c", fn = exit_routine)
+                            )
+
+            looping_input(
+                select_density, 
+                "\n # provide density of final mixture, if known #\n >>>",
+                fn_params
+                )
+
+        if not fn_params["exit"]: 
+            def is_valid_name(an_input, params):
+                if an_input not in self.rep.list_solution_names() and len(an_input) >= 3:
+                    params["name"] = an_input
+                    return True
+                else:
+                    print("choose different unique name! Name should not already be in solution repository AND it should be 3 characters or longe.")
+                    return False
+
+            select_name = dict(
+                            main = is_valid_name, 
+                            exit = dict(value = "exit", fn = exit_routine), 
+                            cancel = dict(value = "cancel", fn = exit_routine), 
+                            cancel2 = dict(value = "c", fn = exit_routine)
+                            )
+
+            looping_input(
+                select_name, 
+                "\n # provide name for a new mixture #\n >>>",
+                fn_params
+                )
+
+        if not fn_params["exit"] and len(fn_params["selected_components"]) > 1:
+            by_volume = fn_params["type_mixture"] == "by volume"
+            if by_volume:
+                print("...................by volume")
+            print(f'.........................type_mixture  `{fn_params["type_mixture"]}`')
+            sols_use = fn_params["selected_components"]
+            qtys_use = fn_params["selected_quantity"]
+            name = "temp_solution_name"
+
+            sol_last = self.rep.items[sols_use[0]]
+            qty_last = qtys_use[0] * sol_last.ro if by_volume else qtys_use[0]
+
+            index_last = len(sols_use) - 1
+
+            for index in range(1,len(sols_use)):
+                ro_final = fn_params["density"] if index == index_last else -1
+                
+                sol_next = self.rep.items[sols_use[index]]
+                qty_next = qtys_use[index] * sol_next.ro if by_volume else qtys_use[index]
+
+                print(f'i: {index};         qty_last: {qty_last};   qty_next: {qty_next}')
+
+                sol_last = mix(sol_last, qty_last, sol_next, qty_next, ro_final, name)
+                qty_last += qty_next
+
+            self.rep.add_solution(sol_last, name = fn_params["name"])
+                                      
+
+        if not fn_params["exit"] and fn_params["name"] in self.rep.list_solution_names():
+            print(f'solution `{fn_params["name"]}` successfully created!!!')
+
+        else:
+            print("no soltion was added ...")
+
+            
+
     def create_recipe_w_dialog(self):
             
         fn_params = dict(exit = False)
@@ -876,6 +1064,24 @@ def mix(sol1, m1, sol2, m2, ro_final, name):
     return sol
 
 
+#>>>> def make_mixture(): 
+#>>>>     
+#>>>>     # 1. ask if to mix by mass or by volume?
+#>>>>     # 2. ask to choose 1st component or -1 
+#>>>>     #   if response is -1 
+#>>>>     #       provide density (or -1)
+#>>>>     #       make mixture
+#>>>>     # 3. ask for quantity
+#>>>>     # 4. goto 2. 
+#>>>>     def
+#>>>>     mixture_type = self.make_a_choice(["mass", "volume"], "mixtures by mass OR by volume")
+#>>>>     if mixture_type is None:
+#>>>>         params["exit"] = True
+#>>>> 
+#>>>>     if not params["exit"]:
+        
+
 #=====================================================================
 
-
+def remove_matching_items(a_list, to_remove):
+    return [x for x in a_list if x not in to_remove]
