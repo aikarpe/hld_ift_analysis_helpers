@@ -141,14 +141,14 @@ first_rinse_source  = Well_Address("2", "A4")
 #mixtrues
 #    address, name, quantity, container, list_qt, list_sol
 mixtures = [
-dict(address =     outer_run_sol_1, name = stock_names["outer_run_solution_1"], volume = 12500, list_qt = [ v_stock_out, v_diluter_out ], list_sol = [stock_out_1, diluter_out_1], use = v_stock_out != 1),
+dict(address =     outer_run_sol_1, name = stock_names["outer_run_solution_1"], volume = 12500, list_qt = [ v_stock_out, v_diluter_out ], list_sol = [stock_out_1, diluter_out_1], use = v_stock_out != 1), 
 dict(address =     outer_run_sol_2, name = stock_names["outer_run_solution_2"], volume = 12500, list_qt = [ v_stock_out, v_diluter_out ], list_sol = [stock_out_2, diluter_out_2], use = v_stock_out != 1), 
-dict(address =     inner_run_sol_1, name = stock_names["inner_run_solution_1"], volume = 12500, list_qt = [  v_stock_in,  v_diluter_in ], list_sol = [ stock_in_1,  diluter_in_1], use =  v_stock_in != 1),
+dict(address =     inner_run_sol_1, name = stock_names["inner_run_solution_1"], volume = 12500, list_qt = [  v_stock_in,  v_diluter_in ], list_sol = [ stock_in_1,  diluter_in_1], use =  v_stock_in != 1), 
 dict(address =     inner_run_sol_2, name = stock_names["inner_run_solution_2"], volume = 12500, list_qt = [  v_stock_in,  v_diluter_in ], list_sol = [ stock_in_2,  diluter_in_2], use =  v_stock_in != 1), 
 dict(address = unused_sample_waste, name =     stock_names["washing_solution"], volume =   500, list_qt = [                           1], list_sol = [                stock_wash], use =             True),
 dict(address =  sample_rinse_waste, name =     stock_names["washing_solution"], volume =   500, list_qt = [                           1], list_sol = [                stock_wash], use =             True),
 dict(address =   first_rinse_waste, name =     stock_names["washing_solution"], volume =   500, list_qt = [                           1], list_sol = [                stock_wash], use =             True),
-dict(address =  first_rinse_source, name =     stock_names["washing_solution"], volume =  1400, list_qt = [                           1], list_sol = [                stock_wash], use =             True) 
+dict(address =  first_rinse_source, name =     stock_names["washing_solution"], volume =  1400, list_qt = [                           1], list_sol = [                stock_wash], use =             True) #1400
 ]
 
 mxg = Mixing_Graph()

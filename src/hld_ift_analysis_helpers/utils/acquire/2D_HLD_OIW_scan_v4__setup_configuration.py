@@ -130,6 +130,7 @@ def duplicate_config(conf_in, conf_type):
 
 # ............................................................ config files
 logout = params["scan"]["oiw_scan_logout"]
+logout = True
 
 configs = params["configurations"]
 suffix_in =   configs["blank_logout_OIW" if logout else "blank_OIW"]
