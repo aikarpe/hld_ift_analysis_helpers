@@ -148,6 +148,28 @@ for afile in file_path:
     print(afile)
     print(cdf.to_markdown())
     
+    def component_table(df, param_lbl): 
+        unique_scans = list(set(cdf["scan"].list()))
+        unique_scans.sort()
+        unique_concs = list(set(cdf["measurement"]))
+        unique_concs.sort()
+        def extr_value(scan_val, meas_val, col_lbl, df):
+            temp_df = df[ (df.scan == scan_val) & (df.measurement == meas_val) ]
+            value = "." if len(temp_df.index) < 1 else str(temp_df[col_lbl].tolist()[0])
+            return value
+
+        index = unique_scans
+        data = dict()
+        for conc in unique_concs:
+            data[conc] = list(map(lambda x: extr_value(x, conc, param_lbl, df), unique_scans))
+        df_out = pd.DataFrame(data, index = index)
+
+    columns = [x for x in list(cdf) if x not in ['scan', 'measurement']]
+
+    for acol in columns:
+        print(component_table(cdf, acol).to_markdown())
+
+
     output_file = afile + ".components.csv" if args.output_file == "" else args.output_file
     cdf.to_csv(output_file, sep = ",", encoding = 'utf-8')
     print(f'composition data written at:\n   {output_file}')
