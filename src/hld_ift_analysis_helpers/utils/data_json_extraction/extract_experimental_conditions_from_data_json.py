@@ -149,9 +149,9 @@ for afile in file_path:
     print(cdf.to_markdown())
     
     def component_table(df, param_lbl): 
-        unique_scans = list(set(cdf["scan"].list()))
+        unique_scans = list(set(cdf["scan"].tolist()))
         unique_scans.sort()
-        unique_concs = list(set(cdf["measurement"]))
+        unique_concs = list(set(cdf["measurement"].tolist()))
         unique_concs.sort()
         def extr_value(scan_val, meas_val, col_lbl, df):
             temp_df = df[ (df.scan == scan_val) & (df.measurement == meas_val) ]
@@ -162,12 +162,18 @@ for afile in file_path:
         data = dict()
         for conc in unique_concs:
             data[conc] = list(map(lambda x: extr_value(x, conc, param_lbl, df), unique_scans))
-        df_out = pd.DataFrame(data, index = index)
+        return pd.DataFrame(data, index = index)
 
     columns = [x for x in list(cdf) if x not in ['scan', 'measurement']]
 
     for acol in columns:
+        print("--------------------------------------------------------------------------------")
+        print("")
+        print(f'### {acol}')
+        print("")
         print(component_table(cdf, acol).to_markdown())
+        print("")
+        print("--------------------------------------------------------------------------------")
 
 
     output_file = afile + ".components.csv" if args.output_file == "" else args.output_file
