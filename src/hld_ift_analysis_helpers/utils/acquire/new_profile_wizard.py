@@ -16,6 +16,7 @@ import json
 import tkinter as tk
 from tkinter.filedialog import askopenfilename, askdirectory
 from hld_ift_http.solution_repository import Solution_Repository
+from functools import reduce
 
 STATE_LOCATION_SPECIFIED = 1
 
@@ -286,15 +287,53 @@ class CreateNewExperimentSet:
     def settings_copy(self): 
         self.copy_verbose(self.params["source_settings_path"], self.settings_path)
 
-    def get_blank_profile_name(self):
+    def get_blank_profile_names(self):
+        print("using 2nd version line 1481")
         with open(self.settings_path) as f:
             cfg = json.load(f)
-        return cfg["configurations"]["blank"]
+
+        names_out = []
+
+        if cfg["configurations"] is None:
+            print("no configurations found in settings file!!!")
+            return names_out
+
+        configs = cfg["configurations"]
+        
+        def add_config_name(lbl):
+            if lbl in configs and configs[lbl] != "":
+                names_out.append(configs[lbl])
+
+        add_config_name("blank")
+        add_config_name("blank_logout_OIW")
+        add_config_name("blank_OIW")
+        
+        return names_out
+
+    #def get_blank_profile_names(self):
+    #    with open(self.settings_path) as f:
+    #        cfg = json.load(f)
+    #    return cfg["configurations"]["blank"]
 
     def list_blank_config_files(self):
+        def files_w_matching_names(lst_files, lbl_to_match):
+            return [ x for x in lst_files if lbl_to_match in x]
+
         all_files = os.listdir(os.path.join(self.source, "config"))
-        search_for = [self.get_blank_profile_name()]
-        return [st for st in all_files if any(sub in st for sub in search_for)] 
+        search_for = self.get_blank_profile_names()
+
+        return list(set(reduce(lambda x,y: x + files_w_matching_names(all_files, y), search_for, [])))
+
+    #def list_blank_config_files(self):
+    #    print("1st version line 296")
+    #    k = input("....enter....")
+    #    def files_w_matching_name(lst_files, lbl_to_match):
+    #        return [ x for x in lst_files if lbl_to_match in x]
+
+    #    all_files = os.listdir(os.path.join(self.source, "config"))
+    #    
+    #    search_for = [self.get_blank_profile_name()]
+    #    return [st for st in all_files if any(sub in st for sub in search_for)] 
     def new_surfactant_add(self):
         with open(self.sol_rep_path, "r") as f:
             cfg = json.load(f)
@@ -1472,15 +1511,38 @@ class CreateNewExperimentSet:
     def settings_copy(self): 
         self.copy_verbose(self.params["source_settings_path"], self.settings_path)
 
-    def get_blank_profile_name(self):
+    def get_blank_profile_names(self):
+        print("using 2nd version line 1481")
         with open(self.settings_path) as f:
             cfg = json.load(f)
-        return cfg["configurations"]["blank"]
+
+        names_out = []
+
+        if cfg["configurations"] is None:
+            print("no configurations found in settings file!!!")
+            return names_out
+
+        configs = cfg["configurations"]
+        
+        def add_config_name(lbl):
+            if lbl in configs and configs[lbl] != "":
+                names_out.append(configs[lbl])
+
+        add_config_name("blank")
+        add_config_name("blank_logout_OIW")
+        add_config_name("blank_OIW")
+        
+        return names_out
 
     def list_blank_config_files(self):
+        def files_w_matching_names(lst_files, lbl_to_match):
+            return [ x for x in lst_files if lbl_to_match in x]
+
         all_files = os.listdir(os.path.join(self.source, "config"))
-        search_for = [self.get_blank_profile_name()]
-        return [st for st in all_files if any(sub in st for sub in search_for)] 
+        search_for = self.get_blank_profile_names()
+
+        return list(set(reduce(lambda x,y: x + files_w_matching_names(all_files, y), search_for, [])))
+
     def new_surfactant_add(self):
         with open(self.sol_rep_path, "r") as f:
             cfg = json.load(f)
