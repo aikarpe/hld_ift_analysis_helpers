@@ -85,6 +85,8 @@ for p in file_path:
         with open(p, 'r', encoding='utf-8') as f:
             data_dict = json.load(f)
         json_path = json_tree(data_dict)
+        print(json_path)
+        k = input("....enter....")
         zz = sorted(list(set(json_path)))
         zz = list(map(lambda x: re.sub("__index__", "_i_", x), zz))
         #zx = list(map(lambda x: re.sub("\\/", "\\\\", x), 
@@ -100,7 +102,8 @@ for p in file_path:
         if to_extract is not None:
             matching_path = []
             unmatched_path = []
-            for a_path in list(map(lambda x: re.sub("\\/", "\\\\", x), to_extract['generic_path'])):
+            #for a_path in list(map(lambda x: re.sub("\\/", "\\\\", x), to_extract['generic_path'])):
+            for a_path in to_extract['generic_path']:
                 if a_path in zz:
                     matching_path.append(a_path)
                 else:

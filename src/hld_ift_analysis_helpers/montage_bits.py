@@ -112,14 +112,20 @@ def needle(im, width = 0):
     props = ski.measure.regionprops(labels, extra_properties=(pixelcount, rel_size,))
     
     i_area_lst = list(map(lambda x: [x[0], -x[1].area], enumerate(props)))
+    print(f'montage_bits:needle() i_area_lst: {i_area_lst}')
     i_area_lst_sorted = sorted(i_area_lst, key = lambda x: x[1])
+    print(i_area_lst_sorted)
+    print(f'montage_bits:needle() i_area_lst_sorted: {i_area_lst_sorted}')
     
     i_area_lst_cleaned_up = list(filter(lambda x: not region_from_top_to_bottom(props[x[0]]), i_area_lst_sorted))
+    print(f'montage_bits:needle() i_area_lst_cleaned_up: {i_area_lst_cleaned_up}')
     i_area_lst_cleaned_up = list(filter(lambda x: not region_at_image_side_edges(props[x[0]]), i_area_lst_cleaned_up))
+    print(f'montage_bits:needle() i_area_lst_cleaned_up: {i_area_lst_cleaned_up}')
     
     flipped = len(i_area_lst_cleaned_up) < len(i_area_lst_sorted)
     
     region_prop = props[i_area_lst_cleaned_up[0][0]]
+    print(f'montage_bits:needle() region_prop: {region_prop}')
     
     coords = region_prop.coords
     extr_val = extrema(coords)
@@ -130,7 +136,7 @@ def needle(im, width = 0):
     width_report = width_raw if width <= 0 else width
     half = int( width_report / 2 )
     start = center - half if center - half >= 0 else 0
-    #    return {"start": start, "width": width_report, "center": center}
+    print(f'montage_bits:needle() start: {start}, width: {width_report}, center: {center}')
     return {"start": start, "width": width_report, "center": center}
 
     # threshold image to binary

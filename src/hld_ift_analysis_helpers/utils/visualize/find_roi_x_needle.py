@@ -64,8 +64,10 @@ if len(file_path) == 0:
 
 def find_needle_pos(path, width = 0):
     if os.path.exists(path):
+        print("image located")
         return needle(imread(path, as_gray = True), width = width)
     else:
+        print("image not there")
         return {"start": -1, "width": -1, "center": -1}
 
 output = []
@@ -78,7 +80,12 @@ for fp in file_path:
         print(f'processing ...:\n   {fp}')
 
         experiment_root = os.path.split(fp)
-        im_path = os.path.join(experiment_root[0], "scan_001", "conc_0.00000", "00000.jpg")
+        scan_folder = os.path.join(experiment_root[0], "scan_001") 
+        meas_folder = [item for item in os.listdir(scan_folder) if "autofocus" not in item and "conc_" in item] 
+        print(scan_folder)
+        print(meas_folder)
+        im_path = os.path.join(scan_folder, meas_folder[0], "00000.jpg")
+        print(f'will use image:\n   {im_path}')
         out = find_needle_pos(im_path)
 
         output.append(out)
